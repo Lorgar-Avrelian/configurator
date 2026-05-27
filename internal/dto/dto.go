@@ -63,3 +63,31 @@ type OidPageResponse struct {
 	TotalItems int         `json:"total_items" example:"450"`
 	Items      []model.Oid `json:"items"`
 }
+
+type DeviceIndicatorCreate struct {
+	Description *string `json:"description" example:"Hardware: x86 family"`
+	ObjectID    *string `json:"object_id" example:"1.3.6.1.4.1.9.1.516"`
+	Contact     *string `json:"contact" example:"sysadmin@company.com"`
+	Name        *string `json:"name" example:"Core-Switch-01"`
+	Location    *string `json:"location" example:"Server Room, Rack 3"`
+	Services    *int16  `json:"services" example:"72"`
+}
+
+type DeviceIndicatorUpdate struct {
+	Description *string `json:"description" example:"Updated Hardware info"`
+	ObjectID    *string `json:"object_id" example:"1.3.6.1.4.1.9.1.516"`
+	Contact     *string `json:"contact" example:"sysadmin_new@company.com"`
+	Name        *string `json:"name" example:"Core-Switch-01-Updated"`
+	Location    *string `json:"location" example:"Server Room, Rack 4"`
+	Services    *int16  `json:"services" example:"74"`
+}
+
+type ParamIndicatorCreate struct {
+	OidID          string  `json:"oid_id" binding:"required" example:"00000000-0000-0000-0000-000000000000"`
+	DotterNotation *string `json:"dotter_notation" example:"1.3.6.1.2.1.1.1.0"`
+}
+
+type ParamIndicatorUpdate struct {
+	OidID          string  `json:"oid_id" binding:"required" example:"00000000-0000-0000-0000-000000000000"`
+	DotterNotation *string `json:"dotter_notation" example:"1.3.6.1.2.1.1.3.0"`
+}

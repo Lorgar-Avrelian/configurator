@@ -79,3 +79,20 @@ func CompareOids(o1, o2 string) bool {
 	}
 	return len1 < len2
 }
+
+type DeviceIndicator struct {
+	ID          int64   `json:"id" example:"1"`
+	Description *string `json:"description,omitempty" example:"Hardware: x86 family"`
+	ObjectID    *string `json:"object_id,omitempty" example:"1.3.6.1.4.1.9.1.516"`
+	Contact     *string `json:"contact,omitempty" example:"sysadmin@company.com"`
+	Name        *string `json:"name,omitempty" example:"Core-Switch-01"`
+	Location    *string `json:"location,omitempty" example:"Server Room, Rack 3"`
+	Services    *int16  `json:"services,omitempty" example:"12"`
+}
+
+type ParamIndicator struct {
+	ID             int64   `json:"id" example:"1"`
+	OidID          string  `json:"oid_id" example:"00000000-0000-0000-0000-000000000000"`
+	DotterNotation *string `json:"dotter_notation,omitempty" example:"1.3.6.1.2.1.1.1.0"`
+	Oid            *Oid    `json:"oid,omitempty"`
+}

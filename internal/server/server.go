@@ -41,6 +41,15 @@ func NewServer() *Server {
 			components.DELETE("/:id", DeleteComponent)
 		}
 
+		indicators := v1.Group("/indicators")
+		{
+			indicators.POST("", CreateIndicator)
+			indicators.GET("", GetAllIndicators)
+			indicators.GET("/:id", GetIndicator)
+			indicators.PUT("/:id", UpdateIndicator)
+			indicators.DELETE("/:id", DeleteIndicator)
+		}
+
 		params := v1.Group("/params")
 		{
 			params.POST("", CreateParam)
@@ -55,6 +64,15 @@ func NewServer() *Server {
 		{
 			relations.POST("", BindParam)
 			relations.DELETE("/:componentId/:paramId", UnbindParam)
+		}
+
+		paramIndicators := v1.Group("/param-indicators")
+		{
+			paramIndicators.POST("", CreateParamIndicator)
+			paramIndicators.GET("", GetAllParamIndicators)
+			paramIndicators.GET("/:id", GetParamIndicator)
+			paramIndicators.PUT("/:id", UpdateParamIndicator)
+			paramIndicators.DELETE("/:id", DeleteParamIndicator)
 		}
 	}
 

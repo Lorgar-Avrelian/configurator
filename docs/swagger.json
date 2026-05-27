@@ -23,7 +23,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Компоненты"
+                    "1. Модельный каталог: Компоненты"
                 ],
                 "summary": "Получить все компоненты вместе с параметрами",
                 "responses": {
@@ -56,7 +56,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Компоненты"
+                    "1. Модельный каталог: Компоненты"
                 ],
                 "summary": "Создать компонент",
                 "parameters": [
@@ -105,7 +105,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Компоненты"
+                    "1. Модельный каталог: Компоненты"
                 ],
                 "summary": "Поиск компонентов по подстроке",
                 "parameters": [
@@ -155,7 +155,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Компоненты"
+                    "1. Модельный каталог: Компоненты"
                 ],
                 "summary": "Получить компонент по ID",
                 "parameters": [
@@ -211,7 +211,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Компоненты"
+                    "1. Модельный каталог: Компоненты"
                 ],
                 "summary": "Обновить компонент",
                 "parameters": [
@@ -271,7 +271,7 @@
             "delete": {
                 "description": "Удаляет компонент по ID, а также автоматически стирает всю иерархию дочерних элементов",
                 "tags": [
-                    "Компоненты"
+                    "1. Модельный каталог: Компоненты"
                 ],
                 "summary": "Удалить компонент и всех его наследников",
                 "parameters": [
@@ -317,13 +317,260 @@
                 }
             }
         },
+        "/api/v1/indicators": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "5. Конфигурация: Индикаторы устройств"
+                ],
+                "summary": "Получить все индикаторы устройств",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "5. Конфигурация: Индикаторы устройств"
+                ],
+                "summary": "Создать индикатор устройства",
+                "parameters": [
+                    {
+                        "description": "Данные индикатора",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.DeviceIndicatorCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/indicators/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "5. Конфигурация: Индикаторы устройств"
+                ],
+                "summary": "Получить индикатор по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Индикатора",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "5. Конфигурация: Индикаторы устройств"
+                ],
+                "summary": "Обновить индикатор по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Индикатора",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.DeviceIndicatorUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "5. Конфигурация: Индикаторы устройств"
+                ],
+                "summary": "Удалить индикатор по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Индикатора",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/oids/exact": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "OIDs"
+                    "4. Парсер: OID"
                 ],
                 "summary": "Полноразмерный OID по dotter_notation",
                 "parameters": [
@@ -372,7 +619,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "OIDs"
+                    "4. Парсер: OID"
                 ],
                 "summary": "Получить OID по имени MIB",
                 "parameters": [
@@ -422,7 +669,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "OIDs"
+                    "4. Парсер: OID"
                 ],
                 "summary": "Поиск OID по префиксу с пагинацией",
                 "parameters": [
@@ -475,7 +722,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "OIDs"
+                    "4. Парсер: OID"
                 ],
                 "summary": "Получить OID по вендору с пагинацией",
                 "parameters": [
@@ -530,6 +777,253 @@
                 }
             }
         },
+        "/api/v1/param-indicators": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Получить все индикаторы параметров",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Создать индикатор параметров",
+                "parameters": [
+                    {
+                        "description": "Данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ParamIndicatorCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/param-indicators/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Получить индикатор параметров по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Индикатора",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Обновить индикатор параметров по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Индикатора",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ParamIndicatorUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Удалить индикатор параметров по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Индикатора",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/params": {
             "post": {
                 "description": "Создает новый системный параметр в таблице public.param",
@@ -540,7 +1034,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Параметры"
+                    "2. Модельный каталог: Параметры"
                 ],
                 "summary": "Создать параметр",
                 "parameters": [
@@ -589,7 +1083,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Параметры"
+                    "2. Модельный каталог: Параметры"
                 ],
                 "summary": "Поиск параметров по строке",
                 "parameters": [
@@ -639,7 +1133,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Параметры"
+                    "2. Модельный каталог: Параметры"
                 ],
                 "summary": "Получить непривязанные параметры",
                 "responses": {
@@ -670,7 +1164,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Параметры"
+                    "2. Модельный каталог: Параметры"
                 ],
                 "summary": "Получить параметр по ID",
                 "parameters": [
@@ -726,7 +1220,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Параметры"
+                    "2. Модельный каталог: Параметры"
                 ],
                 "summary": "Обновить параметр",
                 "parameters": [
@@ -785,7 +1279,7 @@
             },
             "delete": {
                 "tags": [
-                    "Параметры"
+                    "2. Модельный каталог: Параметры"
                 ],
                 "summary": "Удалить параметр",
                 "parameters": [
@@ -841,7 +1335,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Связи (Component \u0026 Params)"
+                    "3. Модельный каталог: Связи"
                 ],
                 "summary": "Связать компонент с параметром",
                 "parameters": [
@@ -890,7 +1384,7 @@
             "delete": {
                 "description": "Удаляет запись из таблицы public.component_param",
                 "tags": [
-                    "Связи (Component \u0026 Params)"
+                    "3. Модельный каталог: Связи"
                 ],
                 "summary": "Удалить связь компонента с параметром",
                 "parameters": [
@@ -1040,6 +1534,64 @@
                 }
             }
         },
+        "filler_internal_dto.DeviceIndicatorCreate": {
+            "type": "object",
+            "properties": {
+                "contact": {
+                    "type": "string",
+                    "example": "sysadmin@company.com"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Hardware: x86 family"
+                },
+                "location": {
+                    "type": "string",
+                    "example": "Server Room, Rack 3"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Core-Switch-01"
+                },
+                "object_id": {
+                    "type": "string",
+                    "example": "1.3.6.1.4.1.9.1.516"
+                },
+                "services": {
+                    "type": "integer",
+                    "example": 72
+                }
+            }
+        },
+        "filler_internal_dto.DeviceIndicatorUpdate": {
+            "type": "object",
+            "properties": {
+                "contact": {
+                    "type": "string",
+                    "example": "sysadmin_new@company.com"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Updated Hardware info"
+                },
+                "location": {
+                    "type": "string",
+                    "example": "Server Room, Rack 4"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Core-Switch-01-Updated"
+                },
+                "object_id": {
+                    "type": "string",
+                    "example": "1.3.6.1.4.1.9.1.516"
+                },
+                "services": {
+                    "type": "integer",
+                    "example": 74
+                }
+            }
+        },
         "filler_internal_dto.OidPageResponse": {
             "type": "object",
             "properties": {
@@ -1120,6 +1672,38 @@
                 "visible": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "filler_internal_dto.ParamIndicatorCreate": {
+            "type": "object",
+            "required": [
+                "oid_id"
+            ],
+            "properties": {
+                "dotter_notation": {
+                    "type": "string",
+                    "example": "1.3.6.1.2.1.1.1.0"
+                },
+                "oid_id": {
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
+                }
+            }
+        },
+        "filler_internal_dto.ParamIndicatorUpdate": {
+            "type": "object",
+            "required": [
+                "oid_id"
+            ],
+            "properties": {
+                "dotter_notation": {
+                    "type": "string",
+                    "example": "1.3.6.1.2.1.1.3.0"
+                },
+                "oid_id": {
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
                 }
             }
         },
@@ -1223,6 +1807,39 @@
                 "title": {
                     "type": "string",
                     "example": "Модуль Питания"
+                }
+            }
+        },
+        "filler_internal_model.DeviceIndicator": {
+            "type": "object",
+            "properties": {
+                "contact": {
+                    "type": "string",
+                    "example": "sysadmin@company.com"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Hardware: x86 family"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "location": {
+                    "type": "string",
+                    "example": "Server Room, Rack 3"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Core-Switch-01"
+                },
+                "object_id": {
+                    "type": "string",
+                    "example": "1.3.6.1.4.1.9.1.516"
+                },
+                "services": {
+                    "type": "integer",
+                    "example": 12
                 }
             }
         },
@@ -1342,6 +1959,46 @@
                     "example": true
                 }
             }
+        },
+        "filler_internal_model.ParamIndicator": {
+            "type": "object",
+            "properties": {
+                "dotter_notation": {
+                    "type": "string",
+                    "example": "1.3.6.1.2.1.1.1.0"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "oid": {
+                    "$ref": "#/definitions/filler_internal_model.Oid"
+                },
+                "oid_id": {
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
+                }
+            }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "1. Модельный каталог: Компоненты"
+        },
+        {
+            "name": "2. Модельный каталог: Параметры"
+        },
+        {
+            "name": "3. Модельный каталог: Связи"
+        },
+        {
+            "name": "4. Парсер: OID"
+        },
+        {
+            "name": "5. Конфигурация: Индикаторы устройств"
+        },
+        {
+            "name": "6. Конфигурация: Индикаторы параметров"
+        }
+    ]
 }

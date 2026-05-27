@@ -15,7 +15,7 @@ import (
 // CreateParam создает новый параметр
 // @Summary         Создать параметр
 // @Description     Создает новый системный параметр в таблице public.param
-// @Tags            Параметры
+// @Tags            2. Модельный каталог: Параметры
 // @Accept          json
 // @Produce         json
 // @Param           request body dto.ParamCreate true "Данные параметра"
@@ -41,7 +41,7 @@ func CreateParam(c *gin.Context) {
 
 // GetParam возвращает параметр по ID
 // @Summary         Получить параметр по ID
-// @Tags            Параметры
+// @Tags            2. Модельный каталог: Параметры
 // @Produce         json
 // @Param           id   path      int  true  "ID Параметра"
 // @Success         200  {object}  model.Param
@@ -70,7 +70,7 @@ func GetParam(c *gin.Context) {
 
 // UpdateParam обновляет параметры
 // @Summary         Обновить параметр
-// @Tags            Параметры
+// @Tags            2. Модельный каталог: Параметры
 // @Accept          json
 // @Produce         json
 // @Param           id      path      int  true  "ID Параметра"
@@ -107,7 +107,7 @@ func UpdateParam(c *gin.Context) {
 
 // DeleteParam удаляет параметр
 // @Summary         Удалить параметр
-// @Tags            Параметры
+// @Tags            2. Модельный каталог: Параметры
 // @Param           id   path      int  true  "ID Параметра"
 // @Success         204  "No Content"
 // @Failure         400  {object}  map[string]string "Неверный формат ID"
@@ -136,7 +136,7 @@ func DeleteParam(c *gin.Context) {
 // GetUnattachedParams возвращает параметры без связей
 // @Summary			Получить непривязанные параметры
 // @Description		Возвращает список всех параметров, которые не привязаны ни к одной составной части устройства
-// @Tags			Параметры
+// @Tags            2. Модельный каталог: Параметры
 // @Produce			json
 // @Success			200   {array}   model.Param
 // @Failure			500  {object}  map[string]string "Ошибка базы данных"
@@ -154,7 +154,7 @@ func GetUnattachedParams(c *gin.Context) {
 // SearchParams выполняет полнотекстовый поиск параметров
 // @Summary         Поиск параметров по строке
 // @Description     Ищет параметры, у которых title, name_en, name_ru, description_en или description_ru частично совпадают с переданной строкой query
-// @Tags            Параметры
+// @Tags            2. Модельный каталог: Параметры
 // @Produce         json
 // @Param           query query     string  true  "Строка поиска"
 // @Success         200   {array}   model.Param

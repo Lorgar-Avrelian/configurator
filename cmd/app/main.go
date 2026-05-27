@@ -14,6 +14,12 @@ import (
 // @title           DB Filler API
 // @version         1.0
 // @description     HTTP-сервер на Go с автоматической генерацией Swagger при старте
+// @tag.name        1. Модельный каталог: Компоненты
+// @tag.name        2. Модельный каталог: Параметры
+// @tag.name        3. Модельный каталог: Связи
+// @tag.name        4. Парсер: OID
+// @tag.name        5. Конфигурация: Индикаторы устройств
+// @tag.name        6. Конфигурация: Индикаторы параметров
 // @contact.name    Lorgar Avrelian
 // @contact.url     https://github.com/Lorgar-Avrelian
 // @contact.email   victor-14-244@mail.ru
@@ -47,10 +53,10 @@ func generateSwagger() {
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		logger.Warn("Не удалось автоматически обновить Swagger через код (возможно, утилита swag не добавлена в PATH системы).")
-		logger.Debug("Детали ошибки генератора:\n%s", string(output))
+		logger.Warn("Не удалось автоматически обновить Swagger через код.")
+		logger.Error("Детали ошибки генератора:\n%s", string(output))
 		return
 	}
 
-	logger.Info("Файлы Swagger успешно обновлены на лету!")
+	logger.Info("Файлы Swagger успешно обновлены")
 }

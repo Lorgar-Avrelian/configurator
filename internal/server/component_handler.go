@@ -15,7 +15,7 @@ import (
 // CreateComponent создает новый компонент
 // @Summary         Создать компонент
 // @Description     Создает новую запись составной части устройства. Если base_component равен null, создается базовый компонент.
-// @Tags            Компоненты
+// @Tags            1. Модельный каталог: Компоненты
 // @Accept          json
 // @Produce         json
 // @Param           request body dto.ComponentCreate true "Данные компонента"
@@ -42,7 +42,7 @@ func CreateComponent(c *gin.Context) {
 // GetComponent возвращает компонент со всеми его параметрами (включая наследуемые)
 // @Summary         Получить компонент по ID
 // @Description     Возвращает компонент и иерархически объединенный список его параметров из БД
-// @Tags            Компоненты
+// @Tags            1. Модельный каталог: Компоненты
 // @Produce         json
 // @Param           id   path      int  true  "ID Компонента"
 // @Success         200  {object}  model.Component
@@ -72,7 +72,7 @@ func GetComponent(c *gin.Context) {
 // GetAllComponents возвращает все компоненты с их параметрами
 // @Summary         Получить все компоненты вместе с параметрами
 // @Description     Возвращает список всех составных частей устройств вместе со всеми собственными и унаследованными параметрами
-// @Tags            Компоненты
+// @Tags            1. Модельный каталог: Компоненты
 // @Produce         json
 // @Success         200  {array}   model.Component
 // @Failure         500  {object}  map[string]string
@@ -90,7 +90,7 @@ func GetAllComponents(c *gin.Context) {
 // SearchComponents осуществляет полнотекстовый поиск компонентов по совпадению строки
 // @Summary         Поиск компонентов по подстроке
 // @Description     Ищет компоненты, у которых строка совпадает с title, name_en, name_ru, description_en или description_ru
-// @Tags            Компоненты
+// @Tags            1. Модельный каталог: Компоненты
 // @Produce         json
 // @Param           query query     string true  "Строка поиска"
 // @Success         200  {array}   model.Component
@@ -114,7 +114,7 @@ func SearchComponents(c *gin.Context) {
 
 // UpdateComponent обновляет существующий компонент
 // @Summary         Обновить компонент
-// @Tags            Компоненты
+// @Tags            1. Модельный каталог: Компоненты
 // @Accept          json
 // @Produce         json
 // @Param           id      path      int  true  "ID Компонента"
@@ -152,7 +152,7 @@ func UpdateComponent(c *gin.Context) {
 // DeleteComponent удаляет компонент рекурсивно со всеми его наследниками
 // @Summary         Удалить компонент и всех его наследников
 // @Description     Удаляет компонент по ID, а также автоматически стирает всю иерархию дочерних элементов
-// @Tags            Компоненты
+// @Tags            1. Модельный каталог: Компоненты
 // @Param           id   path      int  true  "ID Компонента"
 // @Success         204  "No Content"
 // @Failure         400  {object}  map[string]string

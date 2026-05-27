@@ -14,7 +14,7 @@ import (
 // BindParam связывает компонент и параметр
 // @Summary         Связать компонент с параметром
 // @Description     Добавляет запись в таблицу public.component_param
-// @Tags            Связи (Component & Params)
+// @Tags            3. Модельный каталог: Связи
 // @Accept          json
 // @Produce         json
 // @Param           request body dto.BindParamRequest true "ID сущностей для связывания"
@@ -42,7 +42,7 @@ func BindParam(c *gin.Context) {
 // UnbindParam разрывает связь между компонентом и параметром
 // @Summary         Удалить связь компонента с параметром
 // @Description     Удаляет запись из таблицы public.component_param
-// @Tags            Связи (Component & Params)
+// @Tags            3. Модельный каталог: Связи
 // @Param           componentId path      int  true  "ID Компонента"
 // @Param           paramId     path      int  true  "ID Параметра"
 // @Success         204  "No Content"
