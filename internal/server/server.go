@@ -94,6 +94,37 @@ func NewServer() *Server {
 			deviceComponents.DELETE("/:id", DeleteDeviceComponent)
 			deviceComponents.DELETE("/bind/:deviceComponentId/:mappingId", UnbindDeviceMapping)
 		}
+
+		configurations := v1.Group("/configurations")
+		{
+			configurations.POST("", CreateConfiguration)
+			configurations.GET("", GetAllConfigurations)
+			configurations.POST("/bind", BindConfigurationThreshold)
+			configurations.DELETE("/bind/:configurationId/:thresholdId", UnbindConfigurationThreshold)
+			configurations.GET("/:id", GetConfiguration)
+			configurations.PUT("/:id", UpdateConfiguration)
+			configurations.DELETE("/:id", DeleteConfiguration)
+		}
+
+		defaultConfigurations := v1.Group("/default-configurations")
+		{
+			defaultConfigurations.POST("", CreateDefaultConfiguration)
+			defaultConfigurations.GET("", GetAllDefaultConfigurations)
+			defaultConfigurations.POST("/bind", BindDefaultConfigurationThreshold)
+			defaultConfigurations.DELETE("/bind/:defaultConfigurationId/:thresholdId", UnbindDefaultConfigurationThreshold)
+			defaultConfigurations.GET("/:id", GetDefaultConfiguration)
+			defaultConfigurations.PUT("/:id", UpdateDefaultConfiguration)
+			defaultConfigurations.DELETE("/:id", DeleteDefaultConfiguration)
+		}
+
+		thresholds := v1.Group("/thresholds")
+		{
+			thresholds.POST("", CreateThreshold)
+			thresholds.GET("", GetAllThresholds)
+			thresholds.GET("/:id", GetThreshold)
+			thresholds.PUT("/:id", UpdateThreshold)
+			thresholds.DELETE("/:id", DeleteThreshold)
+		}
 	}
 
 	return &Server{router: r}

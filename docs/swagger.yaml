@@ -1,4 +1,28 @@
 definitions:
+  filler_internal_dto.BindConfigThresholdRequest:
+    properties:
+      configuration_id:
+        example: 1
+        type: integer
+      threshold_id:
+        example: 5
+        type: integer
+    required:
+    - configuration_id
+    - threshold_id
+    type: object
+  filler_internal_dto.BindDefaultConfigThresholdRequest:
+    properties:
+      default_configuration_id:
+        example: 1
+        type: integer
+      threshold_id:
+        example: 5
+        type: integer
+    required:
+    - default_configuration_id
+    - threshold_id
+    type: object
   filler_internal_dto.BindDeviceMappingRequest:
     properties:
       device_component_id:
@@ -80,6 +104,28 @@ definitions:
     - name_en
     - name_ru
     - title
+    type: object
+  filler_internal_dto.ConfigurationCreate:
+    properties:
+      device_component_id:
+        example: 4
+        type: integer
+      indicator_id:
+        example: 2
+        type: integer
+    required:
+    - indicator_id
+    type: object
+  filler_internal_dto.ConfigurationUpdate:
+    properties:
+      device_component_id:
+        example: 5
+        type: integer
+      indicator_id:
+        example: 2
+        type: integer
+    required:
+    - indicator_id
     type: object
   filler_internal_dto.DeviceComponentCreate:
     properties:
@@ -318,6 +364,102 @@ definitions:
     - title
     - type
     type: object
+  filler_internal_dto.ThresholdCreate:
+    properties:
+      enabled:
+        example: true
+        type: boolean
+      level:
+        example: WARNING
+        type: string
+      operator:
+        example: ==
+        type: string
+      prev_operator:
+        example: '&&'
+        type: string
+      previous_id:
+        example: 2
+        type: integer
+      source_internal_order:
+        example: 1
+        type: integer
+      source_model:
+        example: 10
+        type: integer
+      source_param:
+        example: temperature
+        type: string
+      target_device:
+        example: 5
+        type: integer
+      target_param:
+        example: alarm_state
+        type: string
+      type:
+        example: INT
+        type: string
+      value:
+        example: "85"
+        type: string
+    required:
+    - level
+    - operator
+    - prev_operator
+    - source_internal_order
+    - source_model
+    - source_param
+    - type
+    - value
+    type: object
+  filler_internal_dto.ThresholdUpdate:
+    properties:
+      enabled:
+        example: true
+        type: boolean
+      level:
+        example: ALARM
+        type: string
+      operator:
+        example: '>='
+        type: string
+      prev_operator:
+        example: '&&'
+        type: string
+      previous_id:
+        example: 2
+        type: integer
+      source_internal_order:
+        example: 1
+        type: integer
+      source_model:
+        example: 10
+        type: integer
+      source_param:
+        example: temperature
+        type: string
+      target_device:
+        example: 5
+        type: integer
+      target_param:
+        example: alarm_state
+        type: string
+      type:
+        example: INT
+        type: string
+      value:
+        example: "90"
+        type: string
+    required:
+    - level
+    - operator
+    - prev_operator
+    - source_internal_order
+    - source_model
+    - source_param
+    - type
+    - value
+    type: object
   filler_internal_model.Component:
     properties:
       access:
@@ -348,6 +490,26 @@ definitions:
       title:
         example: Модуль Питания
         type: string
+    type: object
+  filler_internal_model.Configuration:
+    properties:
+      device_component:
+        $ref: '#/definitions/filler_internal_model.DeviceComponent'
+      id:
+        example: 1
+        type: integer
+      indicator:
+        $ref: '#/definitions/filler_internal_model.DeviceIndicator'
+    type: object
+  filler_internal_model.DefaultConfiguration:
+    properties:
+      device_component:
+        $ref: '#/definitions/filler_internal_model.DeviceComponent'
+      id:
+        example: 1
+        type: integer
+      indicator:
+        $ref: '#/definitions/filler_internal_model.DeviceIndicator'
     type: object
   filler_internal_model.DeviceComponent:
     properties:
@@ -514,6 +676,50 @@ definitions:
         $ref: '#/definitions/filler_internal_model.Oid'
       oid_id:
         example: 00000000-0000-0000-0000-000000000000
+        type: string
+    type: object
+  filler_internal_model.Threshold:
+    properties:
+      enabled:
+        example: true
+        type: boolean
+      id:
+        example: 1
+        type: integer
+      level:
+        example: WARNING
+        type: string
+      operator:
+        example: ==
+        type: string
+      prev_operator:
+        example: '&&'
+        type: string
+      previous_id:
+        example: 2
+        type: integer
+      previous_threshold:
+        $ref: '#/definitions/filler_internal_model.Threshold'
+      source_internal_order:
+        example: 1
+        type: integer
+      source_model:
+        example: 10
+        type: integer
+      source_param:
+        example: temperature
+        type: string
+      target_device:
+        example: 5
+        type: integer
+      target_param:
+        example: alarm_state
+        type: string
+      type:
+        example: INT
+        type: string
+      value:
+        example: "85"
         type: string
     type: object
 host: localhost:8082
@@ -733,6 +939,390 @@ paths:
       summary: Поиск компонентов по подстроке
       tags:
       - '1. Модельный каталог: Компоненты'
+  /api/v1/configurations:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/filler_internal_model.Configuration'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все рабочие конфигурации
+      tags:
+      - '10. Конфигурация: Конфигурации устройств'
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные конфигурации
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ConfigurationCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Возвращает полностью раскрытое содержание созданной конфигурации
+          schema:
+            $ref: '#/definitions/filler_internal_model.Configuration'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать рабочую конфигурацию
+      tags:
+      - '10. Конфигурация: Конфигурации устройств'
+  /api/v1/configurations/{id}:
+    delete:
+      parameters:
+      - description: ID Конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить рабочую configuration по ID
+      tags:
+      - '10. Конфигурация: Конфигурации устройств'
+    get:
+      parameters:
+      - description: ID Конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Возвращает полностью раскрытое содержание
+          schema:
+            $ref: '#/definitions/filler_internal_model.Configuration'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить рабочую конфигурацию по ID
+      tags:
+      - '10. Конфигурация: Конфигурации устройств'
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ConfigurationUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Возвращает полностью раскрытое обновленное содержание
+          schema:
+            $ref: '#/definitions/filler_internal_model.Configuration'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить рабочую конфигурацию по ID
+      tags:
+      - '10. Конфигурация: Конфигурации устройств'
+  /api/v1/configurations/bind:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные связывания
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.BindConfigThresholdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Связать конфигурацию с порогом
+      tags:
+      - '10. Конфигурация: Конфигурации устройств'
+  /api/v1/configurations/bind/{configurationId}/{thresholdId}:
+    delete:
+      parameters:
+      - description: ID Конфигурации
+        in: path
+        name: configurationId
+        required: true
+        type: integer
+      - description: ID Порога
+        in: path
+        name: thresholdId
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      summary: Удалить связь конфигурации с порогом
+      tags:
+      - '10. Конфигурация: Конфигурации устройств'
+  /api/v1/default-configurations:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/filler_internal_model.DefaultConfiguration'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все конфигурации по умолчанию
+      tags:
+      - '9. Конфигурация: Конфигурации по-умолчанию'
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные конфигурации
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ConfigurationCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Возвращает полностью раскрытое содержание созданной конфигурации
+          schema:
+            $ref: '#/definitions/filler_internal_model.DefaultConfiguration'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать конфигурацию по умолчанию
+      tags:
+      - '9. Конфигурация: Конфигурации по-умолчанию'
+  /api/v1/default-configurations/{id}:
+    delete:
+      parameters:
+      - description: ID Конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить дефолтную конфигурацию по ID
+      tags:
+      - '9. Конфигурация: Конфигурации по-умолчанию'
+    get:
+      parameters:
+      - description: ID Конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Возвращает полностью раскрытое содержание
+          schema:
+            $ref: '#/definitions/filler_internal_model.DefaultConfiguration'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить дефолтную конфигурацию по ID
+      tags:
+      - '9. Конфигурация: Конфигурации по-умолчанию'
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ConfigurationUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Возвращает полностью раскрытое обновленное содержание
+          schema:
+            $ref: '#/definitions/filler_internal_model.DefaultConfiguration'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить конфигурацию по умолчанию по ID
+      tags:
+      - '9. Конфигурация: Конфигурации по-умолчанию'
+  /api/v1/default-configurations/bind:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные связывания
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.BindDefaultConfigThresholdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Связать дефолтную конфигурацию с порогом
+      tags:
+      - '9. Конфигурация: Конфигурации по-умолчанию'
+  /api/v1/default-configurations/bind/{defaultConfigurationId}/{thresholdId}:
+    delete:
+      parameters:
+      - description: ID Дефолтной Конфигурации
+        in: path
+        name: defaultConfigurationId
+        required: true
+        type: integer
+      - description: ID Порога
+        in: path
+        name: thresholdId
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      summary: Удалить связь дефолтной конфигурацию с порогом
+      tags:
+      - '9. Конфигурация: Конфигурации по-умолчанию'
   /api/v1/device-components:
     get:
       produces:
@@ -1767,6 +2357,162 @@ paths:
       summary: Удалить связь компонента с параметром
       tags:
       - '3. Модельный каталог: Связи'
+  /api/v1/thresholds:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/filler_internal_model.Threshold'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все пороги
+      tags:
+      - '11. Конфигурация: Пороги'
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные порога
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ThresholdCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Возвращает раскрытую цепочку условий
+          schema:
+            $ref: '#/definitions/filler_internal_model.Threshold'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать порог
+      tags:
+      - '11. Конфигурация: Пороги'
+  /api/v1/thresholds/{id}:
+    delete:
+      parameters:
+      - description: ID Порога
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить порог по ID
+      tags:
+      - '11. Конфигурация: Пороги'
+    get:
+      parameters:
+      - description: ID Порога
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/filler_internal_model.Threshold'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить порог по ID вместе со всей цепочкой родителей
+      tags:
+      - '11. Конфигурация: Пороги'
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Порога
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ThresholdUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/filler_internal_model.Threshold'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить порог по ID
+      tags:
+      - '11. Конфигурация: Пороги'
 swagger: "2.0"
 tags:
 - name: '1. Модельный каталог: Компоненты'
@@ -1777,3 +2523,6 @@ tags:
 - name: '6. Конфигурация: Индикаторы параметров'
 - name: '7. Конфигурация: Сопоставления параметров'
 - name: '8. Конфигурация: Структура компонентов устройства'
+- name: '9. Конфигурация: Конфигурации по-умолчанию'
+- name: '10. Конфигурация: Конфигурации устройств'
+- name: '11. Конфигурация: Пороги'

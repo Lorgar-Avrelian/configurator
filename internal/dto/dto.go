@@ -122,3 +122,53 @@ type BindDeviceMappingRequest struct {
 	DeviceComponentID int64 `json:"device_component_id" binding:"required" example:"1"`
 	MappingID         int64 `json:"mapping_id" binding:"required" example:"5"`
 }
+
+type ConfigurationCreate struct {
+	IndicatorID       int64  `json:"indicator_id" binding:"required" example:"2"`
+	DeviceComponentID *int64 `json:"device_component_id,omitempty" example:"4"`
+}
+
+type ConfigurationUpdate struct {
+	IndicatorID       int64  `json:"indicator_id" binding:"required" example:"2"`
+	DeviceComponentID *int64 `json:"device_component_id,omitempty" example:"5"`
+}
+
+type ThresholdCreate struct {
+	SourceModel         int64   `json:"source_model" binding:"required" example:"10"`
+	SourceInternalOrder int64   `json:"source_internal_order" binding:"required" example:"1"`
+	SourceParam         string  `json:"source_param" binding:"required" example:"temperature"`
+	Value               string  `json:"value" binding:"required" example:"85"`
+	Type                string  `json:"type" binding:"required" example:"INT"`
+	Operator            string  `json:"operator" binding:"required" example:"=="`
+	Enabled             *bool   `json:"enabled,omitempty" example:"true"`
+	TargetParam         *string `json:"target_param,omitempty" example:"alarm_state"`
+	TargetDevice        *int64  `json:"target_device,omitempty" example:"5"`
+	Level               string  `json:"level" binding:"required" example:"WARNING"`
+	PrevOperator        string  `json:"prev_operator" binding:"required" example:"&&"`
+	PreviousID          *int64  `json:"previous_id,omitempty" example:"2"`
+}
+
+type ThresholdUpdate struct {
+	SourceModel         int64   `json:"source_model" binding:"required" example:"10"`
+	SourceInternalOrder int64   `json:"source_internal_order" binding:"required" example:"1"`
+	SourceParam         string  `json:"source_param" binding:"required" example:"temperature"`
+	Value               string  `json:"value" binding:"required" example:"90"`
+	Type                string  `json:"type" binding:"required" example:"INT"`
+	Operator            string  `json:"operator" binding:"required" example:">="`
+	Enabled             *bool   `json:"enabled,omitempty" example:"true"`
+	TargetParam         *string `json:"target_param,omitempty" example:"alarm_state"`
+	TargetDevice        *int64  `json:"target_device,omitempty" example:"5"`
+	Level               string  `json:"level" binding:"required" example:"ALARM"`
+	PrevOperator        string  `json:"prev_operator" binding:"required" example:"&&"`
+	PreviousID          *int64  `json:"previous_id,omitempty" example:"2"`
+}
+
+type BindConfigThresholdRequest struct {
+	ConfigurationID int64 `json:"configuration_id" binding:"required" example:"1"`
+	ThresholdID     int64 `json:"threshold_id" binding:"required" example:"5"`
+}
+
+type BindDefaultConfigThresholdRequest struct {
+	DefaultConfigurationID int64 `json:"default_configuration_id" binding:"required" example:"1"`
+	ThresholdID            int64 `json:"threshold_id" binding:"required" example:"5"`
+}

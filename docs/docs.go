@@ -324,6 +324,594 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/configurations": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Получить все рабочие конфигурации",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/filler_internal_model.Configuration"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Создать рабочую конфигурацию",
+                "parameters": [
+                    {
+                        "description": "Данные конфигурации",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ConfigurationCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Возвращает полностью раскрытое содержание созданной конфигурации",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Configuration"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/configurations/bind": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Связать конфигурацию с порогом",
+                "parameters": [
+                    {
+                        "description": "Данные связывания",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.BindConfigThresholdRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/configurations/bind/{configurationId}/{thresholdId}": {
+            "delete": {
+                "tags": [
+                    "10. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Удалить связь конфигурации с порогом",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Конфигурации",
+                        "name": "configurationId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID Порога",
+                        "name": "thresholdId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/api/v1/configurations/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Получить рабочую конфигурацию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Возвращает полностью раскрытое содержание",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Configuration"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Обновить рабочую конфигурацию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ConfigurationUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Возвращает полностью раскрытое обновленное содержание",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Configuration"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "10. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Удалить рабочую configuration по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/default-configurations": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "9. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Получить все конфигурации по умолчанию",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "9. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Создать конфигурацию по умолчанию",
+                "parameters": [
+                    {
+                        "description": "Данные конфигурации",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ConfigurationCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Возвращает полностью раскрытое содержание созданной конфигурации",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/default-configurations/bind": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "9. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Связать дефолтную конфигурацию с порогом",
+                "parameters": [
+                    {
+                        "description": "Данные связывания",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.BindDefaultConfigThresholdRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/default-configurations/bind/{defaultConfigurationId}/{thresholdId}": {
+            "delete": {
+                "tags": [
+                    "9. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Удалить связь дефолтной конфигурацию с порогом",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Дефолтной Конфигурации",
+                        "name": "defaultConfigurationId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID Порога",
+                        "name": "thresholdId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/api/v1/default-configurations/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "9. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Получить дефолтную конфигурацию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Возвращает полностью раскрытое содержание",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "9. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Обновить конфигурацию по умолчанию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ConfigurationUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Возвращает полностью раскрытое обновленное содержание",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "9. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Удалить дефолтную конфигурацию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/device-components": {
             "get": {
                 "produces": [
@@ -1894,9 +2482,281 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/thresholds": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "11. Конфигурация: Пороги"
+                ],
+                "summary": "Получить все пороги",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/filler_internal_model.Threshold"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "11. Конфигурация: Пороги"
+                ],
+                "summary": "Создать порог",
+                "parameters": [
+                    {
+                        "description": "Данные порога",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ThresholdCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Возвращает раскрытую цепочку условий",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Threshold"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/thresholds/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "11. Конфигурация: Пороги"
+                ],
+                "summary": "Получить порог по ID вместе со всей цепочкой родителей",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Порога",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Threshold"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "11. Конфигурация: Пороги"
+                ],
+                "summary": "Обновить порог по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Порога",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ThresholdUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Threshold"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "11. Конфигурация: Пороги"
+                ],
+                "summary": "Удалить порог по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Порога",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "filler_internal_dto.BindConfigThresholdRequest": {
+            "type": "object",
+            "required": [
+                "configuration_id",
+                "threshold_id"
+            ],
+            "properties": {
+                "configuration_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "threshold_id": {
+                    "type": "integer",
+                    "example": 5
+                }
+            }
+        },
+        "filler_internal_dto.BindDefaultConfigThresholdRequest": {
+            "type": "object",
+            "required": [
+                "default_configuration_id",
+                "threshold_id"
+            ],
+            "properties": {
+                "default_configuration_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "threshold_id": {
+                    "type": "integer",
+                    "example": 5
+                }
+            }
+        },
         "filler_internal_dto.BindDeviceMappingRequest": {
             "type": "object",
             "required": [
@@ -2006,6 +2866,38 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "Обновленный Модуль"
+                }
+            }
+        },
+        "filler_internal_dto.ConfigurationCreate": {
+            "type": "object",
+            "required": [
+                "indicator_id"
+            ],
+            "properties": {
+                "device_component_id": {
+                    "type": "integer",
+                    "example": 4
+                },
+                "indicator_id": {
+                    "type": "integer",
+                    "example": 2
+                }
+            }
+        },
+        "filler_internal_dto.ConfigurationUpdate": {
+            "type": "object",
+            "required": [
+                "indicator_id"
+            ],
+            "properties": {
+                "device_component_id": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "indicator_id": {
+                    "type": "integer",
+                    "example": 2
                 }
             }
         },
@@ -2335,6 +3227,132 @@ const docTemplate = `{
                 }
             }
         },
+        "filler_internal_dto.ThresholdCreate": {
+            "type": "object",
+            "required": [
+                "level",
+                "operator",
+                "prev_operator",
+                "source_internal_order",
+                "source_model",
+                "source_param",
+                "type",
+                "value"
+            ],
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "level": {
+                    "type": "string",
+                    "example": "WARNING"
+                },
+                "operator": {
+                    "type": "string",
+                    "example": "=="
+                },
+                "prev_operator": {
+                    "type": "string",
+                    "example": "\u0026\u0026"
+                },
+                "previous_id": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "source_internal_order": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "source_model": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "source_param": {
+                    "type": "string",
+                    "example": "temperature"
+                },
+                "target_device": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "target_param": {
+                    "type": "string",
+                    "example": "alarm_state"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "INT"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "85"
+                }
+            }
+        },
+        "filler_internal_dto.ThresholdUpdate": {
+            "type": "object",
+            "required": [
+                "level",
+                "operator",
+                "prev_operator",
+                "source_internal_order",
+                "source_model",
+                "source_param",
+                "type",
+                "value"
+            ],
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "level": {
+                    "type": "string",
+                    "example": "ALARM"
+                },
+                "operator": {
+                    "type": "string",
+                    "example": "\u003e="
+                },
+                "prev_operator": {
+                    "type": "string",
+                    "example": "\u0026\u0026"
+                },
+                "previous_id": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "source_internal_order": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "source_model": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "source_param": {
+                    "type": "string",
+                    "example": "temperature"
+                },
+                "target_device": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "target_param": {
+                    "type": "string",
+                    "example": "alarm_state"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "INT"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "90"
+                }
+            }
+        },
         "filler_internal_model.Component": {
             "type": "object",
             "properties": {
@@ -2375,6 +3393,36 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "Модуль Питания"
+                }
+            }
+        },
+        "filler_internal_model.Configuration": {
+            "type": "object",
+            "properties": {
+                "device_component": {
+                    "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "indicator": {
+                    "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                }
+            }
+        },
+        "filler_internal_model.DefaultConfiguration": {
+            "type": "object",
+            "properties": {
+                "device_component": {
+                    "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "indicator": {
+                    "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
                 }
             }
         },
@@ -2608,6 +3656,66 @@ const docTemplate = `{
                     "example": "00000000-0000-0000-0000-000000000000"
                 }
             }
+        },
+        "filler_internal_model.Threshold": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "level": {
+                    "type": "string",
+                    "example": "WARNING"
+                },
+                "operator": {
+                    "type": "string",
+                    "example": "=="
+                },
+                "prev_operator": {
+                    "type": "string",
+                    "example": "\u0026\u0026"
+                },
+                "previous_id": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "previous_threshold": {
+                    "$ref": "#/definitions/filler_internal_model.Threshold"
+                },
+                "source_internal_order": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "source_model": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "source_param": {
+                    "type": "string",
+                    "example": "temperature"
+                },
+                "target_device": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "target_param": {
+                    "type": "string",
+                    "example": "alarm_state"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "INT"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "85"
+                }
+            }
         }
     },
     "tags": [
@@ -2634,6 +3742,15 @@ const docTemplate = `{
         },
         {
             "name": "8. Конфигурация: Структура компонентов устройства"
+        },
+        {
+            "name": "9. Конфигурация: Конфигурации по-умолчанию"
+        },
+        {
+            "name": "10. Конфигурация: Конфигурации устройств"
+        },
+        {
+            "name": "11. Конфигурация: Пороги"
         }
     ]
 }`

@@ -114,3 +114,32 @@ type DeviceComponent struct {
 	Mappings      []Mapping         `json:"mappings"`
 	Components    []DeviceComponent `json:"components"`
 }
+
+type Configuration struct {
+	ID              int64            `json:"id" example:"1"`
+	Indicator       *DeviceIndicator `json:"indicator"`
+	DeviceComponent *DeviceComponent `json:"device_component,omitempty"`
+}
+
+type DefaultConfiguration struct {
+	ID              int64            `json:"id" example:"1"`
+	Indicator       *DeviceIndicator `json:"indicator"`
+	DeviceComponent *DeviceComponent `json:"device_component,omitempty"`
+}
+
+type Threshold struct {
+	ID                  int64         `json:"id" example:"1"`
+	SourceModel         int64         `json:"source_model" example:"10"`
+	SourceInternalOrder int64         `json:"source_internal_order" example:"1"`
+	SourceParam         string        `json:"source_param" example:"temperature"`
+	Value               string        `json:"value" example:"85"`
+	Type                VarType       `json:"type" swaggertype:"primitive,string" example:"INT"`
+	Operator            LogicOperator `json:"operator" swaggertype:"primitive,string" example:"=="`
+	Enabled             bool          `json:"enabled" example:"true"`
+	TargetParam         *string       `json:"target_param,omitempty" example:"alarm_state"`
+	TargetDevice        *int64        `json:"target_device,omitempty" example:"5"`
+	Level               AlarmLevel    `json:"level" swaggertype:"primitive,string" example:"WARNING"`
+	PrevOperator        LogicOperator `json:"prev_operator" swaggertype:"primitive,string" example:"&&"`
+	PreviousID          *int64        `json:"previous_id,omitempty" example:"2"`
+	PreviousThreshold   *Threshold    `json:"previous_threshold,omitempty"`
+}
