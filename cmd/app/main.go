@@ -14,9 +14,9 @@ import (
 // @title           DB Filler API
 // @version         1.0
 // @description     HTTP-сервер на Go с автоматической генерацией Swagger при старте
-// @contact.name    Victor Tokovenko
-// @contact.url     https://opk-bulat.ru/
-// @contact.email   tokovenko@opk-bulat.ru
+// @contact.name    Lorgar Avrelian
+// @contact.url     https://github.com/Lorgar-Avrelian
+// @contact.email   victor-14-244@mail.ru
 // @license.name    Apache 2.0
 // @license.url     http://apache.org
 // @host            localhost:8082

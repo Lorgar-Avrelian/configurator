@@ -10,9 +10,9 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "Victor Tokovenko",
-            "url": "https://opk-bulat.ru/",
-            "email": "tokovenko@opk-bulat.ru"
+            "name": "Lorgar Avrelian",
+            "url": "https://github.com/Lorgar-Avrelian",
+            "email": "victor-14-244@mail.ru"
         },
         "license": {
             "name": "Apache 2.0",
