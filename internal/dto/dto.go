@@ -1,5 +1,7 @@
 package dto
 
+import "filler/internal/model"
+
 type ComponentCreate struct {
 	Title         string `json:"title" binding:"required" example:"Модуль Питания"`
 	NameEn        string `json:"name_en" binding:"required" example:"power_module"`
@@ -53,4 +55,11 @@ type ParamUpdate struct {
 type BindParamRequest struct {
 	ComponentID int64 `json:"component_id" binding:"required" example:"10"`
 	ParamID     int64 `json:"param_id" binding:"required" example:"5"`
+}
+
+type OidPageResponse struct {
+	Page       int         `json:"page" example:"1"`
+	PerPage    int         `json:"per_page" example:"100"`
+	TotalItems int         `json:"total_items" example:"450"`
+	Items      []model.Oid `json:"items"`
 }

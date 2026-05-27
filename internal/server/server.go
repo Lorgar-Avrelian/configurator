@@ -23,6 +23,14 @@ func NewServer() *Server {
 
 	v1 := r.Group("/api/v1")
 	{
+		oids := v1.Group("/oids")
+		{
+			oids.GET("/exact", GetOidsByExactNotation)
+			oids.GET("/prefix", GetOidsByPrefixNotation)
+			oids.GET("/mib", GetOidsByMib)
+			oids.GET("/vendor", GetOidsByVendor)
+		}
+
 		components := v1.Group("/components")
 		{
 			components.POST("", CreateComponent)
