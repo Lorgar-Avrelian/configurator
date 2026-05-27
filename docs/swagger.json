@@ -1,0 +1,1051 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "HTTP-сервер на Go с автоматической генерацией Swagger при старте",
+        "title": "DB Filler API",
+        "contact": {
+            "name": "Victor Tokovenko",
+            "url": "https://opk-bulat.ru/",
+            "email": "tokovenko@opk-bulat.ru"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://apache.org"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8082",
+    "paths": {
+        "/api/v1/components": {
+            "get": {
+                "description": "Возвращает список всех составных частей устройств вместе со всеми собственными и унаследованными параметрами",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Компоненты"
+                ],
+                "summary": "Получить все компоненты вместе с параметрами",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/filler_internal_model.Component"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Создает новую запись составной части устройства. Если base_component равен null, создается базовый компонент.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Компоненты"
+                ],
+                "summary": "Создать компонент",
+                "parameters": [
+                    {
+                        "description": "Данные компонента",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ComponentCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Component"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/components/search": {
+            "get": {
+                "description": "Ищет компоненты, у которых строка совпадает с title, name_en, name_ru, description_en или description_ru",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Компоненты"
+                ],
+                "summary": "Поиск компонентов по подстроке",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Строка поиска",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/filler_internal_model.Component"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/components/{id}": {
+            "get": {
+                "description": "Возвращает компонент и иерархически объединенный список его параметров из БД",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Компоненты"
+                ],
+                "summary": "Получить компонент по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Компонента",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Component"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Компоненты"
+                ],
+                "summary": "Обновить компонент",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Компонента",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ComponentUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Component"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет компонент по ID, а также автоматически стирает всю иерархию дочерних элементов",
+                "tags": [
+                    "Компоненты"
+                ],
+                "summary": "Удалить компонент и всех его наследников",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Компонента",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/params": {
+            "post": {
+                "description": "Создает новый системный параметр в таблице public.param",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Параметры"
+                ],
+                "summary": "Создать параметр",
+                "parameters": [
+                    {
+                        "description": "Данные параметра",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ParamCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Param"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка базы данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/params/search": {
+            "get": {
+                "description": "Ищет параметры, у которых title, name_en, name_ru, description_en или description_ru частично совпадают с переданной строкой query",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Параметры"
+                ],
+                "summary": "Поиск параметров по строке",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Строка поиска",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/filler_internal_model.Param"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Пустой запрос",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка базы данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/params/unattached": {
+            "get": {
+                "description": "Возвращает список всех параметров, которые не привязаны ни к одной составной части устройства",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Параметры"
+                ],
+                "summary": "Получить непривязанные параметры",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/filler_internal_model.Param"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка базы данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/params/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Параметры"
+                ],
+                "summary": "Получить параметр по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Параметра",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Param"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Параметр не найден",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка базы данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Параметры"
+                ],
+                "summary": "Обновить параметр",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Параметра",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.ParamUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_model.Param"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации или неверный ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Параметр не найден",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка базы данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Параметры"
+                ],
+                "summary": "Удалить параметр",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Параметра",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Неверный формат ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Параметр не найден",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка базы данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/relations": {
+            "post": {
+                "description": "Добавляет запись в таблицу public.component_param",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Связи (Component \u0026 Params)"
+                ],
+                "summary": "Связать компонент с параметром",
+                "parameters": [
+                    {
+                        "description": "ID сущностей для связывания",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/filler_internal_dto.BindParamRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Сообщение об успешном связывании",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации JSON",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка базы данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/relations/{componentId}/{paramId}": {
+            "delete": {
+                "description": "Удаляет запись из таблицы public.component_param",
+                "tags": [
+                    "Связи (Component \u0026 Params)"
+                ],
+                "summary": "Удалить связь компонента с параметром",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Компонента",
+                        "name": "componentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID Параметра",
+                        "name": "paramId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Неверный формат ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Связь не найдена",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка базы данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "filler_internal_dto.BindParamRequest": {
+            "type": "object",
+            "required": [
+                "component_id",
+                "param_id"
+            ],
+            "properties": {
+                "component_id": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "param_id": {
+                    "type": "integer",
+                    "example": 5
+                }
+            }
+        },
+        "filler_internal_dto.ComponentCreate": {
+            "type": "object",
+            "required": [
+                "access",
+                "name_en",
+                "name_ru",
+                "title"
+            ],
+            "properties": {
+                "access": {
+                    "type": "string",
+                    "example": "ADMIN"
+                },
+                "base_component": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description_en": {
+                    "type": "string",
+                    "example": "Main power controller unit"
+                },
+                "description_ru": {
+                    "type": "string",
+                    "example": "Главный контроллер питания"
+                },
+                "name_en": {
+                    "type": "string",
+                    "example": "power_module"
+                },
+                "name_ru": {
+                    "type": "string",
+                    "example": "модуль_питания"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Модуль Питания"
+                }
+            }
+        },
+        "filler_internal_dto.ComponentUpdate": {
+            "type": "object",
+            "required": [
+                "access",
+                "name_en",
+                "name_ru",
+                "title"
+            ],
+            "properties": {
+                "access": {
+                    "type": "string",
+                    "example": "OWNER"
+                },
+                "base_component": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description_en": {
+                    "type": "string",
+                    "example": "Updated main power controller unit"
+                },
+                "description_ru": {
+                    "type": "string",
+                    "example": "Обновленный главный контроллер питания"
+                },
+                "name_en": {
+                    "type": "string",
+                    "example": "power_module_v2"
+                },
+                "name_ru": {
+                    "type": "string",
+                    "example": "модуль_питания_в2"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Обновленный Модуль"
+                }
+            }
+        },
+        "filler_internal_dto.ParamCreate": {
+            "type": "object",
+            "required": [
+                "access",
+                "name_en",
+                "name_ru",
+                "title",
+                "type"
+            ],
+            "properties": {
+                "access": {
+                    "type": "string",
+                    "example": "ADMIN"
+                },
+                "description_en": {
+                    "type": "string",
+                    "example": "Maximum operational voltage"
+                },
+                "description_ru": {
+                    "type": "string",
+                    "example": "Максимальное рабочее напряжение"
+                },
+                "name_en": {
+                    "type": "string",
+                    "example": "max_voltage"
+                },
+                "name_ru": {
+                    "type": "string",
+                    "example": "макс_напряжение"
+                },
+                "saved": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Макс. Напряжение"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "INT"
+                },
+                "units_en": {
+                    "type": "string",
+                    "example": "V"
+                },
+                "units_ru": {
+                    "type": "string",
+                    "example": "В"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "220"
+                },
+                "visible": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "filler_internal_dto.ParamUpdate": {
+            "type": "object",
+            "required": [
+                "access",
+                "name_en",
+                "name_ru",
+                "title",
+                "type"
+            ],
+            "properties": {
+                "access": {
+                    "type": "string",
+                    "example": "ADMIN"
+                },
+                "description_en": {
+                    "type": "string",
+                    "example": "Maximum operational voltage"
+                },
+                "description_ru": {
+                    "type": "string",
+                    "example": "Максимальное рабочее напряжение"
+                },
+                "name_en": {
+                    "type": "string",
+                    "example": "max_voltage"
+                },
+                "name_ru": {
+                    "type": "string",
+                    "example": "макс_напряжение"
+                },
+                "saved": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Макс. Напряжение"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "INT"
+                },
+                "units_en": {
+                    "type": "string",
+                    "example": "V"
+                },
+                "units_ru": {
+                    "type": "string",
+                    "example": "В"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "240"
+                },
+                "visible": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "filler_internal_model.Component": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "type": "string",
+                    "example": "USER"
+                },
+                "base_component": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description_en": {
+                    "type": "string",
+                    "example": "Main power controller unit"
+                },
+                "description_ru": {
+                    "type": "string",
+                    "example": "Главный контроллер питания"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "name_en": {
+                    "type": "string",
+                    "example": "power_module"
+                },
+                "name_ru": {
+                    "type": "string",
+                    "example": "модуль_питания"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/filler_internal_model.Param"
+                    }
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Модуль Питания"
+                }
+            }
+        },
+        "filler_internal_model.Param": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "type": "string",
+                    "example": "ADMIN"
+                },
+                "description_en": {
+                    "type": "string",
+                    "example": "Maximum operational voltage"
+                },
+                "description_ru": {
+                    "type": "string",
+                    "example": "Максимальное рабочее напряжение"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name_en": {
+                    "type": "string",
+                    "example": "max_voltage"
+                },
+                "name_ru": {
+                    "type": "string",
+                    "example": "макс_напряжение"
+                },
+                "saved": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Макс. Напряжение"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "INT"
+                },
+                "units_en": {
+                    "type": "string",
+                    "example": "V"
+                },
+                "units_ru": {
+                    "type": "string",
+                    "example": "В"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "220"
+                },
+                "visible": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        }
+    }
+}

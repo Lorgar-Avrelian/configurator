@@ -1,0 +1,14 @@
+app:
+  name: "db-filler"
+
+server:
+  port: 8082
+
+database:
+  url: "localhost:5432"
+  user: "admin"
+  password: "123"
+  name: "translator"
+
+logger:
+  level: "INFO"

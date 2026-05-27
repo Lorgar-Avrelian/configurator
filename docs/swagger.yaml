@@ -1,0 +1,726 @@
+definitions:
+  filler_internal_dto.BindParamRequest:
+    properties:
+      component_id:
+        example: 10
+        type: integer
+      param_id:
+        example: 5
+        type: integer
+    required:
+    - component_id
+    - param_id
+    type: object
+  filler_internal_dto.ComponentCreate:
+    properties:
+      access:
+        example: ADMIN
+        type: string
+      base_component:
+        example: 1
+        type: integer
+      description_en:
+        example: Main power controller unit
+        type: string
+      description_ru:
+        example: Главный контроллер питания
+        type: string
+      name_en:
+        example: power_module
+        type: string
+      name_ru:
+        example: модуль_питания
+        type: string
+      title:
+        example: Модуль Питания
+        type: string
+    required:
+    - access
+    - name_en
+    - name_ru
+    - title
+    type: object
+  filler_internal_dto.ComponentUpdate:
+    properties:
+      access:
+        example: OWNER
+        type: string
+      base_component:
+        example: 1
+        type: integer
+      description_en:
+        example: Updated main power controller unit
+        type: string
+      description_ru:
+        example: Обновленный главный контроллер питания
+        type: string
+      name_en:
+        example: power_module_v2
+        type: string
+      name_ru:
+        example: модуль_питания_в2
+        type: string
+      title:
+        example: Обновленный Модуль
+        type: string
+    required:
+    - access
+    - name_en
+    - name_ru
+    - title
+    type: object
+  filler_internal_dto.ParamCreate:
+    properties:
+      access:
+        example: ADMIN
+        type: string
+      description_en:
+        example: Maximum operational voltage
+        type: string
+      description_ru:
+        example: Максимальное рабочее напряжение
+        type: string
+      name_en:
+        example: max_voltage
+        type: string
+      name_ru:
+        example: макс_напряжение
+        type: string
+      saved:
+        example: true
+        type: boolean
+      title:
+        example: Макс. Напряжение
+        type: string
+      type:
+        example: INT
+        type: string
+      units_en:
+        example: V
+        type: string
+      units_ru:
+        example: В
+        type: string
+      value:
+        example: "220"
+        type: string
+      visible:
+        example: true
+        type: boolean
+    required:
+    - access
+    - name_en
+    - name_ru
+    - title
+    - type
+    type: object
+  filler_internal_dto.ParamUpdate:
+    properties:
+      access:
+        example: ADMIN
+        type: string
+      description_en:
+        example: Maximum operational voltage
+        type: string
+      description_ru:
+        example: Максимальное рабочее напряжение
+        type: string
+      name_en:
+        example: max_voltage
+        type: string
+      name_ru:
+        example: макс_напряжение
+        type: string
+      saved:
+        example: true
+        type: boolean
+      title:
+        example: Макс. Напряжение
+        type: string
+      type:
+        example: INT
+        type: string
+      units_en:
+        example: V
+        type: string
+      units_ru:
+        example: В
+        type: string
+      value:
+        example: "240"
+        type: string
+      visible:
+        example: true
+        type: boolean
+    required:
+    - access
+    - name_en
+    - name_ru
+    - title
+    - type
+    type: object
+  filler_internal_model.Component:
+    properties:
+      access:
+        example: USER
+        type: string
+      base_component:
+        example: 1
+        type: integer
+      description_en:
+        example: Main power controller unit
+        type: string
+      description_ru:
+        example: Главный контроллер питания
+        type: string
+      id:
+        example: 10
+        type: integer
+      name_en:
+        example: power_module
+        type: string
+      name_ru:
+        example: модуль_питания
+        type: string
+      params:
+        items:
+          $ref: '#/definitions/filler_internal_model.Param'
+        type: array
+      title:
+        example: Модуль Питания
+        type: string
+    type: object
+  filler_internal_model.Param:
+    properties:
+      access:
+        example: ADMIN
+        type: string
+      description_en:
+        example: Maximum operational voltage
+        type: string
+      description_ru:
+        example: Максимальное рабочее напряжение
+        type: string
+      id:
+        example: 1
+        type: integer
+      name_en:
+        example: max_voltage
+        type: string
+      name_ru:
+        example: макс_напряжение
+        type: string
+      saved:
+        example: true
+        type: boolean
+      title:
+        example: Макс. Напряжение
+        type: string
+      type:
+        example: INT
+        type: string
+      units_en:
+        example: V
+        type: string
+      units_ru:
+        example: В
+        type: string
+      value:
+        example: "220"
+        type: string
+      visible:
+        example: true
+        type: boolean
+    type: object
+host: localhost:8082
+info:
+  contact:
+    email: tokovenko@opk-bulat.ru
+    name: Victor Tokovenko
+    url: https://opk-bulat.ru/
+  description: HTTP-сервер на Go с автоматической генерацией Swagger при старте
+  license:
+    name: Apache 2.0
+    url: http://apache.org
+  title: DB Filler API
+  version: "1.0"
+paths:
+  /api/v1/components:
+    get:
+      description: Возвращает список всех составных частей устройств вместе со всеми
+        собственными и унаследованными параметрами
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/filler_internal_model.Component'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все компоненты вместе с параметрами
+      tags:
+      - Компоненты
+    post:
+      consumes:
+      - application/json
+      description: Создает новую запись составной части устройства. Если base_component
+        равен null, создается базовый компонент.
+      parameters:
+      - description: Данные компонента
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ComponentCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/filler_internal_model.Component'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать компонент
+      tags:
+      - Компоненты
+  /api/v1/components/{id}:
+    delete:
+      description: Удаляет компонент по ID, а также автоматически стирает всю иерархию
+        дочерних элементов
+      parameters:
+      - description: ID Компонента
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить компонент и всех его наследников
+      tags:
+      - Компоненты
+    get:
+      description: Возвращает компонент и иерархически объединенный список его параметров
+        из БД
+      parameters:
+      - description: ID Компонента
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/filler_internal_model.Component'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить компонент по ID
+      tags:
+      - Компоненты
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Компонента
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ComponentUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/filler_internal_model.Component'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить компонент
+      tags:
+      - Компоненты
+  /api/v1/components/search:
+    get:
+      description: Ищет компоненты, у которых строка совпадает с title, name_en, name_ru,
+        description_en или description_ru
+      parameters:
+      - description: Строка поиска
+        in: query
+        name: query
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/filler_internal_model.Component'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Поиск компонентов по подстроке
+      tags:
+      - Компоненты
+  /api/v1/params:
+    post:
+      consumes:
+      - application/json
+      description: Создает новый системный параметр в таблице public.param
+      parameters:
+      - description: Данные параметра
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ParamCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/filler_internal_model.Param'
+        "400":
+          description: Ошибка валидации
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать параметр
+      tags:
+      - Параметры
+  /api/v1/params/{id}:
+    delete:
+      parameters:
+      - description: ID Параметра
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Неверный формат ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Параметр не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить параметр
+      tags:
+      - Параметры
+    get:
+      parameters:
+      - description: ID Параметра
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/filler_internal_model.Param'
+        "400":
+          description: Неверный формат ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Параметр не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить параметр по ID
+      tags:
+      - Параметры
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Параметра
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.ParamUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/filler_internal_model.Param'
+        "400":
+          description: Ошибка валидации или неверный ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Параметр не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить параметр
+      tags:
+      - Параметры
+  /api/v1/params/search:
+    get:
+      description: Ищет параметры, у которых title, name_en, name_ru, description_en
+        или description_ru частично совпадают с переданной строкой query
+      parameters:
+      - description: Строка поиска
+        in: query
+        name: query
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/filler_internal_model.Param'
+            type: array
+        "400":
+          description: Пустой запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Поиск параметров по строке
+      tags:
+      - Параметры
+  /api/v1/params/unattached:
+    get:
+      description: Возвращает список всех параметров, которые не привязаны ни к одной
+        составной части устройства
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/filler_internal_model.Param'
+            type: array
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить непривязанные параметры
+      tags:
+      - Параметры
+  /api/v1/relations:
+    post:
+      consumes:
+      - application/json
+      description: Добавляет запись в таблицу public.component_param
+      parameters:
+      - description: ID сущностей для связывания
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/filler_internal_dto.BindParamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сообщение об успешном связывании
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Ошибка валидации JSON
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Связать компонент с параметром
+      tags:
+      - Связи (Component & Params)
+  /api/v1/relations/{componentId}/{paramId}:
+    delete:
+      description: Удаляет запись из таблицы public.component_param
+      parameters:
+      - description: ID Компонента
+        in: path
+        name: componentId
+        required: true
+        type: integer
+      - description: ID Параметра
+        in: path
+        name: paramId
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Неверный формат ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Связь не найдена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить связь компонента с параметром
+      tags:
+      - Связи (Component & Params)
+swagger: "2.0"
