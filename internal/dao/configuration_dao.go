@@ -7,6 +7,7 @@ import (
 	"errors"
 	"filler/internal/database"
 	"filler/internal/dto"
+	"filler/internal/logger"
 	"filler/internal/model"
 	"fmt"
 
@@ -153,7 +154,7 @@ func executeGenericConfigSelect(ctx context.Context, table string, idFilter int6
 				       'source_param', t.source_param, 'value', t.value, 'type', t.type, 'operator', t.operator,
 				       'enabled', t.enabled, 'target_param', t.target_param, 'target_device', t.target_device,
 				       'level', t.level, 'prev_operator', t.prev_operator, 'previous_id', t.previous
-			       ))) AS thresholds_json
+			       )) FILTER (WHERE t.id IS NOT NULL)) AS thresholds_json
 			FROM public.%s ct
 			JOIN public.threshold t ON ct.threshold_id = t.id
 			GROUP BY ct.%s
@@ -164,8 +165,8 @@ func executeGenericConfigSelect(ctx context.Context, table string, idFilter int6
 			dt.id, dt.model, dt.internal_order, dt.parent,
 			json_strip_nulls(json_agg(json_build_object(
 				'id', m.id, 'indicator_id', m.indicator, 'param_id', m.param, 'frequency', m.frequency, 'coefficient', m.coefficient, 'enum', m.enum
-			))) FILTER (WHERE m.id IS NOT NULL) AS mappings_json,
-			ath.thresholds_json
+			)) FILTER (WHERE m.id IS NOT NULL)) AS mappings_json,
+			MAX(ath.thresholds_json::text)::json AS thresholds_json
 		FROM public.%s cfg
 		LEFT JOIN public.device_indicator i ON cfg.indicator = i.id
 		LEFT JOIN device_tree dt ON cfg.id = dt.cfg_id
@@ -173,10 +174,11 @@ func executeGenericConfigSelect(ctx context.Context, table string, idFilter int6
 		LEFT JOIN public.mapping m ON dcm.mapping_id = m.id
 		LEFT JOIN aggregated_thresholds ath ON cfg.id = ath.cfg_id
 		%s
-		GROUP BY cfg.id, i.id, i.description, i.object_id, i.contact, i.name, i.location, i.services, dt.id, dt.model, dt.internal_order, dt.parent, ath.thresholds_json
+		GROUP BY cfg.id, i.id, i.description, i.object_id, i.contact, i.name, i.location, i.services, dt.id, dt.model, dt.internal_order, dt.parent
 		ORDER BY cfg.id`, table, thresholdLinkField, thresholdJoinTable, thresholdLinkField, table, filterSQL)
 	rows, err := conn.Query(ctx, query)
 	if err != nil {
+		logger.Error("Ошибка DAO при создании дефолтной конфигурации: %v", err)
 		return nil, err
 	}
 	defer rows.Close()

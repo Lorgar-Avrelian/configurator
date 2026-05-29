@@ -106,13 +106,13 @@ func GetDeviceComponentByID(ctx context.Context, id int64) (*model.DeviceCompone
 		)
 		SELECT dt.id, dt.model, dt.internal_order, dt.parent,
 		       json_strip_nulls(json_agg(json_build_object(
-			       'id', m.id,
-			       'indicator_id', m.indicator,
-			       'param_id', m.param,
-			       'frequency', m.frequency,
-			       'coefficient', m.coefficient,
-			       'enum', m.enum
-		       ))) FILTER (WHERE m.id IS NOT NULL) AS mappings_json
+				    'id', m.id,
+				    'indicator_id', m.indicator,
+				    'param_id', m.param,
+				    'frequency', m.frequency,
+				    'coefficient', m.coefficient,
+				    'enum', m.enum
+				)) FILTER (WHERE m.id IS NOT NULL)) AS mappings_json
 		FROM device_tree dt
 		LEFT JOIN public.device_component_mapping dcm ON dt.id = dcm.device_component_id
 		LEFT JOIN public.mapping m ON dcm.mapping_id = m.id
@@ -143,13 +143,13 @@ func GetAllDeviceComponents(ctx context.Context) ([]model.DeviceComponent, error
 	query := `
 		SELECT dc.id, dc.model, dc.internal_order, dc.parent,
 		       json_strip_nulls(json_agg(json_build_object(
-			       'id', m.id,
-			       'indicator_id', m.indicator,
-			       'param_id', m.param,
-			       'frequency', m.frequency,
-			       'coefficient', m.coefficient,
-			       'enum', m.enum
-		       ))) FILTER (WHERE m.id IS NOT NULL) AS mappings_json
+				    'id', m.id,
+				    'indicator_id', m.indicator,
+				    'param_id', m.param,
+				    'frequency', m.frequency,
+				    'coefficient', m.coefficient,
+				    'enum', m.enum
+				)) FILTER (WHERE m.id IS NOT NULL)) AS mappings_json
 		FROM public.device_component dc
 		LEFT JOIN public.device_component_mapping dcm ON dc.id = dcm.device_component_id
 		LEFT JOIN public.mapping m ON dcm.mapping_id = m.id
