@@ -8,6 +8,64 @@ import (
 	"strings"
 )
 
+// Набор таблиц системы, упорядоченный с учетом Foreign Key зависимостей
+var targetTablesForExport = []string{
+	"public.agent_capabilities",
+	"public.agent_capabilities_module",
+	"public.agent_capabilities_module_notification",
+	"public.agent_capabilities_module_object",
+	"public.choice",
+	"public.explicit",
+	"public.implicit",
+	"public.import",
+	"public.mib",
+	"public.module_compliance",
+	"public.module_compliance_module",
+	"public.module_compliance_module_group",
+	"public.module_compliance_module_object",
+	"public.module_identity",
+	"public.notification_group",
+	"public.notification_type",
+	"public.object_group",
+	"public.object_identifier",
+	"public.object_identity",
+	"public.object_type",
+	"public.oid",
+	"public.revision",
+	"public.sequence",
+	"public.textual_convention",
+	"public.trap_type",
+	"public.mib_to_agent_capabilities",
+	"public.mib_to_choice",
+	"public.mib_to_explicit",
+	"public.mib_to_implicit",
+	"public.mib_to_import",
+	"public.mib_to_module_compliance",
+	"public.mib_to_module_identity",
+	"public.mib_to_notification_group",
+	"public.mib_to_notification_type",
+	"public.mib_to_object_group",
+	"public.mib_to_object_identifier",
+	"public.mib_to_object_identity",
+	"public.mib_to_object_type",
+	"public.mib_to_sequence",
+	"public.mib_to_textual_convention",
+	"public.mib_to_trap_type",
+	"public.param",
+	"public.component",
+	"public.component_param",
+	"public.device_indicator",
+	"public.param_indicator",
+	"public.mapping",
+	"public.device_component",
+	"public.device_component_mapping",
+	"public.configuration",
+	"public.default_configuration",
+	"public.threshold",
+	"public.configuration_threshold",
+	"public.default_configuration_threshold",
+}
+
 type fileRotator struct {
 	baseName    string
 	author      string
@@ -46,7 +104,6 @@ func (fr *fileRotator) writeString(str string) error {
 			return fmt.Errorf("не удалось создать файл %s: %w", fullName, err)
 		}
 		fr.currentFile = f
-
 		header := "-- liquibase formatted sql\n"
 		if _, err := fr.currentFile.WriteString(header); err != nil {
 			return err
@@ -71,85 +128,132 @@ func ExportDatabaseToLiquibase(ctx context.Context, filename string, author stri
 	rotator := newFileRotator(filename, author)
 	defer rotator.close()
 	currentID := startValue
-	tables := []struct {
-		name    string
-		columns []string
-	}{
-		{"public.param", []string{"id", "title", "name_en", "name_ru", "type", "value", "description_en", "description_ru", "units_en", "units_ru", "access", "saved", "visible"}},
-		{"public.component", []string{"id", "title", "name_en", "name_ru", "base_component", "description_en", "description_ru", "access"}},
-		{"public.component_param", []string{"component_id", "param_id"}},
-		{"public.device_indicator", []string{"id", "description", "object_id", "contact", "name", "location", "services"}},
-		{"public.param_indicator", []string{"id", "oid_id", "dotter_notation"}},
-		{"public.mapping", []string{"id", "indicator", "param", "frequency", "coefficient", "enum"}},
-		{"public.device_component", []string{"id", "model", "internal_order", "parent"}},
-		{"public.device_component_mapping", []string{"device_component_id", "mapping_id"}},
-		{"public.configuration", []string{"id", "indicator", "device_component_id"}},
-		{"public.default_configuration", []string{"id", "indicator", "device_component_id"}},
-		{"public.threshold", []string{"id", "source_model", "source_internal_order", "source_param", "value", "type", "operator", "enabled", "target_param", "target_device", "level", "prev_operator", "previous"}},
-		{"public.configuration_threshold", []string{"configuration_id", "threshold_id"}},
-		{"public.default_configuration_threshold", []string{"default_configuration_id", "threshold_id"}},
-	}
-	for _, t := range tables {
-		quotedCols := make([]string, len(t.columns))
-		selectCols := make([]string, len(t.columns))
-		for i, col := range t.columns {
-			quotedCols[i] = fmt.Sprintf(`"%s"`, col)
-			if col == "oid_id" || col == "id" && (t.name == "public.oid" || t.name == "public.param_indicator") {
-				selectCols[i] = fmt.Sprintf(`"%s"::text`, col)
-			} else if col == "enum" || col == "coefficient" {
-				selectCols[i] = fmt.Sprintf(`"%s"::text`, col)
-			} else {
-				selectCols[i] = fmt.Sprintf(`"%s"`, col)
+	for _, tableName := range targetTablesForExport {
+		parts := strings.Split(tableName, ".")
+		schema := "public"
+		tName := tableName
+		if len(parts) == 2 {
+			schema = parts[0]
+			tName = parts[1]
+		}
+		colQuery := `
+			SELECT column_name, data_type 
+			FROM information_schema.columns 
+			WHERE table_schema = $1 AND table_name = $2 
+			ORDER BY ordinal_position`
+		colRows, err := conn.Query(ctx, colQuery, schema, tName)
+		if err != nil {
+			return fmt.Errorf("не удалось получить колонки для %s: %w", tableName, err)
+		}
+		var columns []string
+		var selectCols []string
+		var dataTypes []string
+		for colRows.Next() {
+			var colName, dataType string
+			if err := colRows.Scan(&colName, &dataType); err != nil {
+				colRows.Close()
+				return err
 			}
+			columns = append(columns, colName)
+			dataTypes = append(dataTypes, dataType)
+			if dataType == "uuid" || dataType == "jsonb" || dataType == "numeric" || dataType == "ARRAY" {
+				selectCols = append(selectCols, fmt.Sprintf(`"%s"::text`, colName))
+			} else {
+				selectCols = append(selectCols, fmt.Sprintf(`"%s"`, colName))
+			}
+		}
+		colRows.Close()
+		if len(columns) == 0 {
+			continue
+		}
+		quotedCols := make([]string, len(columns))
+		for i, col := range columns {
+			quotedCols[i] = fmt.Sprintf(`"%s"`, col)
 		}
 		colsStrSelect := strings.Join(selectCols, ", ")
 		colsStrInsert := strings.Join(quotedCols, ", ")
-		selectQuery := fmt.Sprintf("SELECT %s FROM %s ORDER BY 1", colsStrSelect, t.name)
+		whereClause := ""
+		if tableName == "public.object_identifier" {
+			whereClause = " WHERE \"name\" NOT IN ('0', 'itu-t', 'ccitt', 'iso', 'joint-iso-itu-t', 'joint-iso-ccitt')"
+		}
+		selectQuery := fmt.Sprintf("SELECT %s FROM %s%s ORDER BY 1", colsStrSelect, tableName, whereClause)
 		rows, err := conn.Query(ctx, selectQuery)
 		if err != nil {
-			return fmt.Errorf("ошибка вычитки таблицы %s: %w", t.name, err)
+			return fmt.Errorf("ошибка вычитки таблицы %s: %w", tableName, err)
 		}
 		var allValues []string
 		for rows.Next() {
-			scannedValues := make([]interface{}, len(t.columns))
-			scannedPointers := make([]interface{}, len(t.columns))
+			scannedValues := make([]interface{}, len(columns))
+			scannedPointers := make([]interface{}, len(columns))
 			for i := range scannedValues {
 				scannedPointers[i] = &scannedValues[i]
 			}
 			if err := rows.Scan(scannedPointers...); err != nil {
 				rows.Close()
-				return fmt.Errorf("ошибка сканирования строки таблицы %s: %w", t.name, err)
+				return fmt.Errorf("ошибка сканирования строки таблицы %s: %w", tableName, err)
 			}
 			var rowValues []string
-			for _, val := range scannedValues {
+			for idx, val := range scannedValues {
 				if val == nil {
 					rowValues = append(rowValues, "NULL")
 				} else {
-					switch v := val.(type) {
-					case string:
-						escaped := strings.ReplaceAll(v, "'", "''")
-						rowValues = append(rowValues, fmt.Sprintf("'%s'", escaped))
-					case []byte:
-						escaped := strings.ReplaceAll(string(v), "'", "''")
-						rowValues = append(rowValues, fmt.Sprintf("'%s'", escaped))
-					case bool:
-						if v {
-							rowValues = append(rowValues, "TRUE")
+					if dataTypes[idx] == "ARRAY" {
+						strVal := fmt.Sprintf("%v", val)
+						strVal = strings.Trim(strVal, "{}")
+						if strVal == "" {
+							rowValues = append(rowValues, "ARRAY[]::varchar[]")
 						} else {
-							rowValues = append(rowValues, "FALSE")
+							elements := strings.Split(strVal, ",")
+							var quotedElements []string
+							for _, el := range elements {
+								cleanEl := strings.ReplaceAll(el, "\n", " ")
+								cleanEl = strings.ReplaceAll(cleanEl, "\r", "")
+								escaped := strings.ReplaceAll(cleanEl, "'", "''")
+								quotedElements = append(quotedElements, fmt.Sprintf("'%s'", escaped))
+							}
+							rowValues = append(rowValues, fmt.Sprintf("ARRAY[%s]", strings.Join(quotedElements, ", ")))
 						}
-					default:
-						rowValues = append(rowValues, fmt.Sprintf("%v", v))
+					} else {
+						switch v := val.(type) {
+						case string:
+							cleanStr := strings.ReplaceAll(v, "\n", " ")
+							cleanStr = strings.ReplaceAll(cleanStr, "\r", "")
+							escaped := strings.ReplaceAll(cleanStr, "'", "''")
+							rowValues = append(rowValues, fmt.Sprintf("'%s'", escaped))
+						case []byte:
+							cleanStr := strings.ReplaceAll(string(v), "\n", " ")
+							cleanStr = strings.ReplaceAll(cleanStr, "\r", "")
+							escaped := strings.ReplaceAll(cleanStr, "'", "''")
+							rowValues = append(rowValues, fmt.Sprintf("'%s'", escaped))
+						case bool:
+							if v {
+								rowValues = append(rowValues, "TRUE")
+							} else {
+								rowValues = append(rowValues, "FALSE")
+							}
+						default:
+							strVal := fmt.Sprintf("%v", v)
+							if strings.Contains(strVal, " UTC") {
+								cleanTime := strings.Split(strVal, " +")
+								cleanTime = strings.Split(cleanTime[0], " UTC")
+								rowValues = append(rowValues, fmt.Sprintf("'%s'", cleanTime[0]))
+							} else {
+								rowValues = append(rowValues, fmt.Sprintf("%v", v))
+							}
+						}
 					}
 				}
 			}
 			allValues = append(allValues, fmt.Sprintf("(%s)", strings.Join(rowValues, ", ")))
 		}
 		rows.Close()
-		if 0 == len(allValues) {
+		if len(allValues) == 0 {
 			continue
 		}
-		limit := 5000
+		limit := 2500
+		if tableName == "public.oid" || tableName == "public.object_type" || tableName == "public.textual_convention" || tableName == "public.module_identity" || tableName == "public.agent_capabilities" {
+			limit = 1000
+		}
 		for i := 0; len(allValues) > i; i += limit {
 			end := i + limit
 			if end > len(allValues) {
@@ -160,9 +264,9 @@ func ExportDatabaseToLiquibase(ctx context.Context, filename string, author stri
 			sb.WriteString("\n")
 			sb.WriteString(fmt.Sprintf("-- changeset %s:%d\n", author, currentID))
 			currentID += 1
-			sb.WriteString(fmt.Sprintf("INSERT INTO %s (%s)\n", t.name, colsStrInsert))
+			sb.WriteString(fmt.Sprintf("INSERT INTO %s (%s)\n", tableName, colsStrInsert))
 			sb.WriteString("VALUES ")
-			sb.WriteString(chunk[0]) // Исправлено: берем первый элемент слайса строк
+			sb.WriteString(chunk[0])
 			indent := "       "
 			for j := 1; len(chunk) > j; j++ {
 				sb.WriteString(",\n")
