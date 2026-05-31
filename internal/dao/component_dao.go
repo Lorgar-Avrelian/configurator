@@ -1,13 +1,13 @@
 package dao
 
 import (
+	"configurator/internal/database"
+	"configurator/internal/dto"
+	"configurator/internal/model"
 	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"filler/internal/database"
-	"filler/internal/dto"
-	"filler/internal/model"
 
 	"github.com/jackc/pgx/v5"
 )

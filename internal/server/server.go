@@ -1,7 +1,7 @@
 package server
 
 import (
-	"filler/internal/config"
+	"configurator/internal/config"
 	"fmt"
 
 	"github.com/gin-gonic/gin"

@@ -1,6 +1,6 @@
 package dto
 
-import "filler/internal/model"
+import "configurator/internal/model"
 
 type ComponentCreate struct {
 	Title         string `json:"title" binding:"required" example:"physical"`

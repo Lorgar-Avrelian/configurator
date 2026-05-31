@@ -1,4 +1,4 @@
-module filler
+module configurator
 
 go 1.26
 

@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "HTTP-сервер на Go с автоматической генерацией Swagger при старте",
-        "title": "DB Filler API",
+        "title": "Configurator",
         "contact": {
             "name": "Lorgar Avrelian",
             "url": "https://github.com/Lorgar-Avrelian",
@@ -32,7 +32,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Component"
+                                "$ref": "#/definitions/configurator_internal_model.Component"
                             }
                         }
                     },
@@ -66,7 +66,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ComponentCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ComponentCreate"
                         }
                     }
                 ],
@@ -74,7 +74,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Component"
+                            "$ref": "#/definitions/configurator_internal_model.Component"
                         }
                     },
                     "400": {
@@ -123,7 +123,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Component"
+                                "$ref": "#/definitions/configurator_internal_model.Component"
                             }
                         }
                     },
@@ -171,7 +171,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Component"
+                            "$ref": "#/definitions/configurator_internal_model.Component"
                         }
                     },
                     "400": {
@@ -228,7 +228,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ComponentUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ComponentUpdate"
                         }
                     }
                 ],
@@ -236,7 +236,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Component"
+                            "$ref": "#/definitions/configurator_internal_model.Component"
                         }
                     },
                     "400": {
@@ -332,7 +332,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Configuration"
+                                "$ref": "#/definitions/configurator_internal_model.Configuration"
                             }
                         }
                     },
@@ -365,7 +365,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ConfigurationCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationCreate"
                         }
                     }
                 ],
@@ -373,7 +373,7 @@
                     "201": {
                         "description": "Возвращает полностью раскрытое содержание созданной конфигурации",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Configuration"
+                            "$ref": "#/definitions/configurator_internal_model.Configuration"
                         }
                     },
                     "400": {
@@ -416,7 +416,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.BindParamRequest"
+                            "$ref": "#/definitions/configurator_internal_dto.BindParamRequest"
                         }
                     }
                 ],
@@ -520,7 +520,7 @@
                     "200": {
                         "description": "Возвращает полностью раскрытое содержание",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Configuration"
+                            "$ref": "#/definitions/configurator_internal_model.Configuration"
                         }
                     },
                     "404": {
@@ -568,7 +568,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ConfigurationUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationUpdate"
                         }
                     }
                 ],
@@ -576,7 +576,7 @@
                     "200": {
                         "description": "Возвращает полностью раскрытое обновленное содержание",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Configuration"
+                            "$ref": "#/definitions/configurator_internal_model.Configuration"
                         }
                     },
                     "400": {
@@ -662,7 +662,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                                "$ref": "#/definitions/configurator_internal_model.DefaultConfiguration"
                             }
                         }
                     },
@@ -695,7 +695,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ConfigurationCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationCreate"
                         }
                     }
                 ],
@@ -703,7 +703,7 @@
                     "201": {
                         "description": "Возвращает полностью раскрытое содержание созданной конфигурации",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                            "$ref": "#/definitions/configurator_internal_model.DefaultConfiguration"
                         }
                     },
                     "400": {
@@ -746,7 +746,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.BindParamRequest"
+                            "$ref": "#/definitions/configurator_internal_dto.BindParamRequest"
                         }
                     }
                 ],
@@ -850,7 +850,7 @@
                     "200": {
                         "description": "Возвращает полностью раскрытое содержание",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                            "$ref": "#/definitions/configurator_internal_model.DefaultConfiguration"
                         }
                     },
                     "404": {
@@ -898,7 +898,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ConfigurationUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationUpdate"
                         }
                     }
                 ],
@@ -906,7 +906,7 @@
                     "200": {
                         "description": "Возвращает полностью раскрытое обновленное содержание",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                            "$ref": "#/definitions/configurator_internal_model.DefaultConfiguration"
                         }
                     },
                     "400": {
@@ -992,7 +992,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                                "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                             }
                         }
                     }
@@ -1016,7 +1016,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.DeviceComponentCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentCreate"
                         }
                     }
                 ],
@@ -1024,7 +1024,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                         }
                     }
                 }
@@ -1049,7 +1049,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.BindDeviceMappingRequest"
+                            "$ref": "#/definitions/configurator_internal_dto.BindDeviceMappingRequest"
                         }
                     }
                 ],
@@ -1117,7 +1117,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                         }
                     }
                 }
@@ -1147,7 +1147,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.DeviceComponentUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentUpdate"
                         }
                     }
                 ],
@@ -1155,7 +1155,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                         }
                     }
                 }
@@ -1196,7 +1196,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                                "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                             }
                         }
                     },
@@ -1229,7 +1229,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.DeviceIndicatorCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceIndicatorCreate"
                         }
                     }
                 ],
@@ -1237,7 +1237,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                         }
                     },
                     "400": {
@@ -1283,7 +1283,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                         }
                     },
                     "400": {
@@ -1340,7 +1340,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.DeviceIndicatorUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceIndicatorUpdate"
                         }
                     }
                 ],
@@ -1348,7 +1348,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                         }
                     },
                     "400": {
@@ -1443,7 +1443,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Mapping"
+                                "$ref": "#/definitions/configurator_internal_model.Mapping"
                             }
                         }
                     },
@@ -1476,7 +1476,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.MappingCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.MappingCreate"
                         }
                     }
                 ],
@@ -1484,7 +1484,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Mapping"
+                            "$ref": "#/definitions/configurator_internal_model.Mapping"
                         }
                     },
                     "400": {
@@ -1530,7 +1530,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Mapping"
+                            "$ref": "#/definitions/configurator_internal_model.Mapping"
                         }
                     },
                     "400": {
@@ -1587,7 +1587,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.MappingUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.MappingUpdate"
                         }
                     }
                 ],
@@ -1595,7 +1595,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Mapping"
+                            "$ref": "#/definitions/configurator_internal_model.Mapping"
                         }
                     },
                     "400": {
@@ -1699,7 +1699,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Oid"
+                                "$ref": "#/definitions/configurator_internal_model.Oid"
                             }
                         }
                     },
@@ -1755,7 +1755,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Oid"
+                                "$ref": "#/definitions/configurator_internal_model.Oid"
                             }
                         }
                     },
@@ -1817,7 +1817,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Oid"
+                                "$ref": "#/definitions/configurator_internal_model.Oid"
                             }
                         }
                     },
@@ -1866,7 +1866,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Oid"
+                                "$ref": "#/definitions/configurator_internal_model.Oid"
                             }
                         }
                     },
@@ -1920,7 +1920,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.OidPageResponse"
+                            "$ref": "#/definitions/configurator_internal_dto.OidPageResponse"
                         }
                     },
                     "400": {
@@ -1973,7 +1973,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.OidPageResponse"
+                            "$ref": "#/definitions/configurator_internal_dto.OidPageResponse"
                         }
                     },
                     "400": {
@@ -2021,7 +2021,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                                "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                             }
                         }
                     },
@@ -2054,7 +2054,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ParamIndicatorCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorCreate"
                         }
                     }
                 ],
@@ -2062,7 +2062,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                         }
                     },
                     "400": {
@@ -2108,7 +2108,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                         }
                     },
                     "400": {
@@ -2165,7 +2165,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ParamIndicatorUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorUpdate"
                         }
                     }
                 ],
@@ -2173,7 +2173,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                         }
                     },
                     "400": {
@@ -2273,7 +2273,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ParamCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ParamCreate"
                         }
                     }
                 ],
@@ -2281,7 +2281,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Param"
+                            "$ref": "#/definitions/configurator_internal_model.Param"
                         }
                     },
                     "400": {
@@ -2330,7 +2330,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Param"
+                                "$ref": "#/definitions/configurator_internal_model.Param"
                             }
                         }
                     },
@@ -2371,7 +2371,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Param"
+                                "$ref": "#/definitions/configurator_internal_model.Param"
                             }
                         }
                     },
@@ -2409,7 +2409,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Param"
+                            "$ref": "#/definitions/configurator_internal_model.Param"
                         }
                     },
                     "400": {
@@ -2466,7 +2466,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ParamUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ParamUpdate"
                         }
                     }
                 ],
@@ -2474,7 +2474,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Param"
+                            "$ref": "#/definitions/configurator_internal_model.Param"
                         }
                     },
                     "400": {
@@ -2574,7 +2574,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.BindParamRequest"
+                            "$ref": "#/definitions/configurator_internal_dto.BindParamRequest"
                         }
                     }
                 ],
@@ -2725,7 +2725,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Threshold"
+                                "$ref": "#/definitions/configurator_internal_model.Threshold"
                             }
                         }
                     },
@@ -2758,7 +2758,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ThresholdCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdCreate"
                         }
                     }
                 ],
@@ -2766,7 +2766,7 @@
                     "201": {
                         "description": "Возвращает раскрытую цепочку условий",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Threshold"
+                            "$ref": "#/definitions/configurator_internal_model.Threshold"
                         }
                     },
                     "400": {
@@ -2812,7 +2812,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Threshold"
+                            "$ref": "#/definitions/configurator_internal_model.Threshold"
                         }
                     },
                     "400": {
@@ -2869,7 +2869,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ThresholdUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdUpdate"
                         }
                     }
                 ],
@@ -2877,7 +2877,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Threshold"
+                            "$ref": "#/definitions/configurator_internal_model.Threshold"
                         }
                     },
                     "400": {
@@ -2950,7 +2950,7 @@
         }
     },
     "definitions": {
-        "filler_internal_dto.BindDeviceMappingRequest": {
+        "configurator_internal_dto.BindDeviceMappingRequest": {
             "type": "object",
             "required": [
                 "device_component_id",
@@ -2967,7 +2967,7 @@
                 }
             }
         },
-        "filler_internal_dto.BindParamRequest": {
+        "configurator_internal_dto.BindParamRequest": {
             "type": "object",
             "required": [
                 "component_id",
@@ -2984,7 +2984,7 @@
                 }
             }
         },
-        "filler_internal_dto.ComponentCreate": {
+        "configurator_internal_dto.ComponentCreate": {
             "type": "object",
             "required": [
                 "access",
@@ -3023,7 +3023,7 @@
                 }
             }
         },
-        "filler_internal_dto.ComponentUpdate": {
+        "configurator_internal_dto.ComponentUpdate": {
             "type": "object",
             "required": [
                 "access",
@@ -3062,7 +3062,7 @@
                 }
             }
         },
-        "filler_internal_dto.ConfigurationCreate": {
+        "configurator_internal_dto.ConfigurationCreate": {
             "type": "object",
             "required": [
                 "indicator_id"
@@ -3078,7 +3078,7 @@
                 }
             }
         },
-        "filler_internal_dto.ConfigurationUpdate": {
+        "configurator_internal_dto.ConfigurationUpdate": {
             "type": "object",
             "required": [
                 "indicator_id"
@@ -3094,7 +3094,7 @@
                 }
             }
         },
-        "filler_internal_dto.DeviceComponentCreate": {
+        "configurator_internal_dto.DeviceComponentCreate": {
             "type": "object",
             "required": [
                 "model_id"
@@ -3114,7 +3114,7 @@
                 }
             }
         },
-        "filler_internal_dto.DeviceComponentUpdate": {
+        "configurator_internal_dto.DeviceComponentUpdate": {
             "type": "object",
             "required": [
                 "model_id"
@@ -3134,7 +3134,7 @@
                 }
             }
         },
-        "filler_internal_dto.DeviceIndicatorCreate": {
+        "configurator_internal_dto.DeviceIndicatorCreate": {
             "type": "object",
             "properties": {
                 "contact": {
@@ -3163,7 +3163,7 @@
                 }
             }
         },
-        "filler_internal_dto.DeviceIndicatorUpdate": {
+        "configurator_internal_dto.DeviceIndicatorUpdate": {
             "type": "object",
             "properties": {
                 "contact": {
@@ -3192,7 +3192,7 @@
                 }
             }
         },
-        "filler_internal_dto.MappingCreate": {
+        "configurator_internal_dto.MappingCreate": {
             "type": "object",
             "required": [
                 "frequency",
@@ -3224,7 +3224,7 @@
                 }
             }
         },
-        "filler_internal_dto.MappingUpdate": {
+        "configurator_internal_dto.MappingUpdate": {
             "type": "object",
             "required": [
                 "frequency",
@@ -3256,13 +3256,13 @@
                 }
             }
         },
-        "filler_internal_dto.OidPageResponse": {
+        "configurator_internal_dto.OidPageResponse": {
             "type": "object",
             "properties": {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Oid"
+                        "$ref": "#/definitions/configurator_internal_model.Oid"
                     }
                 },
                 "page": {
@@ -3279,7 +3279,7 @@
                 }
             }
         },
-        "filler_internal_dto.ParamCreate": {
+        "configurator_internal_dto.ParamCreate": {
             "type": "object",
             "required": [
                 "access",
@@ -3339,7 +3339,7 @@
                 }
             }
         },
-        "filler_internal_dto.ParamIndicatorCreate": {
+        "configurator_internal_dto.ParamIndicatorCreate": {
             "type": "object",
             "required": [
                 "oid_id"
@@ -3355,7 +3355,7 @@
                 }
             }
         },
-        "filler_internal_dto.ParamIndicatorUpdate": {
+        "configurator_internal_dto.ParamIndicatorUpdate": {
             "type": "object",
             "required": [
                 "oid_id"
@@ -3371,7 +3371,7 @@
                 }
             }
         },
-        "filler_internal_dto.ParamUpdate": {
+        "configurator_internal_dto.ParamUpdate": {
             "type": "object",
             "required": [
                 "access",
@@ -3431,7 +3431,7 @@
                 }
             }
         },
-        "filler_internal_dto.ThresholdCreate": {
+        "configurator_internal_dto.ThresholdCreate": {
             "type": "object",
             "required": [
                 "level",
@@ -3494,7 +3494,7 @@
                 }
             }
         },
-        "filler_internal_dto.ThresholdUpdate": {
+        "configurator_internal_dto.ThresholdUpdate": {
             "type": "object",
             "required": [
                 "level",
@@ -3557,7 +3557,7 @@
                 }
             }
         },
-        "filler_internal_model.Component": {
+        "configurator_internal_model.Component": {
             "type": "object",
             "properties": {
                 "access": {
@@ -3591,7 +3591,7 @@
                 "params": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Param"
+                        "$ref": "#/definitions/configurator_internal_model.Param"
                     }
                 },
                 "title": {
@@ -3600,55 +3600,55 @@
                 }
             }
         },
-        "filler_internal_model.Configuration": {
+        "configurator_internal_model.Configuration": {
             "type": "object",
             "properties": {
                 "device_component": {
-                    "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                    "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                 },
                 "id": {
                     "type": "integer",
                     "example": 1
                 },
                 "indicator": {
-                    "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                    "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                 },
                 "thresholds": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Threshold"
+                        "$ref": "#/definitions/configurator_internal_model.Threshold"
                     }
                 }
             }
         },
-        "filler_internal_model.DefaultConfiguration": {
+        "configurator_internal_model.DefaultConfiguration": {
             "type": "object",
             "properties": {
                 "device_component": {
-                    "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                    "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                 },
                 "id": {
                     "type": "integer",
                     "example": 1
                 },
                 "indicator": {
-                    "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                    "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                 },
                 "thresholds": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Threshold"
+                        "$ref": "#/definitions/configurator_internal_model.Threshold"
                     }
                 }
             }
         },
-        "filler_internal_model.DeviceComponent": {
+        "configurator_internal_model.DeviceComponent": {
             "type": "object",
             "properties": {
                 "components": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                        "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                     }
                 },
                 "id": {
@@ -3662,7 +3662,7 @@
                 "mappings": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Mapping"
+                        "$ref": "#/definitions/configurator_internal_model.Mapping"
                     }
                 },
                 "model_id": {
@@ -3675,7 +3675,7 @@
                 }
             }
         },
-        "filler_internal_model.DeviceIndicator": {
+        "configurator_internal_model.DeviceIndicator": {
             "type": "object",
             "properties": {
                 "contact": {
@@ -3708,7 +3708,7 @@
                 }
             }
         },
-        "filler_internal_model.Mapping": {
+        "configurator_internal_model.Mapping": {
             "type": "object",
             "properties": {
                 "coefficient": {
@@ -3730,14 +3730,14 @@
                     "example": 1
                 },
                 "indicator": {
-                    "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                    "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                 },
                 "param": {
-                    "$ref": "#/definitions/filler_internal_model.Param"
+                    "$ref": "#/definitions/configurator_internal_model.Param"
                 }
             }
         },
-        "filler_internal_model.Oid": {
+        "configurator_internal_model.Oid": {
             "type": "object",
             "properties": {
                 "access": {
@@ -3797,7 +3797,7 @@
                 }
             }
         },
-        "filler_internal_model.Param": {
+        "configurator_internal_model.Param": {
             "type": "object",
             "properties": {
                 "access": {
@@ -3854,7 +3854,7 @@
                 }
             }
         },
-        "filler_internal_model.ParamIndicator": {
+        "configurator_internal_model.ParamIndicator": {
             "type": "object",
             "properties": {
                 "dotter_notation": {
@@ -3866,7 +3866,7 @@
                     "example": 1
                 },
                 "oid": {
-                    "$ref": "#/definitions/filler_internal_model.Oid"
+                    "$ref": "#/definitions/configurator_internal_model.Oid"
                 },
                 "oid_id": {
                     "type": "string",
@@ -3874,7 +3874,7 @@
                 }
             }
         },
-        "filler_internal_model.Threshold": {
+        "configurator_internal_model.Threshold": {
             "type": "object",
             "properties": {
                 "enabled": {
@@ -3902,7 +3902,7 @@
                     "example": 2
                 },
                 "previous_threshold": {
-                    "$ref": "#/definitions/filler_internal_model.Threshold"
+                    "$ref": "#/definitions/configurator_internal_model.Threshold"
                 },
                 "source_internal_order": {
                     "type": "integer",

@@ -1,8 +1,8 @@
 package server
 
 import (
-	"filler/internal/dao"
-	"filler/internal/logger"
+	"configurator/internal/dao"
+	"configurator/internal/logger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

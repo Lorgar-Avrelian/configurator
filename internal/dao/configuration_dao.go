@@ -1,14 +1,14 @@
 package dao
 
 import (
+	"configurator/internal/database"
+	"configurator/internal/dto"
+	"configurator/internal/logger"
+	"configurator/internal/model"
 	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"filler/internal/database"
-	"filler/internal/dto"
-	"filler/internal/logger"
-	"filler/internal/model"
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
@@ -248,7 +248,7 @@ func executeGenericConfigSelect(ctx context.Context, table string, idFilter int6
 						'category', o.category
 					)
 				)
-			)) FILTER (WHERE m.id IS NOT NULL)), '[]'::json) AS mappings_json,
+			) ORDER BY m.id) FILTER (WHERE m.id IS NOT NULL)), '[]'::json) AS mappings_json,
 			MAX(ath.thresholds_json::text)::json AS thresholds_json
 		FROM public.%s cfg
 		LEFT JOIN public.device_indicator i ON cfg.indicator = i.id

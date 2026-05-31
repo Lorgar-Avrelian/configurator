@@ -1,8 +1,8 @@
 package dao
 
 import (
+	"configurator/internal/database"
 	"context"
-	"filler/internal/database"
 	"fmt"
 	"os"
 	"path/filepath"

@@ -1,13 +1,13 @@
 package server
 
 import (
-	"filler/internal/dao"
-	"filler/internal/dto"
-	"filler/internal/logger"
+	"configurator/internal/dao"
+	"configurator/internal/dto"
+	"configurator/internal/logger"
 	"net/http"
 	"strconv"
 
-	_ "filler/internal/model"
+	_ "configurator/internal/model"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,12 +1,12 @@
 package dao
 
 import (
+	"configurator/internal/database"
+	"configurator/internal/logger"
+	"configurator/internal/model"
 	"context"
 	"database/sql"
 	"encoding/json"
-	"filler/internal/database"
-	"filler/internal/logger"
-	"filler/internal/model"
 )
 
 func LoadEnumsFromDB(ctx context.Context) error {

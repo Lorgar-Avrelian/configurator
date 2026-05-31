@@ -1,10 +1,10 @@
 package server
 
 import (
-	"filler/internal/dao"
-	"filler/internal/dto"
-	"filler/internal/logger"
-	"filler/internal/model"
+	"configurator/internal/dao"
+	"configurator/internal/dto"
+	"configurator/internal/logger"
+	"configurator/internal/model"
 	"net/http"
 	"sort"
 	"strconv"

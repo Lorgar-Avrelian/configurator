@@ -1,17 +1,17 @@
 package main
 
 import (
+	"configurator/internal/dao"
 	"context"
-	"filler/internal/dao"
 	"os/exec"
 
-	"filler/internal/config"
-	"filler/internal/database"
-	"filler/internal/logger"
-	"filler/internal/server"
+	"configurator/internal/config"
+	"configurator/internal/database"
+	"configurator/internal/logger"
+	"configurator/internal/server"
 )
 
-// @title           DB Filler API
+// @title           Configurator
 // @version         1.0
 // @description     HTTP-сервер на Go с автоматической генерацией Swagger при старте
 // @tag.name        1. Модельный каталог: Компоненты

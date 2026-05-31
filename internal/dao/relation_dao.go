@@ -1,9 +1,9 @@
 package dao
 
 import (
+	"configurator/internal/database"
+	"configurator/internal/dto"
 	"context"
-	"filler/internal/database"
-	"filler/internal/dto"
 )
 
 func BindParam(ctx context.Context, d dto.BindParamRequest) error {

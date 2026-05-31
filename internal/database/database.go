@@ -1,9 +1,9 @@
 package database
 
 import (
+	"configurator/internal/config"
+	log "configurator/internal/logger"
 	"context"
-	"filler/internal/config"
-	log "filler/internal/logger"
 	"fmt"
 
 	"github.com/jackc/pgx/v5"

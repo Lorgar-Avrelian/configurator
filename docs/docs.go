@@ -39,7 +39,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Component"
+                                "$ref": "#/definitions/configurator_internal_model.Component"
                             }
                         }
                     },
@@ -73,7 +73,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ComponentCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ComponentCreate"
                         }
                     }
                 ],
@@ -81,7 +81,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Component"
+                            "$ref": "#/definitions/configurator_internal_model.Component"
                         }
                     },
                     "400": {
@@ -130,7 +130,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Component"
+                                "$ref": "#/definitions/configurator_internal_model.Component"
                             }
                         }
                     },
@@ -178,7 +178,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Component"
+                            "$ref": "#/definitions/configurator_internal_model.Component"
                         }
                     },
                     "400": {
@@ -235,7 +235,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ComponentUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ComponentUpdate"
                         }
                     }
                 ],
@@ -243,7 +243,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Component"
+                            "$ref": "#/definitions/configurator_internal_model.Component"
                         }
                     },
                     "400": {
@@ -339,7 +339,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Configuration"
+                                "$ref": "#/definitions/configurator_internal_model.Configuration"
                             }
                         }
                     },
@@ -372,7 +372,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ConfigurationCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationCreate"
                         }
                     }
                 ],
@@ -380,7 +380,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Возвращает полностью раскрытое содержание созданной конфигурации",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Configuration"
+                            "$ref": "#/definitions/configurator_internal_model.Configuration"
                         }
                     },
                     "400": {
@@ -423,7 +423,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.BindParamRequest"
+                            "$ref": "#/definitions/configurator_internal_dto.BindParamRequest"
                         }
                     }
                 ],
@@ -527,7 +527,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Возвращает полностью раскрытое содержание",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Configuration"
+                            "$ref": "#/definitions/configurator_internal_model.Configuration"
                         }
                     },
                     "404": {
@@ -575,7 +575,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ConfigurationUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationUpdate"
                         }
                     }
                 ],
@@ -583,7 +583,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Возвращает полностью раскрытое обновленное содержание",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Configuration"
+                            "$ref": "#/definitions/configurator_internal_model.Configuration"
                         }
                     },
                     "400": {
@@ -669,7 +669,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                                "$ref": "#/definitions/configurator_internal_model.DefaultConfiguration"
                             }
                         }
                     },
@@ -702,7 +702,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ConfigurationCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationCreate"
                         }
                     }
                 ],
@@ -710,7 +710,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Возвращает полностью раскрытое содержание созданной конфигурации",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                            "$ref": "#/definitions/configurator_internal_model.DefaultConfiguration"
                         }
                     },
                     "400": {
@@ -753,7 +753,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.BindParamRequest"
+                            "$ref": "#/definitions/configurator_internal_dto.BindParamRequest"
                         }
                     }
                 ],
@@ -857,7 +857,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Возвращает полностью раскрытое содержание",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                            "$ref": "#/definitions/configurator_internal_model.DefaultConfiguration"
                         }
                     },
                     "404": {
@@ -905,7 +905,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ConfigurationUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationUpdate"
                         }
                     }
                 ],
@@ -913,7 +913,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Возвращает полностью раскрытое обновленное содержание",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DefaultConfiguration"
+                            "$ref": "#/definitions/configurator_internal_model.DefaultConfiguration"
                         }
                     },
                     "400": {
@@ -999,7 +999,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                                "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                             }
                         }
                     }
@@ -1023,7 +1023,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.DeviceComponentCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentCreate"
                         }
                     }
                 ],
@@ -1031,7 +1031,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                         }
                     }
                 }
@@ -1056,7 +1056,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.BindDeviceMappingRequest"
+                            "$ref": "#/definitions/configurator_internal_dto.BindDeviceMappingRequest"
                         }
                     }
                 ],
@@ -1124,7 +1124,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                         }
                     }
                 }
@@ -1154,7 +1154,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.DeviceComponentUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentUpdate"
                         }
                     }
                 ],
@@ -1162,7 +1162,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                         }
                     }
                 }
@@ -1203,7 +1203,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                                "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                             }
                         }
                     },
@@ -1236,7 +1236,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.DeviceIndicatorCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceIndicatorCreate"
                         }
                     }
                 ],
@@ -1244,7 +1244,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                         }
                     },
                     "400": {
@@ -1290,7 +1290,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                         }
                     },
                     "400": {
@@ -1347,7 +1347,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.DeviceIndicatorUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceIndicatorUpdate"
                         }
                     }
                 ],
@@ -1355,7 +1355,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                         }
                     },
                     "400": {
@@ -1450,7 +1450,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Mapping"
+                                "$ref": "#/definitions/configurator_internal_model.Mapping"
                             }
                         }
                     },
@@ -1483,7 +1483,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.MappingCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.MappingCreate"
                         }
                     }
                 ],
@@ -1491,7 +1491,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Mapping"
+                            "$ref": "#/definitions/configurator_internal_model.Mapping"
                         }
                     },
                     "400": {
@@ -1537,7 +1537,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Mapping"
+                            "$ref": "#/definitions/configurator_internal_model.Mapping"
                         }
                     },
                     "400": {
@@ -1594,7 +1594,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.MappingUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.MappingUpdate"
                         }
                     }
                 ],
@@ -1602,7 +1602,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Mapping"
+                            "$ref": "#/definitions/configurator_internal_model.Mapping"
                         }
                     },
                     "400": {
@@ -1706,7 +1706,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Oid"
+                                "$ref": "#/definitions/configurator_internal_model.Oid"
                             }
                         }
                     },
@@ -1762,7 +1762,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Oid"
+                                "$ref": "#/definitions/configurator_internal_model.Oid"
                             }
                         }
                     },
@@ -1824,7 +1824,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Oid"
+                                "$ref": "#/definitions/configurator_internal_model.Oid"
                             }
                         }
                     },
@@ -1873,7 +1873,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Oid"
+                                "$ref": "#/definitions/configurator_internal_model.Oid"
                             }
                         }
                     },
@@ -1927,7 +1927,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.OidPageResponse"
+                            "$ref": "#/definitions/configurator_internal_dto.OidPageResponse"
                         }
                     },
                     "400": {
@@ -1980,7 +1980,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.OidPageResponse"
+                            "$ref": "#/definitions/configurator_internal_dto.OidPageResponse"
                         }
                     },
                     "400": {
@@ -2028,7 +2028,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                                "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                             }
                         }
                     },
@@ -2061,7 +2061,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ParamIndicatorCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorCreate"
                         }
                     }
                 ],
@@ -2069,7 +2069,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                         }
                     },
                     "400": {
@@ -2115,7 +2115,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                         }
                     },
                     "400": {
@@ -2172,7 +2172,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ParamIndicatorUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorUpdate"
                         }
                     }
                 ],
@@ -2180,7 +2180,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                            "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                         }
                     },
                     "400": {
@@ -2280,7 +2280,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ParamCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ParamCreate"
                         }
                     }
                 ],
@@ -2288,7 +2288,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Param"
+                            "$ref": "#/definitions/configurator_internal_model.Param"
                         }
                     },
                     "400": {
@@ -2337,7 +2337,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Param"
+                                "$ref": "#/definitions/configurator_internal_model.Param"
                             }
                         }
                     },
@@ -2378,7 +2378,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Param"
+                                "$ref": "#/definitions/configurator_internal_model.Param"
                             }
                         }
                     },
@@ -2416,7 +2416,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Param"
+                            "$ref": "#/definitions/configurator_internal_model.Param"
                         }
                     },
                     "400": {
@@ -2473,7 +2473,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ParamUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ParamUpdate"
                         }
                     }
                 ],
@@ -2481,7 +2481,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Param"
+                            "$ref": "#/definitions/configurator_internal_model.Param"
                         }
                     },
                     "400": {
@@ -2581,7 +2581,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.BindParamRequest"
+                            "$ref": "#/definitions/configurator_internal_dto.BindParamRequest"
                         }
                     }
                 ],
@@ -2732,7 +2732,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/filler_internal_model.Threshold"
+                                "$ref": "#/definitions/configurator_internal_model.Threshold"
                             }
                         }
                     },
@@ -2765,7 +2765,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ThresholdCreate"
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdCreate"
                         }
                     }
                 ],
@@ -2773,7 +2773,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Возвращает раскрытую цепочку условий",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Threshold"
+                            "$ref": "#/definitions/configurator_internal_model.Threshold"
                         }
                     },
                     "400": {
@@ -2819,7 +2819,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Threshold"
+                            "$ref": "#/definitions/configurator_internal_model.Threshold"
                         }
                     },
                     "400": {
@@ -2876,7 +2876,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.ThresholdUpdate"
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdUpdate"
                         }
                     }
                 ],
@@ -2884,7 +2884,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/filler_internal_model.Threshold"
+                            "$ref": "#/definitions/configurator_internal_model.Threshold"
                         }
                     },
                     "400": {
@@ -2957,7 +2957,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "filler_internal_dto.BindDeviceMappingRequest": {
+        "configurator_internal_dto.BindDeviceMappingRequest": {
             "type": "object",
             "required": [
                 "device_component_id",
@@ -2974,7 +2974,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.BindParamRequest": {
+        "configurator_internal_dto.BindParamRequest": {
             "type": "object",
             "required": [
                 "component_id",
@@ -2991,7 +2991,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ComponentCreate": {
+        "configurator_internal_dto.ComponentCreate": {
             "type": "object",
             "required": [
                 "access",
@@ -3030,7 +3030,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ComponentUpdate": {
+        "configurator_internal_dto.ComponentUpdate": {
             "type": "object",
             "required": [
                 "access",
@@ -3069,7 +3069,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ConfigurationCreate": {
+        "configurator_internal_dto.ConfigurationCreate": {
             "type": "object",
             "required": [
                 "indicator_id"
@@ -3085,7 +3085,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ConfigurationUpdate": {
+        "configurator_internal_dto.ConfigurationUpdate": {
             "type": "object",
             "required": [
                 "indicator_id"
@@ -3101,7 +3101,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.DeviceComponentCreate": {
+        "configurator_internal_dto.DeviceComponentCreate": {
             "type": "object",
             "required": [
                 "model_id"
@@ -3121,7 +3121,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.DeviceComponentUpdate": {
+        "configurator_internal_dto.DeviceComponentUpdate": {
             "type": "object",
             "required": [
                 "model_id"
@@ -3141,7 +3141,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.DeviceIndicatorCreate": {
+        "configurator_internal_dto.DeviceIndicatorCreate": {
             "type": "object",
             "properties": {
                 "contact": {
@@ -3170,7 +3170,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.DeviceIndicatorUpdate": {
+        "configurator_internal_dto.DeviceIndicatorUpdate": {
             "type": "object",
             "properties": {
                 "contact": {
@@ -3199,7 +3199,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.MappingCreate": {
+        "configurator_internal_dto.MappingCreate": {
             "type": "object",
             "required": [
                 "frequency",
@@ -3231,7 +3231,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.MappingUpdate": {
+        "configurator_internal_dto.MappingUpdate": {
             "type": "object",
             "required": [
                 "frequency",
@@ -3263,13 +3263,13 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.OidPageResponse": {
+        "configurator_internal_dto.OidPageResponse": {
             "type": "object",
             "properties": {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Oid"
+                        "$ref": "#/definitions/configurator_internal_model.Oid"
                     }
                 },
                 "page": {
@@ -3286,7 +3286,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ParamCreate": {
+        "configurator_internal_dto.ParamCreate": {
             "type": "object",
             "required": [
                 "access",
@@ -3346,7 +3346,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ParamIndicatorCreate": {
+        "configurator_internal_dto.ParamIndicatorCreate": {
             "type": "object",
             "required": [
                 "oid_id"
@@ -3362,7 +3362,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ParamIndicatorUpdate": {
+        "configurator_internal_dto.ParamIndicatorUpdate": {
             "type": "object",
             "required": [
                 "oid_id"
@@ -3378,7 +3378,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ParamUpdate": {
+        "configurator_internal_dto.ParamUpdate": {
             "type": "object",
             "required": [
                 "access",
@@ -3438,7 +3438,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ThresholdCreate": {
+        "configurator_internal_dto.ThresholdCreate": {
             "type": "object",
             "required": [
                 "level",
@@ -3501,7 +3501,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.ThresholdUpdate": {
+        "configurator_internal_dto.ThresholdUpdate": {
             "type": "object",
             "required": [
                 "level",
@@ -3564,7 +3564,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_model.Component": {
+        "configurator_internal_model.Component": {
             "type": "object",
             "properties": {
                 "access": {
@@ -3598,7 +3598,7 @@ const docTemplate = `{
                 "params": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Param"
+                        "$ref": "#/definitions/configurator_internal_model.Param"
                     }
                 },
                 "title": {
@@ -3607,55 +3607,55 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_model.Configuration": {
+        "configurator_internal_model.Configuration": {
             "type": "object",
             "properties": {
                 "device_component": {
-                    "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                    "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                 },
                 "id": {
                     "type": "integer",
                     "example": 1
                 },
                 "indicator": {
-                    "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                    "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                 },
                 "thresholds": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Threshold"
+                        "$ref": "#/definitions/configurator_internal_model.Threshold"
                     }
                 }
             }
         },
-        "filler_internal_model.DefaultConfiguration": {
+        "configurator_internal_model.DefaultConfiguration": {
             "type": "object",
             "properties": {
                 "device_component": {
-                    "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                    "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                 },
                 "id": {
                     "type": "integer",
                     "example": 1
                 },
                 "indicator": {
-                    "$ref": "#/definitions/filler_internal_model.DeviceIndicator"
+                    "$ref": "#/definitions/configurator_internal_model.DeviceIndicator"
                 },
                 "thresholds": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Threshold"
+                        "$ref": "#/definitions/configurator_internal_model.Threshold"
                     }
                 }
             }
         },
-        "filler_internal_model.DeviceComponent": {
+        "configurator_internal_model.DeviceComponent": {
             "type": "object",
             "properties": {
                 "components": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.DeviceComponent"
+                        "$ref": "#/definitions/configurator_internal_model.DeviceComponent"
                     }
                 },
                 "id": {
@@ -3669,7 +3669,7 @@ const docTemplate = `{
                 "mappings": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/filler_internal_model.Mapping"
+                        "$ref": "#/definitions/configurator_internal_model.Mapping"
                     }
                 },
                 "model_id": {
@@ -3682,7 +3682,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_model.DeviceIndicator": {
+        "configurator_internal_model.DeviceIndicator": {
             "type": "object",
             "properties": {
                 "contact": {
@@ -3715,7 +3715,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_model.Mapping": {
+        "configurator_internal_model.Mapping": {
             "type": "object",
             "properties": {
                 "coefficient": {
@@ -3737,14 +3737,14 @@ const docTemplate = `{
                     "example": 1
                 },
                 "indicator": {
-                    "$ref": "#/definitions/filler_internal_model.ParamIndicator"
+                    "$ref": "#/definitions/configurator_internal_model.ParamIndicator"
                 },
                 "param": {
-                    "$ref": "#/definitions/filler_internal_model.Param"
+                    "$ref": "#/definitions/configurator_internal_model.Param"
                 }
             }
         },
-        "filler_internal_model.Oid": {
+        "configurator_internal_model.Oid": {
             "type": "object",
             "properties": {
                 "access": {
@@ -3804,7 +3804,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_model.Param": {
+        "configurator_internal_model.Param": {
             "type": "object",
             "properties": {
                 "access": {
@@ -3861,7 +3861,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_model.ParamIndicator": {
+        "configurator_internal_model.ParamIndicator": {
             "type": "object",
             "properties": {
                 "dotter_notation": {
@@ -3873,7 +3873,7 @@ const docTemplate = `{
                     "example": 1
                 },
                 "oid": {
-                    "$ref": "#/definitions/filler_internal_model.Oid"
+                    "$ref": "#/definitions/configurator_internal_model.Oid"
                 },
                 "oid_id": {
                     "type": "string",
@@ -3881,7 +3881,7 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_model.Threshold": {
+        "configurator_internal_model.Threshold": {
             "type": "object",
             "properties": {
                 "enabled": {
@@ -3909,7 +3909,7 @@ const docTemplate = `{
                     "example": 2
                 },
                 "previous_threshold": {
-                    "$ref": "#/definitions/filler_internal_model.Threshold"
+                    "$ref": "#/definitions/configurator_internal_model.Threshold"
                 },
                 "source_internal_order": {
                     "type": "integer",
@@ -3988,7 +3988,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8082",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "DB Filler API",
+	Title:            "Configurator",
 	Description:      "HTTP-сервер на Go с автоматической генерацией Swagger при старте",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

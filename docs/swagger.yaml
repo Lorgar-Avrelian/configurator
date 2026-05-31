@@ -1,5 +1,5 @@
 definitions:
-  filler_internal_dto.BindDeviceMappingRequest:
+  configurator_internal_dto.BindDeviceMappingRequest:
     properties:
       device_component_id:
         example: 1
@@ -11,7 +11,7 @@ definitions:
     - device_component_id
     - mapping_id
     type: object
-  filler_internal_dto.BindParamRequest:
+  configurator_internal_dto.BindParamRequest:
     properties:
       component_id:
         example: 10
@@ -23,7 +23,7 @@ definitions:
     - component_id
     - param_id
     type: object
-  filler_internal_dto.ComponentCreate:
+  configurator_internal_dto.ComponentCreate:
     properties:
       access:
         example: USER
@@ -52,7 +52,7 @@ definitions:
     - name_ru
     - title
     type: object
-  filler_internal_dto.ComponentUpdate:
+  configurator_internal_dto.ComponentUpdate:
     properties:
       access:
         example: USER
@@ -81,7 +81,7 @@ definitions:
     - name_ru
     - title
     type: object
-  filler_internal_dto.ConfigurationCreate:
+  configurator_internal_dto.ConfigurationCreate:
     properties:
       device_component_id:
         example: 4
@@ -92,7 +92,7 @@ definitions:
     required:
     - indicator_id
     type: object
-  filler_internal_dto.ConfigurationUpdate:
+  configurator_internal_dto.ConfigurationUpdate:
     properties:
       device_component_id:
         example: 5
@@ -103,7 +103,7 @@ definitions:
     required:
     - indicator_id
     type: object
-  filler_internal_dto.DeviceComponentCreate:
+  configurator_internal_dto.DeviceComponentCreate:
     properties:
       internal_order:
         example: 1
@@ -117,7 +117,7 @@ definitions:
     required:
     - model_id
     type: object
-  filler_internal_dto.DeviceComponentUpdate:
+  configurator_internal_dto.DeviceComponentUpdate:
     properties:
       internal_order:
         example: 2
@@ -131,7 +131,7 @@ definitions:
     required:
     - model_id
     type: object
-  filler_internal_dto.DeviceIndicatorCreate:
+  configurator_internal_dto.DeviceIndicatorCreate:
     properties:
       contact:
         example: sysadmin@company.com
@@ -152,7 +152,7 @@ definitions:
         example: 72
         type: integer
     type: object
-  filler_internal_dto.DeviceIndicatorUpdate:
+  configurator_internal_dto.DeviceIndicatorUpdate:
     properties:
       contact:
         example: sysadmin_new@company.com
@@ -173,7 +173,7 @@ definitions:
         example: 74
         type: integer
     type: object
-  filler_internal_dto.MappingCreate:
+  configurator_internal_dto.MappingCreate:
     properties:
       coefficient:
         example: "1.5"
@@ -196,7 +196,7 @@ definitions:
     - indicator_id
     - param_id
     type: object
-  filler_internal_dto.MappingUpdate:
+  configurator_internal_dto.MappingUpdate:
     properties:
       coefficient:
         example: "2.0"
@@ -219,11 +219,11 @@ definitions:
     - indicator_id
     - param_id
     type: object
-  filler_internal_dto.OidPageResponse:
+  configurator_internal_dto.OidPageResponse:
     properties:
       items:
         items:
-          $ref: '#/definitions/filler_internal_model.Oid'
+          $ref: '#/definitions/configurator_internal_model.Oid'
         type: array
       page:
         example: 1
@@ -235,7 +235,7 @@ definitions:
         example: 450
         type: integer
     type: object
-  filler_internal_dto.ParamCreate:
+  configurator_internal_dto.ParamCreate:
     properties:
       access:
         example: USER
@@ -280,7 +280,7 @@ definitions:
     - title
     - type
     type: object
-  filler_internal_dto.ParamIndicatorCreate:
+  configurator_internal_dto.ParamIndicatorCreate:
     properties:
       dotter_notation:
         example: 1.3.6.1.2.1.1.1.0
@@ -291,7 +291,7 @@ definitions:
     required:
     - oid_id
     type: object
-  filler_internal_dto.ParamIndicatorUpdate:
+  configurator_internal_dto.ParamIndicatorUpdate:
     properties:
       dotter_notation:
         example: 1.3.6.1.2.1.1.3.0
@@ -302,7 +302,7 @@ definitions:
     required:
     - oid_id
     type: object
-  filler_internal_dto.ParamUpdate:
+  configurator_internal_dto.ParamUpdate:
     properties:
       access:
         example: ADMIN
@@ -347,7 +347,7 @@ definitions:
     - title
     - type
     type: object
-  filler_internal_dto.ThresholdCreate:
+  configurator_internal_dto.ThresholdCreate:
     properties:
       enabled:
         example: true
@@ -395,7 +395,7 @@ definitions:
     - type
     - value
     type: object
-  filler_internal_dto.ThresholdUpdate:
+  configurator_internal_dto.ThresholdUpdate:
     properties:
       enabled:
         example: true
@@ -443,7 +443,7 @@ definitions:
     - type
     - value
     type: object
-  filler_internal_model.Component:
+  configurator_internal_model.Component:
     properties:
       access:
         example: USER
@@ -468,45 +468,45 @@ definitions:
         type: string
       params:
         items:
-          $ref: '#/definitions/filler_internal_model.Param'
+          $ref: '#/definitions/configurator_internal_model.Param'
         type: array
       title:
         example: Модуль Питания
         type: string
     type: object
-  filler_internal_model.Configuration:
+  configurator_internal_model.Configuration:
     properties:
       device_component:
-        $ref: '#/definitions/filler_internal_model.DeviceComponent'
+        $ref: '#/definitions/configurator_internal_model.DeviceComponent'
       id:
         example: 1
         type: integer
       indicator:
-        $ref: '#/definitions/filler_internal_model.DeviceIndicator'
+        $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
       thresholds:
         items:
-          $ref: '#/definitions/filler_internal_model.Threshold'
+          $ref: '#/definitions/configurator_internal_model.Threshold'
         type: array
     type: object
-  filler_internal_model.DefaultConfiguration:
+  configurator_internal_model.DefaultConfiguration:
     properties:
       device_component:
-        $ref: '#/definitions/filler_internal_model.DeviceComponent'
+        $ref: '#/definitions/configurator_internal_model.DeviceComponent'
       id:
         example: 1
         type: integer
       indicator:
-        $ref: '#/definitions/filler_internal_model.DeviceIndicator'
+        $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
       thresholds:
         items:
-          $ref: '#/definitions/filler_internal_model.Threshold'
+          $ref: '#/definitions/configurator_internal_model.Threshold'
         type: array
     type: object
-  filler_internal_model.DeviceComponent:
+  configurator_internal_model.DeviceComponent:
     properties:
       components:
         items:
-          $ref: '#/definitions/filler_internal_model.DeviceComponent'
+          $ref: '#/definitions/configurator_internal_model.DeviceComponent'
         type: array
       id:
         example: 1
@@ -516,7 +516,7 @@ definitions:
         type: integer
       mappings:
         items:
-          $ref: '#/definitions/filler_internal_model.Mapping'
+          $ref: '#/definitions/configurator_internal_model.Mapping'
         type: array
       model_id:
         example: 10
@@ -525,7 +525,7 @@ definitions:
         example: 3
         type: integer
     type: object
-  filler_internal_model.DeviceIndicator:
+  configurator_internal_model.DeviceIndicator:
     properties:
       contact:
         example: sysadmin@company.com
@@ -549,7 +549,7 @@ definitions:
         example: 12
         type: integer
     type: object
-  filler_internal_model.Mapping:
+  configurator_internal_model.Mapping:
     properties:
       coefficient:
         example: "1.500000000000"
@@ -565,11 +565,11 @@ definitions:
         example: 1
         type: integer
       indicator:
-        $ref: '#/definitions/filler_internal_model.ParamIndicator'
+        $ref: '#/definitions/configurator_internal_model.ParamIndicator'
       param:
-        $ref: '#/definitions/filler_internal_model.Param'
+        $ref: '#/definitions/configurator_internal_model.Param'
     type: object
-  filler_internal_model.Oid:
+  configurator_internal_model.Oid:
     properties:
       access:
         example: read-only
@@ -613,7 +613,7 @@ definitions:
         example: seconds
         type: string
     type: object
-  filler_internal_model.Param:
+  configurator_internal_model.Param:
     properties:
       access:
         example: ADMIN
@@ -655,7 +655,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  filler_internal_model.ParamIndicator:
+  configurator_internal_model.ParamIndicator:
     properties:
       dotter_notation:
         example: 1.3.6.1.2.1.1.1.0
@@ -664,12 +664,12 @@ definitions:
         example: 1
         type: integer
       oid:
-        $ref: '#/definitions/filler_internal_model.Oid'
+        $ref: '#/definitions/configurator_internal_model.Oid'
       oid_id:
         example: 00000000-0000-0000-0000-000000000000
         type: string
     type: object
-  filler_internal_model.Threshold:
+  configurator_internal_model.Threshold:
     properties:
       enabled:
         example: true
@@ -690,7 +690,7 @@ definitions:
         example: 2
         type: integer
       previous_threshold:
-        $ref: '#/definitions/filler_internal_model.Threshold'
+        $ref: '#/definitions/configurator_internal_model.Threshold'
       source_internal_order:
         example: 1
         type: integer
@@ -723,7 +723,7 @@ info:
   license:
     name: Apache 2.0
     url: http://apache.org
-  title: DB Filler API
+  title: Configurator
   version: "1.0"
 paths:
   /api/v1/components:
@@ -737,7 +737,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Component'
+              $ref: '#/definitions/configurator_internal_model.Component'
             type: array
         "500":
           description: Internal Server Error
@@ -759,14 +759,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ComponentCreate'
+          $ref: '#/definitions/configurator_internal_dto.ComponentCreate'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/filler_internal_model.Component'
+            $ref: '#/definitions/configurator_internal_model.Component'
         "400":
           description: Bad Request
           schema:
@@ -831,7 +831,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.Component'
+            $ref: '#/definitions/configurator_internal_model.Component'
         "400":
           description: Bad Request
           schema:
@@ -867,14 +867,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ComponentUpdate'
+          $ref: '#/definitions/configurator_internal_dto.ComponentUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.Component'
+            $ref: '#/definitions/configurator_internal_model.Component'
         "400":
           description: Bad Request
           schema:
@@ -913,7 +913,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Component'
+              $ref: '#/definitions/configurator_internal_model.Component'
             type: array
         "400":
           description: Bad Request
@@ -939,7 +939,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Configuration'
+              $ref: '#/definitions/configurator_internal_model.Configuration'
             type: array
         "500":
           description: Internal Server Error
@@ -959,14 +959,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ConfigurationCreate'
+          $ref: '#/definitions/configurator_internal_dto.ConfigurationCreate'
       produces:
       - application/json
       responses:
         "201":
           description: Возвращает полностью раскрытое содержание созданной конфигурации
           schema:
-            $ref: '#/definitions/filler_internal_model.Configuration'
+            $ref: '#/definitions/configurator_internal_model.Configuration'
         "400":
           description: Bad Request
           schema:
@@ -1021,7 +1021,7 @@ paths:
         "200":
           description: Возвращает полностью раскрытое содержание
           schema:
-            $ref: '#/definitions/filler_internal_model.Configuration'
+            $ref: '#/definitions/configurator_internal_model.Configuration'
         "404":
           description: Not Found
           schema:
@@ -1051,14 +1051,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ConfigurationUpdate'
+          $ref: '#/definitions/configurator_internal_dto.ConfigurationUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: Возвращает полностью раскрытое обновленное содержание
           schema:
-            $ref: '#/definitions/filler_internal_model.Configuration'
+            $ref: '#/definitions/configurator_internal_model.Configuration'
         "400":
           description: Bad Request
           schema:
@@ -1091,7 +1091,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.BindParamRequest'
+          $ref: '#/definitions/configurator_internal_dto.BindParamRequest'
       produces:
       - application/json
       responses:
@@ -1156,7 +1156,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.DefaultConfiguration'
+              $ref: '#/definitions/configurator_internal_model.DefaultConfiguration'
             type: array
         "500":
           description: Internal Server Error
@@ -1176,14 +1176,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ConfigurationCreate'
+          $ref: '#/definitions/configurator_internal_dto.ConfigurationCreate'
       produces:
       - application/json
       responses:
         "201":
           description: Возвращает полностью раскрытое содержание созданной конфигурации
           schema:
-            $ref: '#/definitions/filler_internal_model.DefaultConfiguration'
+            $ref: '#/definitions/configurator_internal_model.DefaultConfiguration'
         "400":
           description: Bad Request
           schema:
@@ -1238,7 +1238,7 @@ paths:
         "200":
           description: Возвращает полностью раскрытое содержание
           schema:
-            $ref: '#/definitions/filler_internal_model.DefaultConfiguration'
+            $ref: '#/definitions/configurator_internal_model.DefaultConfiguration'
         "404":
           description: Not Found
           schema:
@@ -1268,14 +1268,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ConfigurationUpdate'
+          $ref: '#/definitions/configurator_internal_dto.ConfigurationUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: Возвращает полностью раскрытое обновленное содержание
           schema:
-            $ref: '#/definitions/filler_internal_model.DefaultConfiguration'
+            $ref: '#/definitions/configurator_internal_model.DefaultConfiguration'
         "400":
           description: Bad Request
           schema:
@@ -1307,7 +1307,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.BindParamRequest'
+          $ref: '#/definitions/configurator_internal_dto.BindParamRequest'
       produces:
       - application/json
       responses:
@@ -1372,7 +1372,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.DeviceComponent'
+              $ref: '#/definitions/configurator_internal_model.DeviceComponent'
             type: array
       summary: Получить всю структуру подчиненности устройств
       tags:
@@ -1386,14 +1386,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.DeviceComponentCreate'
+          $ref: '#/definitions/configurator_internal_dto.DeviceComponentCreate'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/filler_internal_model.DeviceComponent'
+            $ref: '#/definitions/configurator_internal_model.DeviceComponent'
       summary: Создать узел состава устройства
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
@@ -1424,7 +1424,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.DeviceComponent'
+            $ref: '#/definitions/configurator_internal_model.DeviceComponent'
       summary: Получить узел состава по ID
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
@@ -1442,14 +1442,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.DeviceComponentUpdate'
+          $ref: '#/definitions/configurator_internal_dto.DeviceComponentUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.DeviceComponent'
+            $ref: '#/definitions/configurator_internal_model.DeviceComponent'
       summary: Обновить узел состава по ID
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
@@ -1463,7 +1463,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.BindDeviceMappingRequest'
+          $ref: '#/definitions/configurator_internal_dto.BindDeviceMappingRequest'
       produces:
       - application/json
       responses:
@@ -1504,7 +1504,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.DeviceIndicator'
+              $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
             type: array
         "500":
           description: Internal Server Error
@@ -1524,14 +1524,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.DeviceIndicatorCreate'
+          $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorCreate'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/filler_internal_model.DeviceIndicator'
+            $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
         "400":
           description: Bad Request
           schema:
@@ -1592,7 +1592,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.DeviceIndicator'
+            $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
         "400":
           description: Bad Request
           schema:
@@ -1628,14 +1628,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.DeviceIndicatorUpdate'
+          $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.DeviceIndicator'
+            $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
         "400":
           description: Bad Request
           schema:
@@ -1666,7 +1666,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Mapping'
+              $ref: '#/definitions/configurator_internal_model.Mapping'
             type: array
         "500":
           description: Internal Server Error
@@ -1686,14 +1686,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.MappingCreate'
+          $ref: '#/definitions/configurator_internal_dto.MappingCreate'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/filler_internal_model.Mapping'
+            $ref: '#/definitions/configurator_internal_model.Mapping'
         "400":
           description: Bad Request
           schema:
@@ -1754,7 +1754,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.Mapping'
+            $ref: '#/definitions/configurator_internal_model.Mapping'
         "400":
           description: Bad Request
           schema:
@@ -1790,14 +1790,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.MappingUpdate'
+          $ref: '#/definitions/configurator_internal_dto.MappingUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.Mapping'
+            $ref: '#/definitions/configurator_internal_model.Mapping'
         "400":
           description: Bad Request
           schema:
@@ -1834,7 +1834,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Oid'
+              $ref: '#/definitions/configurator_internal_model.Oid'
             type: array
         "400":
           description: Bad Request
@@ -1871,7 +1871,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Oid'
+              $ref: '#/definitions/configurator_internal_model.Oid'
             type: array
         "400":
           description: Bad Request
@@ -1913,7 +1913,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Oid'
+              $ref: '#/definitions/configurator_internal_model.Oid'
             type: array
         "400":
           description: Bad Request
@@ -1945,7 +1945,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Oid'
+              $ref: '#/definitions/configurator_internal_model.Oid'
             type: array
         "400":
           description: Bad Request
@@ -1982,7 +1982,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_dto.OidPageResponse'
+            $ref: '#/definitions/configurator_internal_dto.OidPageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2018,7 +2018,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_dto.OidPageResponse'
+            $ref: '#/definitions/configurator_internal_dto.OidPageResponse'
         "400":
           description: Bad Request
           schema:
@@ -2049,7 +2049,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.ParamIndicator'
+              $ref: '#/definitions/configurator_internal_model.ParamIndicator'
             type: array
         "500":
           description: Internal Server Error
@@ -2069,14 +2069,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ParamIndicatorCreate'
+          $ref: '#/definitions/configurator_internal_dto.ParamIndicatorCreate'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/filler_internal_model.ParamIndicator'
+            $ref: '#/definitions/configurator_internal_model.ParamIndicator'
         "400":
           description: Bad Request
           schema:
@@ -2137,7 +2137,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.ParamIndicator'
+            $ref: '#/definitions/configurator_internal_model.ParamIndicator'
         "400":
           description: Bad Request
           schema:
@@ -2173,14 +2173,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ParamIndicatorUpdate'
+          $ref: '#/definitions/configurator_internal_dto.ParamIndicatorUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.ParamIndicator'
+            $ref: '#/definitions/configurator_internal_model.ParamIndicator'
         "400":
           description: Bad Request
           schema:
@@ -2213,14 +2213,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ParamCreate'
+          $ref: '#/definitions/configurator_internal_dto.ParamCreate'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/filler_internal_model.Param'
+            $ref: '#/definitions/configurator_internal_model.Param'
         "400":
           description: Ошибка валидации
           schema:
@@ -2281,7 +2281,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.Param'
+            $ref: '#/definitions/configurator_internal_model.Param'
         "400":
           description: Неверный формат ID
           schema:
@@ -2317,14 +2317,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ParamUpdate'
+          $ref: '#/definitions/configurator_internal_dto.ParamUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.Param'
+            $ref: '#/definitions/configurator_internal_model.Param'
         "400":
           description: Ошибка валидации или неверный ID
           schema:
@@ -2363,7 +2363,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Param'
+              $ref: '#/definitions/configurator_internal_model.Param'
             type: array
         "400":
           description: Пустой запрос
@@ -2391,7 +2391,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Param'
+              $ref: '#/definitions/configurator_internal_model.Param'
             type: array
         "500":
           description: Ошибка базы данных
@@ -2413,7 +2413,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.BindParamRequest'
+          $ref: '#/definitions/configurator_internal_dto.BindParamRequest'
       produces:
       - application/json
       responses:
@@ -2515,7 +2515,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/filler_internal_model.Threshold'
+              $ref: '#/definitions/configurator_internal_model.Threshold'
             type: array
         "500":
           description: Internal Server Error
@@ -2535,14 +2535,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ThresholdCreate'
+          $ref: '#/definitions/configurator_internal_dto.ThresholdCreate'
       produces:
       - application/json
       responses:
         "201":
           description: Возвращает раскрытую цепочку условий
           schema:
-            $ref: '#/definitions/filler_internal_model.Threshold'
+            $ref: '#/definitions/configurator_internal_model.Threshold'
         "400":
           description: Bad Request
           schema:
@@ -2597,7 +2597,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.Threshold'
+            $ref: '#/definitions/configurator_internal_model.Threshold'
         "400":
           description: Bad Request
           schema:
@@ -2633,14 +2633,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/filler_internal_dto.ThresholdUpdate'
+          $ref: '#/definitions/configurator_internal_dto.ThresholdUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/filler_internal_model.Threshold'
+            $ref: '#/definitions/configurator_internal_model.Threshold'
         "400":
           description: Bad Request
           schema:

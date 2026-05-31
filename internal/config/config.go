@@ -1,7 +1,7 @@
 package config
 
 import (
-	log "filler/internal/logger"
+	log "configurator/internal/logger"
 	"os"
 
 	"gopkg.in/yaml.v3"
