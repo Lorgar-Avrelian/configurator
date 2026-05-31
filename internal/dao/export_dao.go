@@ -236,14 +236,18 @@ func ExportDatabaseToSqlFiles(ctx context.Context) error {
 				sb.WriteString(indent)
 				sb.WriteString(chunk[j])
 			}
-			if hasIDColumn {
+			if tableName == "public.component_param" {
+				sb.WriteString("\nON CONFLICT (\"component_id\", \"param_id\") DO NOTHING;\n")
+			} else if tableName == "public.device_component_mapping" {
+				sb.WriteString("\nON CONFLICT (\"device_component_id\", \"mapping_id\") DO NOTHING;\n")
+			} else if hasIDColumn {
 				sb.WriteString("\nON CONFLICT (\"id\") DO NOTHING;\n")
 			} else {
 				sb.WriteString(";\n")
 			}
 			if _, err = f.WriteString(sb.String()); err != nil {
 				f.Close()
-				return fmt.Errorf("ошибка записи в файл %s: %w", fullName, err)
+				return fmt.Errorf("Ошибка записи в файл %s: %w", fullName, err)
 			}
 		}
 		f.Close()
