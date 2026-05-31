@@ -47,20 +47,25 @@ func ScanGenericConfigRows(rows pgx.Rows) ([]ConfigFlatRow, error) {
 	return flatRows, nil
 }
 
+// AssembleConfigurations собирает рекурсивные строки в глубокое дерево
 func AssembleConfigurations(flatRows []ConfigFlatRow) ([]int64, map[int64]*model.DeviceIndicator, map[int64]*model.DeviceComponent, map[int64][]model.Threshold) {
 	configIDs := []int64{}
 	seenConfigs := make(map[int64]bool)
 	indicatorsMap := make(map[int64]*model.DeviceIndicator)
-	dcNodes := make(map[int64]*model.DeviceComponent)
 	configThresholdsMap := make(map[int64][]model.Threshold)
-	type edge struct{ parent, child int64 }
-	var edges []edge
-	nodeToConfigMap := make(map[int64]int64)
+	type componentRaw struct {
+		dc       model.DeviceComponent
+		parentID sql.NullInt64
+	}
+	configComponents := make(map[int64]map[int64]*componentRaw)
+	configAdjList := make(map[int64]map[int64][]int64)
 	for _, r := range flatRows {
 		if !seenConfigs[r.ConfigID] {
 			seenConfigs[r.ConfigID] = true
 			configIDs = append(configIDs, r.ConfigID)
 			configThresholdsMap[r.ConfigID] = []model.Threshold{}
+			configComponents[r.ConfigID] = make(map[int64]*componentRaw)
+			configAdjList[r.ConfigID] = make(map[int64][]int64)
 		}
 		if r.IndID.Valid {
 			if _, ok := indicatorsMap[r.ConfigID]; !ok {
@@ -69,23 +74,30 @@ func AssembleConfigurations(flatRows []ConfigFlatRow) ([]int64, map[int64]*model
 			}
 		}
 		if r.DcID.Valid {
-			nodeToConfigMap[r.DcID.Int64] = r.ConfigID
-			if _, ok := dcNodes[r.DcID.Int64]; !ok {
-				node := model.DeviceComponent{
-					ID:            r.DcID.Int64,
-					ModelID:       r.DcModel.Int64,
-					InternalOrder: r.DcOrder.Int32,
-					Mappings:      []model.Mapping{},
-					Components:    []model.DeviceComponent{},
+			cfgID := r.ConfigID
+			dcID := r.DcID.Int64
+			if _, exists := configComponents[cfgID][dcID]; !exists {
+				cr := &componentRaw{}
+				cr.dc.ID = dcID
+				cr.dc.ModelID = r.DcModel.Int64
+				cr.dc.InternalOrder = 1
+				if r.DcOrder.Valid {
+					cr.dc.InternalOrder = r.DcOrder.Int32
 				}
+				cr.parentID = r.DcParent
 				if r.DcParent.Valid {
-					node.ParentID = &r.DcParent.Int64
-					edges = append(edges, edge{parent: r.DcParent.Int64, child: r.DcID.Int64})
+					cr.dc.ParentID = &r.DcParent.Int64
+					configAdjList[cfgID][r.DcParent.Int64] = append(configAdjList[cfgID][r.DcParent.Int64], dcID)
 				}
+				cr.dc.Mappings = []model.Mapping{}
+				cr.dc.Components = []model.DeviceComponent{}
 				if len(r.DcMapJSON) > 0 && string(r.DcMapJSON) != "[null]" {
-					_ = json.Unmarshal(r.DcMapJSON, &node.Mappings)
+					_ = json.Unmarshal(r.DcMapJSON, &cr.dc.Mappings)
 				}
-				dcNodes[r.DcID.Int64] = &node
+				if cr.dc.Mappings == nil {
+					cr.dc.Mappings = []model.Mapping{}
+				}
+				configComponents[cfgID][dcID] = cr
 			}
 		}
 		if len(r.CfgThJSON) > 0 && string(r.CfgThJSON) != "[null]" && len(configThresholdsMap[r.ConfigID]) == 0 {
@@ -106,27 +118,46 @@ func AssembleConfigurations(flatRows []ConfigFlatRow) ([]int64, map[int64]*model
 			}
 		}
 	}
-	for _, e := range edges {
-		pNode, pOk := dcNodes[e.parent]
-		cNode, cOk := dcNodes[e.child]
-		if pOk && cOk {
-			pNode.Components = append(pNode.Components, *cNode)
-		}
-	}
 	configComponentMap := make(map[int64]*model.DeviceComponent)
-	for nodeID, node := range dcNodes {
-		cfgID := nodeToConfigMap[nodeID]
-		isRoot := false
-		if node.ParentID == nil {
-			isRoot = true
-		} else {
-			if _, parentExists := dcNodes[*node.ParentID]; !parentExists {
-				isRoot = true
+	for _, cfgID := range configIDs {
+		componentsMap := configComponents[cfgID]
+		adjList := configAdjList[cfgID]
+		if 0 > len(componentsMap) || len(componentsMap) == 0 {
+			configComponentMap[cfgID] = nil
+			continue
+		}
+		var buildNode func(id int64) model.DeviceComponent
+		buildNode = func(id int64) model.DeviceComponent {
+			current := componentsMap[id]
+			childIDs := adjList[id]
+			current.dc.Components = []model.DeviceComponent{}
+			for _, childID := range childIDs {
+				childNode := buildNode(childID)
+				current.dc.Components = append(current.dc.Components, childNode)
+			}
+			return current.dc
+		}
+		var rootComponent *model.DeviceComponent
+		for id, cr := range componentsMap {
+			isRoot := !cr.parentID.Valid
+			if !isRoot {
+				_, parentExists := componentsMap[cr.parentID.Int64]
+				isRoot = !parentExists
+			}
+			if isRoot {
+				finalRoot := buildNode(id)
+				rootComponent = &finalRoot
+				break
 			}
 		}
-		if isRoot {
-			configComponentMap[cfgID] = node
+		if rootComponent == nil && len(componentsMap) > 0 {
+			for id := range componentsMap {
+				finalRoot := buildNode(id)
+				rootComponent = &finalRoot
+				break
+			}
 		}
+		configComponentMap[cfgID] = rootComponent
 	}
 	return configIDs, indicatorsMap, configComponentMap, configThresholdsMap
 }
@@ -148,13 +179,13 @@ func executeGenericConfigSelect(ctx context.Context, table string, idFilter int6
 			SELECT id, indicator, device_component_id FROM public.%s cfg
 		),
 		device_tree AS (
-			SELECT dc.id, dc.model, dc.internal_order, dc.parent, tc.id AS cfg_id
+			SELECT dc.id::bigint, dc.model, dc.internal_order, dc.parent::bigint, tc.id AS cfg_id
 			FROM public.device_component dc
 			JOIN target_configs tc ON dc.id = tc.device_component_id
 			UNION ALL
-			SELECT c.id, c.model, c.internal_order, c.parent, dt.cfg_id
+			SELECT c.id::bigint, c.model, c.internal_order, c.parent::bigint, dt.cfg_id
 			FROM public.device_component c
-			JOIN device_tree dt ON c.parent = dt.id
+			JOIN device_tree dt ON c.parent::bigint = dt.id::bigint
 		),
 		aggregated_thresholds AS (
 			SELECT ct.%s AS cfg_id,
@@ -176,7 +207,7 @@ func executeGenericConfigSelect(ctx context.Context, table string, idFilter int6
 			cfg.id,
 			i.id, i.description, i.object_id, i.contact, i.name, i.location, i.services,
 			dt.id, dt.model, dt.internal_order, dt.parent,
-			json_strip_nulls(json_agg(json_build_object(
+			COALESCE(json_strip_nulls(json_agg(json_build_object(
 				'id', m.id,
 				'frequency', pf.value,
 				'coefficient', m.coefficient::text,
@@ -217,7 +248,7 @@ func executeGenericConfigSelect(ctx context.Context, table string, idFilter int6
 						'category', o.category
 					)
 				)
-			)) FILTER (WHERE m.id IS NOT NULL)) AS mappings_json,
+			)) FILTER (WHERE m.id IS NOT NULL)), '[]'::json) AS mappings_json,
 			MAX(ath.thresholds_json::text)::json AS thresholds_json
 		FROM public.%s cfg
 		LEFT JOIN public.device_indicator i ON cfg.indicator = i.id
@@ -239,7 +270,7 @@ func executeGenericConfigSelect(ctx context.Context, table string, idFilter int6
 		ORDER BY cfg.id`, table, thresholdLinkField, thresholdJoinTable, thresholdLinkField, table, filterSQL)
 	rows, err := conn.Query(ctx, query)
 	if err != nil {
-		logger.Error("Ошибка DAO при создании дефолтной конфигурации: %v", err)
+		logger.Error("Ошибка DAO при создании конфигурации: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -307,7 +338,8 @@ func GetExpandedConfigurations(ctx context.Context) ([]model.Configuration, erro
 	}
 	ids, indMap, dcMap, thMap := AssembleConfigurations(flatRows)
 	var list []model.Configuration
-	for _, id := range ids {
+	for i := range ids {
+		id := ids[i]
 		list = append(list, model.Configuration{
 			ID:              id,
 			Indicator:       indMap[id],

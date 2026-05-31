@@ -14,53 +14,55 @@ import (
 
 // Вспомогательный метод выгрузки плоского списка и сборки в дерево
 func buildTreeFromRows(rows pgx.Rows) ([]model.DeviceComponent, error) {
-	nodesMap := make(map[int64]*model.DeviceComponent)
-	var roots []model.DeviceComponent
-	type edge struct {
-		parentID int64
-		childID  int64
+	type rawNode struct {
+		dc       model.DeviceComponent
+		parentID sql.NullInt64
 	}
-	var edges []edge
+	allNodes := make(map[int64]*rawNode)
+	adjList := make(map[int64][]int64)
 	for rows.Next() {
-		var dc model.DeviceComponent
-		var parent sql.NullInt64
+		rn := &rawNode{}
 		var jsonBytes []byte
-		if err := rows.Scan(&dc.ID, &dc.ModelID, &dc.InternalOrder, &parent, &jsonBytes); err != nil {
+		err := rows.Scan(&rn.dc.ID, &rn.dc.ModelID, &rn.dc.InternalOrder, &rn.parentID, &jsonBytes)
+		if err != nil {
 			return nil, err
 		}
-		if parent.Valid {
-			dc.ParentID = &parent.Int64
+		if rn.parentID.Valid {
+			rn.dc.ParentID = &rn.parentID.Int64
+			adjList[rn.parentID.Int64] = append(adjList[rn.parentID.Int64], rn.dc.ID)
 		}
-		dc.Mappings = []model.Mapping{}
-		dc.Components = []model.DeviceComponent{}
+		rn.dc.Mappings = []model.Mapping{}
+		rn.dc.Components = []model.DeviceComponent{}
 		if len(jsonBytes) > 0 && string(jsonBytes) != "[null]" {
-			_ = json.Unmarshal(jsonBytes, &dc.Mappings)
+			_ = json.Unmarshal(jsonBytes, &rn.dc.Mappings)
 		}
-		nodesMap[dc.ID] = &dc
-		if parent.Valid {
-			edges = append(edges, edge{parentID: parent.Int64, childID: dc.ID})
-		}
+		allNodes[rn.dc.ID] = rn
 	}
-	for _, e := range edges {
-		parentBox, parentExists := nodesMap[e.parentID]
-		childBox, childExists := nodesMap[e.childID]
+	var buildNode func(id int64) model.DeviceComponent
+	buildNode = func(id int64) model.DeviceComponent {
+		current := allNodes[id]
+		childIDs := adjList[id]
+		for _, childID := range childIDs {
+			childNode := buildNode(childID)
+			current.dc.Components = append(current.dc.Components, childNode)
+		}
 
-		if parentExists && childExists {
-			parentBox.Components = append(parentBox.Components, *childBox)
+		return current.dc
+	}
+	var roots []model.DeviceComponent
+	for id, rn := range allNodes {
+		isRoot := !rn.parentID.Valid
+		if !isRoot {
+			_, parentExists := allNodes[rn.parentID.Int64]
+			isRoot = !parentExists
+		}
+		if isRoot {
+			roots = append(roots, buildNode(id))
 		}
 	}
-	for _, node := range nodesMap {
-		if node.ParentID == nil {
-			roots = append(roots, *node)
-		} else {
-			if _, ok := nodesMap[*node.ParentID]; !ok {
-				roots = append(roots, *node)
-			}
-		}
-	}
-	if len(nodesMap) > 0 && len(roots) == 0 {
-		for _, node := range nodesMap {
-			roots = append(roots, *node)
+	if len(allNodes) > 0 && len(roots) == 0 {
+		for id := range allNodes {
+			roots = append(roots, buildNode(id))
 			break
 		}
 	}
@@ -105,7 +107,7 @@ func GetDeviceComponentByID(ctx context.Context, id int64) (*model.DeviceCompone
 			JOIN device_tree dt ON c.parent = dt.id
 		)
 		SELECT dt.id, dt.model, dt.internal_order, dt.parent,
-		       json_strip_nulls(json_agg(json_build_object(
+		       COALESCE(json_strip_nulls(json_agg(json_build_object(
 				    'id', m.id,
 				    'frequency', pf.value,
 				    'coefficient', m.coefficient::text,
@@ -146,7 +148,7 @@ func GetDeviceComponentByID(ctx context.Context, id int64) (*model.DeviceCompone
 						    'category', o.category
 					    )
 				    )
-				)) FILTER (WHERE m.id IS NOT NULL)) AS mappings_json
+				)) FILTER (WHERE m.id IS NOT NULL)), '[]'::json) AS mappings_json
 		FROM device_tree dt
 		LEFT JOIN public.device_component_mapping dcm ON dt.id = dcm.device_component_id
 		LEFT JOIN public.mapping m ON dcm.mapping_id = m.id
@@ -184,8 +186,15 @@ func GetDeviceComponentByID(ctx context.Context, id int64) (*model.DeviceCompone
 func GetAllDeviceComponents(ctx context.Context) ([]model.DeviceComponent, error) {
 	conn := database.Get()
 	query := `
-		SELECT dc.id, dc.model, dc.internal_order, dc.parent,
-		       json_strip_nulls(json_agg(json_build_object(
+		WITH RECURSIVE device_tree AS (
+			SELECT id, model, internal_order, parent FROM public.device_component WHERE parent IS NULL
+			UNION ALL
+			SELECT c.id, c.model, c.internal_order, c.parent
+			FROM public.device_component c
+			JOIN device_tree dt ON c.parent = dt.id
+		)
+		SELECT dt.id, dt.model, dt.internal_order, dt.parent,
+		       COALESCE(json_strip_nulls(json_agg(json_build_object(
 				    'id', m.id,
 				    'frequency', pf.value,
 				    'coefficient', m.coefficient::text,
@@ -226,9 +235,9 @@ func GetAllDeviceComponents(ctx context.Context) ([]model.DeviceComponent, error
 						    'category', o.category
 					    )
 				    )
-				)) FILTER (WHERE m.id IS NOT NULL)) AS mappings_json
-		FROM public.device_component dc
-		LEFT JOIN public.device_component_mapping dcm ON dc.id = dcm.device_component_id
+				)) FILTER (WHERE m.id IS NOT NULL)), '[]'::json) AS mappings_json
+		FROM device_tree dt
+		LEFT JOIN public.device_component_mapping dcm ON dt.id = dcm.device_component_id
 		LEFT JOIN public.mapping m ON dcm.mapping_id = m.id
 		LEFT JOIN public.polling_frequency pf ON m.frequency = pf.id
 		LEFT JOIN public.param p ON m.param = p.id
@@ -239,7 +248,7 @@ func GetAllDeviceComponents(ctx context.Context) ([]model.DeviceComponent, error
 		LEFT JOIN public.asn1_type o_at ON o.type = o_at.id
 		LEFT JOIN public.oid_status o_st ON o.status = o_st.id
 		LEFT JOIN public.oid_access o_oac ON o.access = o_oac.id
-		GROUP BY dc.id, dc.model, dc.internal_order, dc.parent`
+		GROUP BY dt.id, dt.model, dt.internal_order, dt.parent`
 	rows, err := conn.Query(ctx, query)
 	if err != nil {
 		return nil, err
