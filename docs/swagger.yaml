@@ -347,22 +347,6 @@ definitions:
     - title
     - type
     type: object
-  filler_internal_dto.SaveResultRequest:
-    properties:
-      author:
-        example: Tokovenko
-        type: string
-      filename:
-        example: data
-        type: string
-      start_value:
-        example: 172
-        type: integer
-    required:
-    - author
-    - filename
-    - start_value
-    type: object
   filler_internal_dto.ThresholdCreate:
     properties:
       enabled:
@@ -2496,15 +2480,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Выгружает данные 13 основных таблиц в структурированный .sql файл
-        в корне проекта с разбиением на changeset-ы
-      parameters:
-      - description: Параметры экспорта
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/filler_internal_dto.SaveResultRequest'
+      description: Выгружает данные основных таблиц в структурированные .sql файлы
+        в директорию 'sql' в корне проекта
       produces:
       - application/json
       responses:
@@ -2526,9 +2503,9 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Экспортировать результаты в Liquibase скрипт
+      summary: Экспортировать результаты в SQL скрипт
       tags:
-      - '12. Результат: Экспортировать БД в Liquibase скрипт'
+      - '12. Результат: Экспортировать БД в SQL скрипт'
   /api/v1/thresholds:
     get:
       produces:
@@ -2698,4 +2675,4 @@ tags:
 - name: '9. Конфигурация: Конфигурации по-умолчанию'
 - name: '10. Конфигурация: Конфигурации устройств'
 - name: '11. Конфигурация: Пороги'
-- name: '12. Результат: Экспортировать БД в Liquibase скрипт'
+- name: '12. Результат: Экспортировать БД в SQL скрипт'

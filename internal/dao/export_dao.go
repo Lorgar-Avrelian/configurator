@@ -5,6 +5,7 @@ import (
 	"filler/internal/database"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -66,93 +67,42 @@ var targetTablesForExport = []string{
 	"public.default_configuration_threshold",
 }
 
-type fileRotator struct {
-	baseName    string
-	author      string
-	fileIndex   int
-	lineCount   int
-	currentFile *os.File
-}
-
-func newFileRotator(baseName, author string) *fileRotator {
-	baseName = strings.TrimSuffix(baseName, ".sql")
-	return &fileRotator{
-		baseName:  baseName,
-		author:    author,
-		fileIndex: 0,
-		lineCount: 0,
-	}
-}
-
-func (fr *fileRotator) writeString(str string) error {
-	linesInStr := strings.Count(str, "\n")
-	if fr.currentFile != nil && fr.lineCount+linesInStr > 5000 {
-		fr.currentFile.Close()
-		fr.currentFile = nil
-	}
-	if fr.currentFile == nil {
-		fr.fileIndex += 1
-		fr.lineCount = 0
-		fullName := fmt.Sprintf("%s-%d.sql", fr.baseName, fr.fileIndex)
-		if _, err := os.Stat(fullName); err == nil {
-			if err := os.Remove(fullName); err != nil {
-				return fmt.Errorf("не удалось удалить существующий файл %s: %w", fullName, err)
-			}
-		}
-		f, err := os.Create(fullName)
-		if err != nil {
-			return fmt.Errorf("не удалось создать файл %s: %w", fullName, err)
-		}
-		fr.currentFile = f
-		header := "-- liquibase formatted sql\n"
-		if _, err := fr.currentFile.WriteString(header); err != nil {
-			return err
-		}
-		fr.lineCount += strings.Count(header, "\n")
-	}
-	if _, err := fr.currentFile.WriteString(str); err != nil {
-		return err
-	}
-	fr.lineCount += linesInStr
-	return nil
-}
-
-func (fr *fileRotator) close() {
-	if fr.currentFile != nil {
-		fr.currentFile.Close()
-	}
-}
-
-func ExportDatabaseToLiquibase(ctx context.Context, filename string, author string, startValue int) error {
+// ExportDatabaseToSqlFiles экспортирует состояние таблиц в индивидуальные SQL файлы [имя_таблицы].sql
+func ExportDatabaseToSqlFiles(ctx context.Context) error {
 	conn := database.Get()
-	rotator := newFileRotator(filename, author)
-	defer rotator.close()
-	currentID := startValue
+	outputDir := "sql"
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		return fmt.Errorf("не удалось создать директорию %s: %w", outputDir, err)
+	}
 	for _, tableName := range targetTablesForExport {
+		cleanTableName := tableName
 		parts := strings.Split(tableName, ".")
 		schema := "public"
-		tName := tableName
 		if len(parts) == 2 {
 			schema = parts[0]
-			tName = parts[1]
+			cleanTableName = parts[1]
 		}
 		colQuery := `
 			SELECT column_name, data_type 
 			FROM information_schema.columns 
 			WHERE table_schema = $1 AND table_name = $2 
 			ORDER BY ordinal_position`
-		colRows, err := conn.Query(ctx, colQuery, schema, tName)
+		colRows, err := conn.Query(ctx, colQuery, schema, cleanTableName)
 		if err != nil {
 			return fmt.Errorf("не удалось получить колонки для %s: %w", tableName, err)
 		}
 		var columns []string
 		var selectCols []string
 		var dataTypes []string
+		hasIDColumn := false
 		for colRows.Next() {
 			var colName, dataType string
 			if err := colRows.Scan(&colName, &dataType); err != nil {
 				colRows.Close()
 				return err
+			}
+			if colName == "id" {
+				hasIDColumn = true
 			}
 			columns = append(columns, colName)
 			dataTypes = append(dataTypes, dataType)
@@ -234,9 +184,13 @@ func ExportDatabaseToLiquibase(ctx context.Context, filename string, author stri
 						default:
 							strVal := fmt.Sprintf("%v", v)
 							if strings.Contains(strVal, " UTC") {
-								cleanTime := strings.Split(strVal, " +")
-								cleanTime = strings.Split(cleanTime[0], " UTC")
-								rowValues = append(rowValues, fmt.Sprintf("'%s'", cleanTime[0]))
+								utcIdx := strings.Index(strVal, " UTC")
+								cleanTime := strVal[0:utcIdx]
+								plusIdx := strings.Index(cleanTime, " +")
+								if plusIdx > 0 {
+									cleanTime = cleanTime[0:plusIdx]
+								}
+								rowValues = append(rowValues, fmt.Sprintf("'%s'", cleanTime))
 							} else {
 								rowValues = append(rowValues, fmt.Sprintf("%v", v))
 							}
@@ -250,10 +204,18 @@ func ExportDatabaseToLiquibase(ctx context.Context, filename string, author stri
 		if len(allValues) == 0 {
 			continue
 		}
-		limit := 2500
-		if tableName == "public.oid" || tableName == "public.object_type" || tableName == "public.textual_convention" || tableName == "public.module_identity" || tableName == "public.agent_capabilities" {
-			limit = 1000
+		fullName := filepath.Join(outputDir, fmt.Sprintf("%s.sql", tableName))
+		if _, err := os.Stat(fullName); err == nil {
+			if err := os.Remove(fullName); err != nil {
+				return fmt.Errorf("не удалось удалить существующий файл %s: %w", fullName, err)
+			}
 		}
+		f, err := os.Create(fullName)
+		if err != nil {
+			return fmt.Errorf("не удалось создать файл %s: %w", fullName, err)
+		}
+		limit := 5000
+		isFirstInsert := true
 		for i := 0; len(allValues) > i; i += limit {
 			end := i + limit
 			if end > len(allValues) {
@@ -261,9 +223,10 @@ func ExportDatabaseToLiquibase(ctx context.Context, filename string, author stri
 			}
 			chunk := allValues[i:end]
 			var sb strings.Builder
-			sb.WriteString("\n")
-			sb.WriteString(fmt.Sprintf("-- changeset %s:%d\n", author, currentID))
-			currentID += 1
+			if !isFirstInsert {
+				sb.WriteString("\n")
+			}
+			isFirstInsert = false
 			sb.WriteString(fmt.Sprintf("INSERT INTO %s (%s)\n", tableName, colsStrInsert))
 			sb.WriteString("VALUES ")
 			sb.WriteString(chunk[0])
@@ -273,11 +236,17 @@ func ExportDatabaseToLiquibase(ctx context.Context, filename string, author stri
 				sb.WriteString(indent)
 				sb.WriteString(chunk[j])
 			}
-			sb.WriteString(";\n")
-			if err := rotator.writeString(sb.String()); err != nil {
-				return err
+			if hasIDColumn {
+				sb.WriteString("\nON CONFLICT (\"id\") DO NOTHING;\n")
+			} else {
+				sb.WriteString(";\n")
+			}
+			if _, err = f.WriteString(sb.String()); err != nil {
+				f.Close()
+				return fmt.Errorf("ошибка записи в файл %s: %w", fullName, err)
 			}
 		}
+		f.Close()
 	}
 	return nil
 }

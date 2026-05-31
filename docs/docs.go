@@ -2675,7 +2675,7 @@ const docTemplate = `{
         },
         "/api/v1/save-result": {
             "post": {
-                "description": "Выгружает данные 13 основных таблиц в структурированный .sql файл в корне проекта с разбиением на changeset-ы",
+                "description": "Выгружает данные основных таблиц в структурированные .sql файлы в директорию 'sql' в корне проекта",
                 "consumes": [
                     "application/json"
                 ],
@@ -2683,20 +2683,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "12. Результат: Экспортировать БД в Liquibase скрипт"
+                    "12. Результат: Экспортировать БД в SQL скрипт"
                 ],
-                "summary": "Экспортировать результаты в Liquibase скрипт",
-                "parameters": [
-                    {
-                        "description": "Параметры экспорта",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/filler_internal_dto.SaveResultRequest"
-                        }
-                    }
-                ],
+                "summary": "Экспортировать результаты в SQL скрипт",
                 "responses": {
                     "200": {
                         "description": "Сообщение об успешном создании файла",
@@ -3449,28 +3438,6 @@ const docTemplate = `{
                 }
             }
         },
-        "filler_internal_dto.SaveResultRequest": {
-            "type": "object",
-            "required": [
-                "author",
-                "filename",
-                "start_value"
-            ],
-            "properties": {
-                "author": {
-                    "type": "string",
-                    "example": "Tokovenko"
-                },
-                "filename": {
-                    "type": "string",
-                    "example": "data"
-                },
-                "start_value": {
-                    "type": "integer",
-                    "example": 172
-                }
-            }
-        },
         "filler_internal_dto.ThresholdCreate": {
             "type": "object",
             "required": [
@@ -4010,7 +3977,7 @@ const docTemplate = `{
             "name": "11. Конфигурация: Пороги"
         },
         {
-            "name": "12. Результат: Экспортировать БД в Liquibase скрипт"
+            "name": "12. Результат: Экспортировать БД в SQL скрипт"
         }
     ]
 }`
