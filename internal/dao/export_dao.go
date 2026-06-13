@@ -82,11 +82,7 @@ func ExportDatabaseToSqlFiles(ctx context.Context) error {
 			schema = parts[0]
 			cleanTableName = parts[1]
 		}
-		colQuery := `
-			SELECT column_name, data_type 
-			FROM information_schema.columns 
-			WHERE table_schema = $1 AND table_name = $2 
-			ORDER BY ordinal_position`
+		colQuery := `SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2 ORDER BY ordinal_position`
 		colRows, err := conn.Query(ctx, colQuery, schema, cleanTableName)
 		if err != nil {
 			return fmt.Errorf("не удалось получить колонки для %s: %w", tableName, err)
@@ -248,6 +244,13 @@ func ExportDatabaseToSqlFiles(ctx context.Context) error {
 			if _, err = f.WriteString(sb.String()); err != nil {
 				f.Close()
 				return fmt.Errorf("Ошибка записи в файл %s: %w", fullName, err)
+			}
+		}
+		if hasIDColumn {
+			seqStr := fmt.Sprintf("\nSELECT SETVAL(PG_GET_SERIAL_SEQUENCE('%s', 'id'), COALESCE(MAX(id), 1)) FROM %s;\n", tableName, tableName)
+			if _, err = f.WriteString(seqStr); err != nil {
+				f.Close()
+				return fmt.Errorf("Ошибка записи счетчика в файл %s: %w", fullName, err)
 			}
 		}
 		f.Close()
