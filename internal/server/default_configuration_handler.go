@@ -15,7 +15,7 @@ import (
 
 // CreateDefaultConfiguration создает конфигурацию по умолчанию
 // @Summary         Создать конфигурацию по умолчанию
-// @Tags            9. Конфигурация: Конфигурации по-умолчанию
+// @Tags            10. Конфигурация: Конфигурации по-умолчанию
 // @Accept          json
 // @Produce         json
 // @Param           request body dto.ConfigurationCreate true "Данные конфигурации"
@@ -41,7 +41,7 @@ func CreateDefaultConfiguration(c *gin.Context) {
 
 // GetDefaultConfiguration возвращает конфигурацию по умолчанию по ID
 // @Summary         Получить дефолтную конфигурацию по ID
-// @Tags            9. Конфигурация: Конфигурации по-умолчанию
+// @Tags            10. Конфигурация: Конфигурации по-умолчанию
 // @Produce         json
 // @Param           id   path      int  true  "ID Конфигурации"
 // @Success         200  {object}  model.DefaultConfiguration "Возвращает полностью раскрытое содержание"
@@ -64,7 +64,7 @@ func GetDefaultConfiguration(c *gin.Context) {
 
 // GetAllDefaultConfigurations возвращает все конфигурации по умолчанию
 // @Summary         Получить все конфигурации по умолчанию
-// @Tags            9. Конфигурация: Конфигурации по-умолчанию
+// @Tags            10. Конфигурация: Конфигурации по-умолчанию
 // @Produce         json
 // @Success         200  {array}   model.DefaultConfiguration
 // @Failure         500  {object}  map[string]string
@@ -80,7 +80,7 @@ func GetAllDefaultConfigurations(c *gin.Context) {
 
 // UpdateDefaultConfiguration обновляет дефолтную конфигурацию по ID
 // @Summary         Обновить конфигурацию по умолчанию по ID
-// @Tags            9. Конфигурация: Конфигурации по-умолчанию
+// @Tags            10. Конфигурация: Конфигурации по-умолчанию
 // @Accept          json
 // @Produce         json
 // @Param           id      path      int  true  "ID Конфигурации"
@@ -112,7 +112,7 @@ func UpdateDefaultConfiguration(c *gin.Context) {
 
 // DeleteDefaultConfiguration удаляет дефолтную конфигурацию по ID
 // @Summary         Удалить дефолтную конфигурацию по ID
-// @Tags            9. Конфигурация: Конфигурации по-умолчанию
+// @Tags            10. Конфигурация: Конфигурации по-умолчанию
 // @Param           id   path      int  true  "ID Конфигурации"
 // @Success         204  "No Content"
 // @Failure         404  {object}  map[string]string
@@ -127,56 +127,6 @@ func DeleteDefaultConfiguration(c *gin.Context) {
 	}
 	if !found {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Конфигурация не найдена"})
-		return
-	}
-	c.Status(http.StatusNoContent)
-}
-
-// BindDefaultConfigThreshold связывает дефолтную конфигурацию с порогом
-// @Summary         Привязать порог к дефолтной конфигурации
-// @Tags            9. Конфигурация: Конфигурации по-умолчанию
-// @Accept          json
-// @Produce         json
-// @Param           request body dto.BindParamRequest true "ID конфигурации и ID порога"
-// @Success         200  {object}  map[string]string
-// @Failure         400  {object}  map[string]string
-// @Failure         500  {object}  map[string]string
-// @Router          /api/v1/default-configurations/bind [post]
-func BindDefaultConfigThreshold(c *gin.Context) {
-	var input struct {
-		DefaultConfigurationID int64 `json:"default_configuration_id" binding:"required"`
-		ThresholdID            int64 `json:"threshold_id" binding:"required"`
-	}
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	if err := dao.BindDefaultConfigThreshold(c.Request.Context(), input.DefaultConfigurationID, input.ThresholdID); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "Порог успешно привязан к дефолтной конфигурации"})
-}
-
-// UnbindDefaultConfigThreshold разрывает связь дефолтной конфигурации с порогом
-// @Summary         Удалить связь дефолтной конфигурации с порогом
-// @Tags            9. Конфигурация: Конфигурации по-умолчанию
-// @Param           defaultConfigurationId path      int  true  "ID Дефолтной конфигурации"
-// @Param           thresholdId            path      int  true  "ID Порога"
-// @Success         204  "No Content"
-// @Failure         404  {object}  map[string]string
-// @Failure         500  {object}  map[string]string
-// @Router          /api/v1/default-configurations/bind/{defaultConfigurationId}/{thresholdId} [delete]
-func UnbindDefaultConfigThreshold(c *gin.Context) {
-	defCfgID, _ := strconv.ParseInt(c.Param("defaultConfigurationId"), 10, 64)
-	tID, _ := strconv.ParseInt(c.Param("thresholdId"), 10, 64)
-	found, err := dao.UnbindDefaultConfigThreshold(c.Request.Context(), defCfgID, tID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Связь не найдена"})
 		return
 	}
 	c.Status(http.StatusNoContent)

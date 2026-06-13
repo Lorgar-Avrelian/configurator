@@ -13,7 +13,7 @@ import (
 
 // CreateThreshold создает порог
 // @Summary         Создать порог
-// @Tags            11. Конфигурация: Пороги
+// @Tags            12. Конфигурация: Пороги
 // @Accept          json
 // @Produce         json
 // @Param           request body dto.ThresholdCreate true "Данные порога"
@@ -38,7 +38,7 @@ func CreateThreshold(c *gin.Context) {
 
 // GetThreshold возвращает порог и всю цепочку связей
 // @Summary         Получить порог по ID вместе со всей цепочкой родителей
-// @Tags            11. Конфигурация: Пороги
+// @Tags            12. Конфигурация: Пороги
 // @Produce         json
 // @Param           id   path      int  true  "ID Порога"
 // @Success         200  {object}  model.Threshold
@@ -66,7 +66,7 @@ func GetThreshold(c *gin.Context) {
 
 // GetAllThresholds возвращает все пороги с их цепочками
 // @Summary         Получить все пороги
-// @Tags            11. Конфигурация: Пороги
+// @Tags            12. Конфигурация: Пороги
 // @Produce         json
 // @Success         200  {array}   model.Threshold
 // @Failure         500  {object}  map[string]string
@@ -82,7 +82,7 @@ func GetAllThresholds(c *gin.Context) {
 
 // UpdateThreshold обновляет порог по ID
 // @Summary         Обновить порог по ID
-// @Tags            11. Конфигурация: Пороги
+// @Tags            12. Конфигурация: Пороги
 // @Accept          json
 // @Produce         json
 // @Param           id      path      int  true  "ID Порога"
@@ -118,7 +118,7 @@ func UpdateThreshold(c *gin.Context) {
 
 // DeleteThreshold удаляет порог по ID
 // @Summary         Удалить порог по ID
-// @Tags            11. Конфигурация: Пороги
+// @Tags            12. Конфигурация: Пороги
 // @Param           id   path      int  true  "ID Порога"
 // @Success         204  "No Content"
 // @Failure         404  {object}  map[string]string

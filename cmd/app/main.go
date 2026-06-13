@@ -22,10 +22,13 @@ import (
 // @tag.name        6. Конфигурация: Индикаторы параметров
 // @tag.name        7. Конфигурация: Сопоставления параметров
 // @tag.name        8. Конфигурация: Структура компонентов устройства
-// @tag.name        9. Конфигурация: Конфигурации по-умолчанию
-// @tag.name        10. Конфигурация: Конфигурации устройств
-// @tag.name        11. Конфигурация: Пороги
-// @tag.name        12. Результат: Экспортировать БД в SQL скрипт
+// @tag.name        9. Конфигурация: Связь компонентов устройства и сопоставлений параметров
+// @tag.name        10. Конфигурация: Конфигурации по-умолчанию
+// @tag.name        11. Конфигурация: Конфигурации устройств
+// @tag.name        12. Конфигурация: Пороги
+// @tag.name        13. Конфигурация: Привязка порога к конфигурации по умолчанию
+// @tag.name        14. Конфигурация: Привязка порога к рабочей конфигурации
+// @tag.name        15. Результат: Экспортировать БД в SQL скрипт
 // @contact.name    Lorgar Avrelian
 // @contact.url     https://github.com/Lorgar-Avrelian
 // @contact.email   victor-14-244@mail.ru
@@ -36,7 +39,7 @@ func main() {
 	configPath := "cmd/config.yml"
 	config.Init(configPath)
 	logger.Init(config.Get().Logger.Level)
-	//generateSwagger()
+	generateSwagger()
 	database.Init()
 	if err := dao.LoadEnumsFromDB(context.Background()); err != nil {
 		logger.Fatalf("Критическая ошибка при загрузке справочников enum из БД: %v", err)

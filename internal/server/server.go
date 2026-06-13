@@ -15,18 +15,14 @@ type Server struct {
 
 func NewServer() *Server {
 	gin.SetMode(gin.ReleaseMode)
-	//r := gin.Default()
 	r := gin.New()
 	r.Use(gin.Recovery())
 	r.Static("/docs", "./docs")
-
 	url := ginSwagger.URL("/docs/swagger.json")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
-
 	v1 := r.Group("/api/v1")
 	{
 		v1.POST("/save-result", SaveResult)
-
 		oids := v1.Group("/oids")
 		{
 			oids.GET("/exact", GetOidsByExactNotation)
@@ -36,7 +32,6 @@ func NewServer() *Server {
 			oids.GET("/mib", GetOidsByMib)
 			oids.GET("/vendor", GetOidsByVendor)
 		}
-
 		components := v1.Group("/components")
 		{
 			components.POST("", CreateComponent)
@@ -46,7 +41,6 @@ func NewServer() *Server {
 			components.PUT("/:id", UpdateComponent)
 			components.DELETE("/:id", DeleteComponent)
 		}
-
 		indicators := v1.Group("/indicators")
 		{
 			indicators.POST("", CreateIndicator)
@@ -55,7 +49,6 @@ func NewServer() *Server {
 			indicators.PUT("/:id", UpdateIndicator)
 			indicators.DELETE("/:id", DeleteIndicator)
 		}
-
 		params := v1.Group("/params")
 		{
 			params.POST("", CreateParam)
@@ -65,13 +58,11 @@ func NewServer() *Server {
 			params.PUT("/:id", UpdateParam)
 			params.DELETE("/:id", DeleteParam)
 		}
-
 		relations := v1.Group("/relations")
 		{
 			relations.POST("", BindParam)
 			relations.DELETE("/:componentId/:paramId", UnbindParam)
 		}
-
 		paramIndicators := v1.Group("/param-indicators")
 		{
 			paramIndicators.POST("", CreateParamIndicator)
@@ -80,7 +71,6 @@ func NewServer() *Server {
 			paramIndicators.PUT("/:id", UpdateParamIndicator)
 			paramIndicators.DELETE("/:id", DeleteParamIndicator)
 		}
-
 		mappings := v1.Group("/mappings")
 		{
 			mappings.POST("", CreateMapping)
@@ -89,7 +79,6 @@ func NewServer() *Server {
 			mappings.PUT("/:id", UpdateMapping)
 			mappings.DELETE("/:id", DeleteMapping)
 		}
-
 		deviceComponents := v1.Group("/device-components")
 		{
 			deviceComponents.POST("", CreateDeviceComponent)
@@ -100,7 +89,6 @@ func NewServer() *Server {
 			deviceComponents.DELETE("/:id", DeleteDeviceComponent)
 			deviceComponents.DELETE("/bind/:deviceComponentId/:mappingId", UnbindDeviceMapping)
 		}
-
 		configurations := v1.Group("/configurations")
 		{
 			configurations.POST("", CreateConfiguration)
@@ -111,7 +99,6 @@ func NewServer() *Server {
 			configurations.PUT("/:id", UpdateConfiguration)
 			configurations.DELETE("/:id", DeleteConfiguration)
 		}
-
 		defaultConfigurations := v1.Group("/default-configurations")
 		{
 			defaultConfigurations.POST("", CreateDefaultConfiguration)
@@ -122,7 +109,6 @@ func NewServer() *Server {
 			defaultConfigurations.PUT("/:id", UpdateDefaultConfiguration)
 			defaultConfigurations.DELETE("/:id", DeleteDefaultConfiguration)
 		}
-
 		thresholds := v1.Group("/thresholds")
 		{
 			thresholds.POST("", CreateThreshold)
@@ -132,7 +118,6 @@ func NewServer() *Server {
 			thresholds.DELETE("/:id", DeleteThreshold)
 		}
 	}
-
 	return &Server{router: r}
 }
 

@@ -12,12 +12,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CreateMapping создает новый маппинг
-// @Summary         Создать маппинг
+// CreateMapping создает новое сопоставление
+// @Summary         Создать сопоставление
 // @Tags            7. Конфигурация: Сопоставления параметров
 // @Accept          json
 // @Produce         json
-// @Param           request body dto.MappingCreate true "Данные маппинга"
+// @Param           request body dto.MappingCreate true "Данные сопоставления"
 // @Success         201  {object}  model.Mapping
 // @Failure         400  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
@@ -38,11 +38,11 @@ func CreateMapping(c *gin.Context) {
 	c.JSON(http.StatusCreated, res)
 }
 
-// GetMapping возвращает маппинг по ID
-// @Summary         Получить маппинг по ID
+// GetMapping возвращает сопоставление по ID
+// @Summary         Получить сопоставление по ID
 // @Tags            7. Конфигурация: Сопоставления параметров
 // @Produce         json
-// @Param           id   path      int  true  "ID Маппинга"
+// @Param           id   path      int  true  "ID сопоставления"
 // @Success         200  {object}  model.Mapping
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
@@ -67,8 +67,8 @@ func GetMapping(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// GetAllMappings возвращает все маппинги
-// @Summary         Получить все маппинги
+// GetAllMappings возвращает все сопоставления
+// @Summary         Получить все сопоставления
 // @Tags            7. Конфигурация: Сопоставления параметров
 // @Produce         json
 // @Success         200  {array}   model.Mapping
@@ -84,12 +84,12 @@ func GetAllMappings(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// UpdateMapping обновляет маппинг по ID
-// @Summary         Обновить маппинг по ID
+// UpdateMapping обновляет сопоставление по ID
+// @Summary         Обновить сопоставление по ID
 // @Tags            7. Конфигурация: Сопоставления параметров
 // @Accept          json
 // @Produce         json
-// @Param           id      path      int  true  "ID Маппинга"
+// @Param           id      path      int  true  "ID сопоставления"
 // @Param           request body dto.MappingUpdate true "Новые данные"
 // @Success         200  {object}  model.Mapping
 // @Failure         400  {object}  map[string]string
@@ -121,10 +121,10 @@ func UpdateMapping(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// DeleteMapping удаляет маппинг по ID
-// @Summary         Удалить маппинг по ID
+// DeleteMapping удаляет сопоставление по ID
+// @Summary         Удалить сопоставление по ID
 // @Tags            7. Конфигурация: Сопоставления параметров
-// @Param           id   path      int  true  "ID Маппинга"
+// @Param           id   path      int  true  "ID сопоставления"
 // @Success         204  "No Content"
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string

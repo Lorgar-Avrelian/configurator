@@ -82,10 +82,7 @@ func assembleThresholdChain(flatRows []thresholdFlatRow, startID int64) *model.T
 
 func CreateThreshold(ctx context.Context, d dto.ThresholdCreate) (int64, error) {
 	conn := database.Get()
-	query := `
-		INSERT INTO public.threshold (source_model, source_internal_order, source_param, value, type, operator, enabled, target_param, target_device, level, prev_operator, previous)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-		RETURNING id`
+	query := `INSERT INTO public.threshold (source_model, source_internal_order, source_param, value, type, operator, enabled, target_param, target_device, level, prev_operator, previous) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id`
 	typeIdx := model.ParseVarType(d.Type)
 	opIdx := model.ParseLogicOperator(d.Operator)
 	lvlIdx := model.ParseAlarmLevel(d.Level)
@@ -100,11 +97,7 @@ func CreateThreshold(ctx context.Context, d dto.ThresholdCreate) (int64, error) 
 		prevID.Valid = true
 	}
 	var id int64
-	err := conn.QueryRow(ctx, query,
-		d.SourceModel, d.SourceInternalOrder, d.SourceParam, d.Value,
-		int16(typeIdx), int16(opIdx), enabled, toNullString(d.TargetParam),
-		toNullInt64(d.TargetDevice), int16(lvlIdx), int16(prevOpIdx), prevID,
-	).Scan(&id)
+	err := conn.QueryRow(ctx, query, d.SourceModel, d.SourceInternalOrder, d.SourceParam, d.Value, int16(typeIdx), int16(opIdx), enabled, toNullString(d.TargetParam), toNullInt64(d.TargetDevice), int16(lvlIdx), int16(prevOpIdx), prevID).Scan(&id)
 	return id, err
 }
 
@@ -134,11 +127,7 @@ func GetDetailedThresholdByID(ctx context.Context, id int64) (*model.Threshold, 
 
 func UpdateThreshold(ctx context.Context, id int64, d dto.ThresholdUpdate) (int64, error) {
 	conn := database.Get()
-	query := `
-		UPDATE public.threshold 
-		SET source_model = $1, source_internal_order = $2, source_param = $3, value = $4, type = $5, operator = $6, enabled = $7, target_param = $8, target_device = $9, level = $10, prev_operator = $11, previous = $12
-		WHERE id = $13
-		RETURNING id`
+	query := `UPDATE public.threshold SET source_model = $1, source_internal_order = $2, source_param = $3, value = $4, type = $5, operator = $6, enabled = $7, target_param = $8, target_device = $9, level = $10, prev_operator = $11, previous = $12 WHERE id = $13 RETURNING id`
 	typeIdx := model.ParseVarType(d.Type)
 	opIdx := model.ParseLogicOperator(d.Operator)
 	lvlIdx := model.ParseAlarmLevel(d.Level)
@@ -153,12 +142,7 @@ func UpdateThreshold(ctx context.Context, id int64, d dto.ThresholdUpdate) (int6
 		prevID.Valid = true
 	}
 	var updatedID int64
-	err := conn.QueryRow(ctx, query,
-		d.SourceModel, d.SourceInternalOrder, d.SourceParam, d.Value,
-		int16(typeIdx), int16(opIdx), enabled, toNullString(d.TargetParam),
-		toNullInt64(d.TargetDevice), int16(lvlIdx), int16(prevOpIdx), prevID, id,
-	).Scan(&updatedID)
-
+	err := conn.QueryRow(ctx, query, d.SourceModel, d.SourceInternalOrder, d.SourceParam, d.Value, int16(typeIdx), int16(opIdx), enabled, toNullString(d.TargetParam), toNullInt64(d.TargetDevice), int16(lvlIdx), int16(prevOpIdx), prevID, id).Scan(&updatedID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return 0, nil
