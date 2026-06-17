@@ -1,5 +1,5 @@
 app:
-  name: "db-filler"
+  name: "configurator"
 
 server:
   port: 8082

@@ -40,6 +40,7 @@ func NewServer() *Server {
 			components.GET("/:id", GetComponent)
 			components.PUT("/:id", UpdateComponent)
 			components.DELETE("/:id", DeleteComponent)
+			//components.PATCH("/:id/shift", ShiftComponent)
 		}
 		indicators := v1.Group("/indicators")
 		{

@@ -3,257 +3,597 @@ package dao
 import (
 	"configurator/internal/database"
 	"context"
+	"database/sql"
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
+	"strconv"
 	"strings"
+
+	"golang.org/x/sync/errgroup"
 )
 
-// Набор таблиц системы, упорядоченный с учетом Foreign Key зависимостей
-var targetTablesForExport = []string{
-	"public.agent_capabilities",
-	"public.agent_capabilities_module",
-	"public.agent_capabilities_module_notification",
-	"public.agent_capabilities_module_object",
-	"public.choice",
-	"public.explicit",
-	"public.implicit",
-	"public.import",
-	"public.mib",
-	"public.module_compliance",
-	"public.module_compliance_module",
-	"public.module_compliance_module_group",
-	"public.module_compliance_module_object",
-	"public.module_identity",
-	"public.notification_group",
-	"public.notification_type",
-	"public.object_group",
-	"public.object_identifier",
-	"public.object_identity",
-	"public.object_type",
-	"public.oid",
-	"public.revision",
-	"public.sequence",
-	"public.textual_convention",
-	"public.trap_type",
-	"public.mib_to_agent_capabilities",
-	"public.mib_to_choice",
-	"public.mib_to_explicit",
-	"public.mib_to_implicit",
-	"public.mib_to_import",
-	"public.mib_to_module_compliance",
-	"public.mib_to_module_identity",
-	"public.mib_to_notification_group",
-	"public.mib_to_notification_type",
-	"public.mib_to_object_group",
-	"public.mib_to_object_identifier",
-	"public.mib_to_object_identity",
-	"public.mib_to_object_type",
-	"public.mib_to_sequence",
-	"public.mib_to_textual_convention",
-	"public.mib_to_trap_type",
-	"public.param",
-	"public.component",
-	"public.component_param",
-	"public.device_indicator",
-	"public.param_indicator",
-	"public.mapping",
-	"public.device_component",
-	"public.device_component_mapping",
-	"public.configuration",
-	"public.default_configuration",
-	"public.threshold",
-	"public.configuration_threshold",
-	"public.default_configuration_threshold",
+var allTablesForExport = []string{
+	"public.polling_protocol", "public.access", "public.version_snmp",
+	"public.auth_protocol_snmp", "public.privacy_protocol_snmp", "public.oid_type",
+	"public.logic_operator", "public.alarm_level", "public.var_type",
+	"public.polling_frequency", "public.oid_access", "public.oid_status",
+	"public.asn1_type", "public.vendor", "public.component", "public.param",
+	"public.component_param", "public.agent_capabilities", "public.agent_capabilities_module",
+	"public.agent_capabilities_module_notification", "public.agent_capabilities_module_object",
+	"public.choice", "public.explicit", "public.implicit", "public.import",
+	"public.mib", "public.module_compliance", "public.module_compliance_module",
+	"public.module_compliance_module_group", "public.module_compliance_module_object",
+	"public.module_identity", "public.notification_group", "public.notification_type",
+	"public.object_group", "public.object_identifier", "public.object_identity",
+	"public.object_type", "public.oid", "public.revision", "public.sequence",
+	"public.textual_convention", "public.trap_type", "public.mib_to_agent_capabilities",
+	"public.mib_to_choice", "public.mib_to_explicit", "public.mib_to_implicit",
+	"public.mib_to_import", "public.mib_to_module_compliance", "public.mib_to_module_identity",
+	"public.mib_to_notification_group", "public.mib_to_notification_type", "public.mib_to_object_group",
+	"public.mib_to_object_identifier", "public.mib_to_object_identity", "public.mib_to_object_type",
+	"public.mib_to_sequence", "public.mib_to_textual_convention", "public.mib_to_trap_type",
+	"public.device_indicator", "public.param_indicator", "public.mapping",
+	"public.device_component", "public.device_component_mapping", "public.configuration",
+	"public.default_configuration", "public.threshold", "public.configuration_threshold",
+	"public.default_configuration_threshold", "public.device_snmp", "public.config_in_process",
 }
 
-// ExportDatabaseToSqlFiles экспортирует состояние таблиц в индивидуальные SQL файлы [имя_таблицы].sql
 func ExportDatabaseToSqlFiles(ctx context.Context) error {
 	conn := database.Get()
 	outputDir := "sql"
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
-		return fmt.Errorf("не удалось создать директорию %s: %w", outputDir, err)
+		return fmt.Errorf("failed to create directory %s: %w", outputDir, err)
 	}
-	for _, tableName := range targetTablesForExport {
+	g, _ := errgroup.WithContext(ctx)
+	g.SetLimit(10)
+	for _, table := range allTablesForExport {
+		tableName := table
 		cleanTableName := tableName
-		parts := strings.Split(tableName, ".")
 		schema := "public"
-		if len(parts) == 2 {
+		if parts := strings.Split(tableName, "."); len(parts) == 2 {
 			schema = parts[0]
 			cleanTableName = parts[1]
 		}
-		colQuery := `SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2 ORDER BY ordinal_position`
+		colQuery := `
+			SELECT 
+				column_name, 
+				data_type, 
+				is_nullable, 
+				character_maximum_length,
+				is_identity,
+				udt_name
+			FROM information_schema.columns 
+			WHERE table_schema = $1 AND table_name = $2 
+			ORDER BY ordinal_position`
 		colRows, err := conn.Query(ctx, colQuery, schema, cleanTableName)
 		if err != nil {
-			return fmt.Errorf("не удалось получить колонки для %s: %w", tableName, err)
+			return fmt.Errorf("failed to get columns for %s: %w", tableName, err)
 		}
-		var columns []string
-		var selectCols []string
-		var dataTypes []string
+		var columns, quotedCols, ddlCols []string
 		hasIDColumn := false
+		isIdNumeric := false
 		for colRows.Next() {
-			var colName, dataType string
-			if err := colRows.Scan(&colName, &dataType); err != nil {
+			var colName, dataType, isNullable, isIdentity, udtName string
+			var maxLength sql.NullInt32
+			if err := colRows.Scan(&colName, &dataType, &isNullable, &maxLength, &isIdentity, &udtName); err != nil {
 				colRows.Close()
 				return err
 			}
 			if colName == "id" {
 				hasIDColumn = true
+				isIdNumeric = isNumericType(dataType)
 			}
 			columns = append(columns, colName)
-			dataTypes = append(dataTypes, dataType)
-			if dataType == "uuid" || dataType == "jsonb" || dataType == "numeric" || dataType == "ARRAY" {
-				selectCols = append(selectCols, fmt.Sprintf(`"%s"::text`, colName))
-			} else {
-				selectCols = append(selectCols, fmt.Sprintf(`"%s"`, colName))
+			quotedCols = append(quotedCols, fmt.Sprintf(`"%s"`, colName))
+			isArray := dataType == "ARRAY" || strings.HasPrefix(udtName, "_")
+			finalDataType := dataType
+			if isArray {
+				finalDataType = strings.TrimPrefix(udtName, "_")
 			}
+			typeStr := formatDataType(finalDataType, maxLength, isArray)
+			colDef := fmt.Sprintf(`    "%s" %s`, colName, typeStr)
+			if isIdentity == "YES" {
+				colDef += " GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY"
+			} else if colName == "id" && tableName != "public.component_param" && tableName != "public.device_component_mapping" {
+				colDef += " PRIMARY KEY"
+			} else if isNullable == "NO" {
+				colDef += " NOT NULL"
+			}
+			ddlCols = append(ddlCols, colDef)
 		}
 		colRows.Close()
 		if len(columns) == 0 {
 			continue
 		}
-		quotedCols := make([]string, len(columns))
-		for i, col := range columns {
-			quotedCols[i] = fmt.Sprintf(`"%s"`, col)
+		var extraConstraints string
+		if tableName == "public.component_param" {
+			extraConstraints = ",\n    PRIMARY KEY (\"component_id\", \"param_id\")"
+		} else if tableName == "public.device_component_mapping" {
+			extraConstraints = ",\n    PRIMARY KEY (\"device_component_id\", \"mapping_id\")"
 		}
-		colsStrSelect := strings.Join(selectCols, ", ")
-		colsStrInsert := strings.Join(quotedCols, ", ")
-		whereClause := ""
-		if tableName == "public.object_identifier" {
-			whereClause = " WHERE \"name\" NOT IN ('0', 'itu-t', 'ccitt', 'iso', 'joint-iso-itu-t', 'joint-iso-ccitt')"
+		createTableDDL := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (\n%s%s\n);\n\n", tableName, strings.Join(ddlCols, ",\n"), extraConstraints)
+		colsStrSelect := strings.Join(quotedCols, ", ")
+		orderByClause := "ORDER BY 1"
+		if hasIDColumn && tableName != "public.device_snmp" {
+			orderByClause = "ORDER BY \"id\" ASC"
 		}
-		selectQuery := fmt.Sprintf("SELECT %s FROM %s%s ORDER BY 1", colsStrSelect, tableName, whereClause)
+		selectQuery := fmt.Sprintf("SELECT %s FROM %s %s", colsStrSelect, tableName, orderByClause)
 		rows, err := conn.Query(ctx, selectQuery)
 		if err != nil {
-			return fmt.Errorf("ошибка вычитки таблицы %s: %w", tableName, err)
+			return fmt.Errorf("failed to read table %s: %w", tableName, err)
+		}
+		structType, exists := getStructTypeByTableName(tableName)
+		if !exists {
+			rows.Close()
+			return fmt.Errorf("no data structure defined for table %s", tableName)
 		}
 		var allValues []string
 		for rows.Next() {
-			scannedValues := make([]interface{}, len(columns))
+			valStruct := reflect.New(structType).Elem()
 			scannedPointers := make([]interface{}, len(columns))
-			for i := range scannedValues {
-				scannedPointers[i] = &scannedValues[i]
+			for idx, colName := range columns {
+				found := false
+				for i := 0; i < structType.NumField(); i++ {
+					field := structType.Field(i)
+					if field.Tag.Get("db") == colName {
+						scannedPointers[idx] = valStruct.Field(i).Addr().Interface()
+						found = true
+						break
+					}
+				}
+				if !found {
+					var dummy interface{}
+					scannedPointers[idx] = &dummy
+				}
 			}
 			if err := rows.Scan(scannedPointers...); err != nil {
 				rows.Close()
-				return fmt.Errorf("ошибка сканирования строки таблицы %s: %w", tableName, err)
+				return fmt.Errorf("failed to scan row for table %s: %w", tableName, err)
 			}
-			var rowValues []string
-			for idx, val := range scannedValues {
-				if val == nil {
-					rowValues = append(rowValues, "NULL")
-				} else {
-					if dataTypes[idx] == "ARRAY" {
-						strVal := fmt.Sprintf("%v", val)
-						strVal = strings.Trim(strVal, "{}")
-						if strVal == "" {
-							rowValues = append(rowValues, "ARRAY[]::varchar[]")
-						} else {
-							elements := strings.Split(strVal, ",")
-							var quotedElements []string
-							for _, el := range elements {
-								cleanEl := strings.ReplaceAll(el, "\n", " ")
-								cleanEl = strings.ReplaceAll(cleanEl, "\r", "")
-								escaped := strings.ReplaceAll(cleanEl, "'", "''")
-								quotedElements = append(quotedElements, fmt.Sprintf("'%s'", escaped))
-							}
-							rowValues = append(rowValues, fmt.Sprintf("ARRAY[%s]", strings.Join(quotedElements, ", ")))
-						}
-					} else {
-						switch v := val.(type) {
-						case string:
-							cleanStr := strings.ReplaceAll(v, "\n", " ")
-							cleanStr = strings.ReplaceAll(cleanStr, "\r", "")
-							escaped := strings.ReplaceAll(cleanStr, "'", "''")
-							rowValues = append(rowValues, fmt.Sprintf("'%s'", escaped))
-						case []byte:
-							cleanStr := strings.ReplaceAll(string(v), "\n", " ")
-							cleanStr = strings.ReplaceAll(cleanStr, "\r", "")
-							escaped := strings.ReplaceAll(cleanStr, "'", "''")
-							rowValues = append(rowValues, fmt.Sprintf("'%s'", escaped))
-						case bool:
-							if v {
-								rowValues = append(rowValues, "TRUE")
-							} else {
-								rowValues = append(rowValues, "FALSE")
-							}
-						default:
-							strVal := fmt.Sprintf("%v", v)
-							if strings.Contains(strVal, " UTC") {
-								utcIdx := strings.Index(strVal, " UTC")
-								cleanTime := strVal[0:utcIdx]
-								plusIdx := strings.Index(cleanTime, " +")
-								if plusIdx > 0 {
-									cleanTime = cleanTime[0:plusIdx]
-								}
-								rowValues = append(rowValues, fmt.Sprintf("'%s'", cleanTime))
-							} else {
-								rowValues = append(rowValues, fmt.Sprintf("%v", v))
-							}
-						}
+			rowValues := make([]string, len(columns))
+			for idx, colName := range columns {
+				for i := 0; i < structType.NumField(); i++ {
+					field := structType.Field(i)
+					if field.Tag.Get("db") == colName {
+						rowValues[idx] = stringifyValue(valStruct.Field(i))
+						break
 					}
 				}
 			}
 			allValues = append(allValues, fmt.Sprintf("(%s)", strings.Join(rowValues, ", ")))
 		}
 		rows.Close()
-		if len(allValues) == 0 {
+		tName := tableName
+		hID := hasIDColumn
+		hNumID := hasIDColumn && isIdNumeric
+		qCols := quotedCols
+		g.Go(func() error {
+			fullName := filepath.Join(outputDir, fmt.Sprintf("%s.sql", tName))
+			f, err := os.Create(fullName)
+			if err != nil {
+				return fmt.Errorf("failed to create file %s: %w", fullName, err)
+			}
+			if _, err := f.WriteString(createTableDDL); err != nil {
+				f.Close()
+				return fmt.Errorf("failed to write DDL to file %s: %w", fullName, err)
+			}
+			if len(allValues) == 0 {
+				f.Close()
+				return nil
+			}
+			limit := 5000
+			isFirstInsert := true
+			colsStrInsert := strings.Join(qCols, ", ")
+			for i := 0; len(allValues) > i; i += limit {
+				end := i + limit
+				if end > len(allValues) {
+					end = len(allValues)
+				}
+				chunk := allValues[i:end]
+				var sb strings.Builder
+				if !isFirstInsert {
+					sb.WriteString("\n")
+				}
+				isFirstInsert = false
+				sb.WriteString(fmt.Sprintf("INSERT INTO %s (%s)\n", tName, colsStrInsert))
+				sb.WriteString("VALUES ")
+				sb.WriteString(chunk[0])
+				indent := "       "
+				for j := 1; len(chunk) > j; j++ {
+					sb.WriteString(",\n")
+					sb.WriteString(indent)
+					sb.WriteString(chunk[j])
+				}
+				if tName == "public.component_param" {
+					sb.WriteString("\nON CONFLICT (\"component_id\", \"param_id\") DO NOTHING;\n")
+				} else if tName == "public.device_component_mapping" {
+					sb.WriteString("\nON CONFLICT (\"device_component_id\", \"mapping_id\") DO NOTHING;\n")
+				} else if hID {
+					sb.WriteString("\nON CONFLICT (\"id\") DO NOTHING;\n")
+				} else {
+					sb.WriteString(";\n")
+				}
+				if _, err = f.WriteString(sb.String()); err != nil {
+					f.Close()
+					return fmt.Errorf("failed to write records to file %s: %w", fullName, err)
+				}
+			}
+			if hNumID {
+				seqStr := fmt.Sprintf("\nSELECT SETVAL(PG_GET_SERIAL_SEQUENCE('%s', 'id'), COALESCE(MAX(\"id\"), 1))\nFROM %s;\n", tName, tName)
+				if _, err = f.WriteString(seqStr); err != nil {
+					f.Close()
+					return fmt.Errorf("failed to write sequence reset to file %s: %w", fullName, err)
+				}
+			}
+			f.Close()
+			return nil
+		})
+	}
+	if err := g.Wait(); err != nil {
+		return fmt.Errorf("parallel file writing encountered an error: %w", err)
+	}
+	return ExportConstraintsToSqlFile(ctx)
+}
+
+func isNumericType(t string) bool {
+	t = strings.ToLower(t)
+	return strings.Contains(t, "int") || strings.Contains(t, "serial") || t == "numeric" || t == "double precision" || t == "real"
+}
+
+func formatDataType(dataType string, maxLength sql.NullInt32, isArray bool) string {
+	dataType = strings.ToLower(dataType)
+	baseType := ""
+	switch dataType {
+	case "character varying", "varchar":
+		if maxLength.Valid && maxLength.Int32 > 0 {
+			baseType = fmt.Sprintf("VARCHAR(%d)", maxLength.Int32)
+		} else {
+			baseType = "VARCHAR"
+		}
+	case "character", "char":
+		if maxLength.Valid && maxLength.Int32 > 0 {
+			baseType = fmt.Sprintf("CHAR(%d)", maxLength.Int32)
+		} else {
+			baseType = "CHAR"
+		}
+	case "smallint":
+		baseType = "SMALLINT"
+	case "integer", "int":
+		baseType = "INTEGER"
+	case "bigint":
+		baseType = "BIGINT"
+	case "text":
+		baseType = "TEXT"
+	case "boolean", "bool":
+		baseType = "BOOLEAN"
+	case "numeric":
+		baseType = "NUMERIC"
+	case "double precision":
+		baseType = "DOUBLE PRECISION"
+	case "real":
+		baseType = "REAL"
+	case "uuid":
+		baseType = "UUID"
+	case "timestamp without time zone", "timestamp":
+		baseType = "TIMESTAMP"
+	case "jsonb":
+		baseType = "JSONB"
+	default:
+		baseType = strings.ToUpper(dataType)
+	}
+	if isArray {
+		return baseType + "[]"
+	}
+	return baseType
+}
+
+func stringifyValue(v reflect.Value) string {
+	t := v.Type()
+	if t.PkgPath() == "database/sql" {
+		switch t.Name() {
+		case "NullString":
+			ns := v.Interface().(sql.NullString)
+			if !ns.Valid {
+				return "NULL"
+			}
+			return fmt.Sprintf("'%s'", sanitizeString(ns.String))
+		case "NullInt16":
+			ni := v.Interface().(sql.NullInt16)
+			if !ni.Valid {
+				return "NULL"
+			}
+			return strconv.FormatInt(int64(ni.Int16), 10)
+		case "NullInt32":
+			ni := v.Interface().(sql.NullInt32)
+			if !ni.Valid {
+				return "NULL"
+			}
+			return strconv.FormatInt(int64(ni.Int32), 10)
+		case "NullInt64":
+			ni := v.Interface().(sql.NullInt64)
+			if !ni.Valid {
+				return "NULL"
+			}
+			return strconv.FormatInt(ni.Int64, 10)
+		case "NullBool":
+			nb := v.Interface().(sql.NullBool)
+			if !nb.Valid {
+				return "NULL"
+			}
+			if nb.Bool {
+				return "TRUE"
+			}
+			return "FALSE"
+		case "NullFloat64":
+			nf := v.Interface().(sql.NullFloat64)
+			if !nf.Valid {
+				return "NULL"
+			}
+			return strconv.FormatFloat(nf.Float64, 'f', -1, 64)
+		case "NullTime":
+			nt := v.Interface().(sql.NullTime)
+			if !nt.Valid {
+				return "NULL"
+			}
+			return fmt.Sprintf("'%s'", nt.Time.Format("2006-01-02 15:04:05"))
+		}
+	}
+	switch v.Kind() {
+	case reflect.String:
+		return fmt.Sprintf("'%s'", sanitizeString(v.String()))
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return strconv.FormatInt(v.Int(), 10)
+	case reflect.Bool:
+		if v.Bool() {
+			return "TRUE"
+		}
+		return "FALSE"
+	case reflect.Slice:
+		if v.Type().Elem().Name() == "NullString" && v.Type().Elem().PkgPath() == "database/sql" {
+			slice, ok := v.Interface().([]sql.NullString)
+			if !ok || len(slice) == 0 {
+				return "ARRAY[]::varchar[]"
+			}
+			var quoted []string
+			for _, ns := range slice {
+				if !ns.Valid {
+					quoted = append(quoted, "NULL")
+				} else {
+					quoted = append(quoted, fmt.Sprintf("'%s'", sanitizeString(ns.String)))
+				}
+			}
+			return fmt.Sprintf("ARRAY[%s]", strings.Join(quoted, ", "))
+		}
+	}
+	return "NULL"
+}
+
+func sanitizeString(s string) string {
+	s = strings.ReplaceAll(s, "\r", "")
+	s = strings.ReplaceAll(s, "\n", " ")
+	return strings.ReplaceAll(s, "'", "''")
+}
+
+func getStructTypeByTableName(name string) (reflect.Type, bool) {
+	m := map[string]interface{}{
+		"public.polling_protocol":                       PollingProtocolData{},
+		"public.access":                                 AccessData{},
+		"public.version_snmp":                           VersionSnmpData{},
+		"public.auth_protocol_snmp":                     AuthProtocolSnmpData{},
+		"public.privacy_protocol_snmp":                  PrivacyProtocolSnmpData{},
+		"public.oid_type":                               OidTypeData{},
+		"public.logic_operator":                         LogicOperatorData{},
+		"public.alarm_level":                            AlarmLevelData{},
+		"public.var_type":                               VarTypeData{},
+		"public.polling_frequency":                      PollingFrequencyData{},
+		"public.oid_access":                             OidAccessData{},
+		"public.oid_status":                             OidStatusData{},
+		"public.asn1_type":                              Asn1TypeData{},
+		"public.vendor":                                 VendorData{},
+		"public.component":                              ComponentData{},
+		"public.param":                                  ParamData{},
+		"public.component_param":                        ComponentParamData{},
+		"public.agent_capabilities":                     AgentCapabilitiesData{},
+		"public.agent_capabilities_module":              AgentCapabilitiesModuleData{},
+		"public.agent_capabilities_module_notification": AgentCapabilitiesModuleNotificationData{},
+		"public.agent_capabilities_module_object":       AgentCapabilitiesModuleObjectData{},
+		"public.choice":                                 ChoiceData{},
+		"public.explicit":                               ExplicitData{},
+		"public.implicit":                               ImplicitData{},
+		"public.import":                                 ImportData{},
+		"public.mib":                                    MibData{},
+		"public.module_compliance":                      ModuleComplianceData{},
+		"public.module_compliance_module":               ModuleComplianceModuleData{},
+		"public.module_compliance_module_group":         ModuleComplianceModuleGroupData{},
+		"public.module_compliance_module_object":        ModuleComplianceModuleObjectData{},
+		"public.module_identity":                        ModuleIdentityData{},
+		"public.notification_group":                     NotificationGroupData{},
+		"public.notification_type":                      NotificationTypeData{},
+		"public.object_group":                           ObjectGroupData{},
+		"public.object_identifier":                      ObjectIdentifierData{},
+		"public.object_identity":                        ObjectIdentityData{},
+		"public.object_type":                            ObjectTypeData{},
+		"public.oid":                                    OidData{},
+		"public.revision":                               RevisionData{},
+		"public.sequence":                               SequenceData{},
+		"public.textual_convention":                     TextualConventionData{},
+		"public.trap_type":                              TrapTypeData{},
+		"public.mib_to_agent_capabilities":              MibToAgentCapabilitiesData{},
+		"public.mib_to_choice":                          MibToChoiceData{},
+		"public.mib_to_explicit":                        MibToExplicitData{},
+		"public.mib_to_implicit":                        MibToImplicitData{},
+		"public.mib_to_import":                          MibToImportData{},
+		"public.mib_to_module_compliance":               MibToModuleComplianceData{},
+		"public.mib_to_module_identity":                 MibToModuleIdentityData{},
+		"public.mib_to_notification_group":              MibToNotificationGroupData{},
+		"public.mib_to_notification_type":               MibToNotificationTypeData{},
+		"public.mib_to_object_group":                    MibToObjectGroupData{},
+		"public.mib_to_object_identifier":               MibToObjectIdentifierData{},
+		"public.mib_to_object_identity":                 MibToObjectIdentityData{},
+		"public.mib_to_object_type":                     MibToObjectTypeData{},
+		"public.mib_to_sequence":                        MibToSequenceData{},
+		"public.mib_to_textual_convention":              MibToTextualConventionData{},
+		"public.mib_to_trap_type":                       MibToTrapTypeData{},
+		"public.device_indicator":                       DeviceIndicatorData{},
+		"public.param_indicator":                        ParamIndicatorData{},
+		"public.mapping":                                MappingData{},
+		"public.device_component":                       DeviceComponentData{},
+		"public.device_component_mapping":               DeviceComponentMappingData{},
+		"public.configuration":                          ConfigurationData{},
+		"public.default_configuration":                  DefaultConfigurationData{},
+		"public.threshold":                              ThresholdData{},
+		"public.configuration_threshold":                ConfigurationThresholdData{},
+		"public.default_configuration_threshold":        DefaultConfigurationThresholdData{},
+		"public.device_snmp":                            DeviceSnmpData{},
+		"public.config_in_process":                      ConfigInProcessData{},
+	}
+	v, ok := m[name]
+	if !ok {
+		return nil, false
+	}
+	return reflect.TypeOf(v), true
+}
+
+func ExportConstraintsToSqlFile(ctx context.Context) error {
+	conn := database.Get()
+	outputDir := "sql"
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		return fmt.Errorf("failed to create directory %s: %w", outputDir, err)
+	}
+	fullName := filepath.Join(outputDir, "constraints.sql")
+	f, err := os.Create(fullName)
+	if err != nil {
+		return fmt.Errorf("failed to create file %s: %w", fullName, err)
+	}
+	defer f.Close()
+	query := `
+		SELECT 
+			ns.nspname AS table_schema,
+			conrel.relname AS table_name,
+			con.conname AS constraint_name,
+			pg_get_constraintdef(con.oid) AS constraint_definition
+		FROM pg_catalog.pg_constraint con
+		INNER JOIN pg_catalog.pg_class conrel ON conrel.oid = con.conrelid
+		INNER JOIN pg_catalog.pg_namespace ns ON ns.oid = conrel.relnamespace
+		WHERE ns.nspname = 'public' 
+		  AND con.contype IN ('f', 'u')
+		ORDER BY con.contype DESC, conrel.relname, con.conname`
+	rows, err := conn.Query(ctx, query)
+	if err != nil {
+		return fmt.Errorf("failed to fetch database constraints: %w", err)
+	}
+	defer rows.Close()
+	var sb strings.Builder
+	isFirst := true
+	for rows.Next() {
+		var schema, table, name, definition string
+		if err := rows.Scan(&schema, &table, &name, &definition); err != nil {
+			return fmt.Errorf("failed to scan constraint row: %w", err)
+		}
+		foundInExport := false
+		fullSearchName := fmt.Sprintf("%s.%s", schema, table)
+		for _, t := range allTablesForExport {
+			if t == fullSearchName {
+				foundInExport = true
+				break
+			}
+		}
+		if !foundInExport {
 			continue
 		}
-		fullName := filepath.Join(outputDir, fmt.Sprintf("%s.sql", tableName))
-		if _, err := os.Stat(fullName); err == nil {
-			if err := os.Remove(fullName); err != nil {
-				return fmt.Errorf("не удалось удалить существующий файл %s: %w", fullName, err)
-			}
+		if !isFirst {
+			sb.WriteString("\n")
 		}
-		f, err := os.Create(fullName)
-		if err != nil {
-			return fmt.Errorf("не удалось создать файл %s: %w", fullName, err)
+		isFirst = false
+		cleanedDef := formatConstraintDefinition(definition)
+		sb.WriteString(fmt.Sprintf("ALTER TABLE %s.%s ADD CONSTRAINT %s\n%s;\n", schema, table, name, cleanedDef))
+	}
+	if sb.Len() > 0 {
+		if _, err := f.WriteString(sb.String()); err != nil {
+			return fmt.Errorf("failed to write constraints to file: %w", err)
 		}
-		limit := 5000
-		isFirstInsert := true
-		for i := 0; len(allValues) > i; i += limit {
-			end := i + limit
-			if end > len(allValues) {
-				end = len(allValues)
-			}
-			chunk := allValues[i:end]
-			var sb strings.Builder
-			if !isFirstInsert {
-				sb.WriteString("\n")
-			}
-			isFirstInsert = false
-			sb.WriteString(fmt.Sprintf("INSERT INTO %s (%s)\n", tableName, colsStrInsert))
-			sb.WriteString("VALUES ")
-			sb.WriteString(chunk[0])
-			indent := "       "
-			for j := 1; len(chunk) > j; j++ {
-				sb.WriteString(",\n")
-				sb.WriteString(indent)
-				sb.WriteString(chunk[j])
-			}
-			if tableName == "public.component_param" {
-				sb.WriteString("\nON CONFLICT (\"component_id\", \"param_id\") DO NOTHING;\n")
-			} else if tableName == "public.device_component_mapping" {
-				sb.WriteString("\nON CONFLICT (\"device_component_id\", \"mapping_id\") DO NOTHING;\n")
-			} else if hasIDColumn {
-				sb.WriteString("\nON CONFLICT (\"id\") DO NOTHING;\n")
-			} else {
-				sb.WriteString(";\n")
-			}
-			if _, err = f.WriteString(sb.String()); err != nil {
-				f.Close()
-				return fmt.Errorf("Ошибка записи в файл %s: %w", fullName, err)
-			}
-		}
-		if hasIDColumn {
-			seqStr := fmt.Sprintf("\nSELECT SETVAL(PG_GET_SERIAL_SEQUENCE('%s', 'id'), COALESCE(MAX(id), 1)) FROM %s;\n", tableName, tableName)
-			if _, err = f.WriteString(seqStr); err != nil {
-				f.Close()
-				return fmt.Errorf("Ошибка записи счетчика в файл %s: %w", fullName, err)
-			}
-		}
-		f.Close()
 	}
 	return nil
+}
+
+func formatConstraintDefinition(def string) string {
+	lowered := strings.ToLower(def)
+	replacements := []struct {
+		old string
+		new string
+	}{
+		{"foreign key", "FOREIGN KEY"},
+		{"references", "REFERENCES"},
+		{"primary key", "PRIMARY KEY"},
+		{"unique", "UNIQUE"},
+		{"on delete cascade", "ON DELETE CASCADE"},
+		{"on update cascade", "ON UPDATE CASCADE"},
+		{"on delete set null", "ON DELETE SET NULL"},
+		{"on update set null", "ON UPDATE SET NULL"},
+		{"on delete restrict", "ON DELETE RESTRICT"},
+		{"on update restrict", "ON UPDATE RESTRICT"},
+	}
+	res := def
+	for _, r := range replacements {
+		if idx := strings.Index(lowered, r.old); idx != -1 {
+			res = res[:idx] + r.new + res[idx+len(r.old):]
+		}
+	}
+	var sb strings.Builder
+	inQuotes := false
+	inParens := false
+	var currentWord strings.Builder
+	for i := 0; i < len(res); i++ {
+		ch := res[i]
+		if ch == '"' {
+			inQuotes = !inQuotes
+			sb.WriteByte(ch)
+			continue
+		}
+		if inQuotes {
+			sb.WriteByte(ch)
+			continue
+		}
+		if ch == '(' {
+			inParens = true
+			sb.WriteByte(ch)
+			continue
+		}
+		if ch == ')' {
+			if inParens && currentWord.Len() > 0 {
+				sb.WriteString(quoteIdentifier(currentWord.String()))
+				currentWord.Reset()
+			}
+			inParens = false
+			sb.WriteByte(ch)
+			continue
+		}
+		if inParens {
+			if ch == ',' || ch == ' ' {
+				if currentWord.Len() > 0 {
+					sb.WriteString(quoteIdentifier(currentWord.String()))
+					currentWord.Reset()
+				}
+				sb.WriteByte(ch)
+			} else {
+				currentWord.WriteByte(ch)
+			}
+		} else {
+			sb.WriteByte(ch)
+		}
+	}
+	return sb.String()
+}
+
+func quoteIdentifier(s string) string {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return ""
+	}
+	if strings.HasPrefix(s, "\"") && strings.HasSuffix(s, "\"") {
+		return s
+	}
+	return fmt.Sprintf("\"%s\"", s)
 }

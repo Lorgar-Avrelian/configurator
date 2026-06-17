@@ -177,3 +177,39 @@ func DeleteComponent(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+
+/*// ShiftComponent сдвигает компонент вверх или вниз по списку ID
+// @Summary         Переместить компонент в списке компонентов
+// @Description     Меняет ID указанного компонента с соседним в зависимости от направления (up/down) с каскадным обновлением связей. Проверяет условие base_component > id.
+// @Tags            1. Модельный каталог: Компоненты
+// @Produce         json
+// @Param           id        path      int     true  "ID компонента"
+// @Param           target_id query     int     true  "Целевой ID"
+// @Success         200       {object}  map[string]string "Сообщение об успешном сдвиге"
+// @Failure         400       {object}  map[string]string "Неверный ID, нарушение иерархии или параметров"
+// @Failure         404       {object}  map[string]string "Компонент или целевой ID не найден"
+// @Failure         500       {object}  map[string]string "Внутренняя ошибка сервера"
+// @Router          /api/v1/components/{id}/shift [patch]
+func ShiftComponent(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID компонента"})
+		return
+	}
+	targetID, err := strconv.ParseInt(c.Query("target_id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный target_id"})
+		return
+	}
+	moved, err := dao.ShiftComponent(c.Request.Context(), id, targetID)
+	if err != nil {
+		logger.Error("Ошибка при сдвиге компонента %d к %d: %v", id, targetID, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if !moved {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Компонент или целевая позиция не найдены"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Компонент успешно сдвинут на целевую позицию"})
+}*/
