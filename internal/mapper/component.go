@@ -41,6 +41,16 @@ func ComponentDaoToComponentDto(d dao.ComponentDao) dto.ComponentDto {
 	return res
 }
 
+func ComponentDaoArrayToComponentDtoArray(arr []dao.ComponentDao) []dto.ComponentDto {
+	var res []dto.ComponentDto
+	res = []dto.ComponentDto{}
+	var c dao.ComponentDao
+	for _, c = range arr {
+		res = append(res, ComponentDaoToComponentDto(c))
+	}
+	return res
+}
+
 func ComponentToComponentDto(m dao.Component) dto.ComponentDto {
 	var res dto.ComponentDto
 	var modelAccess model.Access

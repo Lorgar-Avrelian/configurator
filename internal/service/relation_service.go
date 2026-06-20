@@ -3,6 +3,7 @@ package service
 import (
 	"configurator/internal/dao"
 	"configurator/internal/dto"
+	"configurator/internal/mapper"
 	"context"
 )
 
@@ -21,4 +22,16 @@ func UnbindParam(ctx context.Context, componentID int64, paramID int64) (bool, e
 	var err error
 	found, err = dao.UnbindParam(ctx, componentID, paramID)
 	return found, err
+}
+
+func GetComponentsByDirectParamID(ctx context.Context, paramID int64) ([]dto.ComponentDto, error) {
+	var arr []dao.ComponentDao
+	var err error
+	arr, err = dao.GetComponentsByDirectParamID(ctx, paramID)
+	if err != nil {
+		return nil, err
+	}
+	var res []dto.ComponentDto
+	res = mapper.ComponentDaoArrayToComponentDtoArray(arr)
+	return res, nil
 }

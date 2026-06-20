@@ -49,6 +49,7 @@ func NewServer() *Server {
 		{
 			relation.POST("", BindParam)
 			relation.DELETE("/:componentId/:paramId", UnbindParam)
+			relation.GET("/search/:id", GetComponentsByParam)
 		}
 	}
 	return &Server{router: r}

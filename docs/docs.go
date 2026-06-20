@@ -656,6 +656,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/relation/search/{id}": {
+            "get": {
+                "description": "Возвращает список компонентов, для которых параметр с данным ID является их собственным, а не унаследованным",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "3. Модельный каталог: Связи"
+                ],
+                "summary": "Получить компоненты по ID параметра",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Параметра",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.ComponentDto"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка базы данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/relation/{componentId}/{paramId}": {
             "delete": {
                 "description": "Удаляет запись из таблицы public.component_param",
