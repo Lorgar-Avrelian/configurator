@@ -1,19 +1,10 @@
 package server
 
 import (
-	"configurator/internal/dao"
-	"configurator/internal/dto"
-	"configurator/internal/logger"
-	"configurator/internal/model"
-	"net/http"
-	"strconv"
-
 	_ "configurator/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
-// CreateConfiguration создает рабочую конфигурацию
+/*// CreateConfiguration создает рабочую конфигурацию
 // @Summary         Создать рабочую конфигурацию
 // @Tags            11. Конфигурация: Конфигурации устройств
 // @Accept          json
@@ -131,3 +122,4 @@ func DeleteConfiguration(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+*/

@@ -39,20 +39,20 @@ func main() {
 	configPath := "cmd/config.yml"
 	config.Init(configPath)
 	logger.Init(config.Get().Logger.Level)
-	//generateSwagger()
+	generateSwagger()
 	database.Init()
 	if err := dao.LoadEnumsFromDB(context.Background()); err != nil {
-		logger.Fatalf("Критическая ошибка при загрузке справочников enum из БД: %v", err)
+		logger.Fatalf("Critical error when loading enum directories from the Database: %v", err)
 	}
 	srv := server.NewServer()
-	logger.Info("Запуск HTTP-сервера на порту %d...", config.Get().Server.Port)
+	logger.Info("HTTP Server started on port: %d...", config.Get().Server.Port)
 	if err := srv.Run(); err != nil {
-		logger.Fatalf("Ошибка работы HTTP-сервера: %v", err)
+		logger.Fatalf("HTTP Server error: %v", err)
 	}
 }
 
 func generateSwagger() {
-	logger.Info("Автогенерация файлов Swagger...")
+	logger.Info("Swagger files autogeneration")
 
 	cmd := exec.Command("swag", "init",
 		"-g", "cmd/app/main.go",
@@ -62,10 +62,10 @@ func generateSwagger() {
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		logger.Warn("Не удалось автоматически обновить Swagger через код.")
-		logger.Error("Детали ошибки генератора:\n%s", string(output))
+		logger.Warn("Couldn't update Swagger automatically via the code")
+		logger.Error("Generator error details:\n%s", string(output))
 		return
 	}
 
-	logger.Info("Файлы Swagger успешно обновлены")
+	logger.Info("Swagger files updated successfully")
 }

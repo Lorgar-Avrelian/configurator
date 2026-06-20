@@ -1,15 +1,10 @@
 package server
 
 import (
-	"configurator/internal/dao"
 	_ "configurator/internal/dto"
-	"net/http"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
-// BindDefaultConfigThreshold связывает конфигурацию по умолчанию с порогом
+/*// BindDefaultConfigThreshold связывает конфигурацию по умолчанию с порогом
 // @Summary         Привязать порог к конфигурации по умолчанию
 // @Tags            13. Конфигурация: Привязка порога к конфигурации по умолчанию
 // @Accept          json
@@ -57,4 +52,4 @@ func UnbindDefaultConfigThreshold(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusNoContent)
-}
+}*/

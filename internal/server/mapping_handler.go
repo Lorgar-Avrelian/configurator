@@ -1,18 +1,10 @@
 package server
 
 import (
-	"configurator/internal/dao"
-	"configurator/internal/dto"
-	"configurator/internal/logger"
-	"net/http"
-	"strconv"
-
 	_ "configurator/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
-// CreateMapping создает новое сопоставление
+/*// CreateMapping создает новое сопоставление
 // @Summary         Создать сопоставление
 // @Tags            7. Конфигурация: Сопоставления параметров
 // @Accept          json
@@ -148,3 +140,4 @@ func DeleteMapping(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+*/

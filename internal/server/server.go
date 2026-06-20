@@ -15,115 +15,51 @@ type Server struct {
 
 func NewServer() *Server {
 	gin.SetMode(gin.ReleaseMode)
-	r := gin.New()
+	var r *gin.Engine
+	r = gin.New()
 	r.Use(gin.Recovery())
 	r.Static("/docs", "./docs")
-	url := ginSwagger.URL("/docs/swagger.json")
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
-	v1 := r.Group("/api/v1")
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/docs/swagger.json")))
+	var v1 *gin.RouterGroup
+	v1 = r.Group("/api/v1")
 	{
-		v1.POST("/save-result", SaveResult)
-		oids := v1.Group("/oids")
+		v1.GET("/components", GetAllComponents)
+		var component *gin.RouterGroup
+		component = v1.Group("/component")
 		{
-			oids.GET("/exact", GetOidsByExactNotation)
-			oids.GET("/exact-with-mib", GetOidsByDotterAndMib)
-			oids.GET("/exact-with-mib-and-vendor", GetOidsByDotterMibAndVendor)
-			oids.GET("/prefix", GetOidsByPrefixNotation)
-			oids.GET("/mib", GetOidsByMib)
-			oids.GET("/vendor", GetOidsByVendor)
+			component.POST("", CreateComponent)
+			component.GET("/search", SearchComponents)
+			component.GET("/:id", GetComponent)
+			component.PUT("/:id", UpdateComponent)
+			component.DELETE("/:id", DeleteComponent)
 		}
-		components := v1.Group("/components")
+		v1.GET("/params", GetAllParams)
+		var param *gin.RouterGroup
+		param = v1.Group("/param")
 		{
-			components.POST("", CreateComponent)
-			components.GET("", GetAllComponents)
-			components.GET("/search", SearchComponents)
-			components.GET("/:id", GetComponent)
-			components.PUT("/:id", UpdateComponent)
-			components.DELETE("/:id", DeleteComponent)
-			//components.PATCH("/:id/shift", ShiftComponent)
+			param.POST("", CreateParam)
+			param.GET("/unattached", GetUnattachedParams)
+			param.GET("/search", SearchParams)
+			param.GET("/:id", GetParam)
+			param.PUT("/:id", UpdateParam)
+			param.DELETE("/:id", DeleteParam)
 		}
-		indicators := v1.Group("/indicators")
+		var relation *gin.RouterGroup
+		relation = v1.Group("/relation")
 		{
-			indicators.POST("", CreateIndicator)
-			indicators.GET("", GetAllIndicators)
-			indicators.GET("/:id", GetIndicator)
-			indicators.PUT("/:id", UpdateIndicator)
-			indicators.DELETE("/:id", DeleteIndicator)
-		}
-		params := v1.Group("/params")
-		{
-			params.POST("", CreateParam)
-			params.GET("/unattached", GetUnattachedParams)
-			params.GET("/search", SearchParams)
-			params.GET("/:id", GetParam)
-			params.PUT("/:id", UpdateParam)
-			params.DELETE("/:id", DeleteParam)
-		}
-		relations := v1.Group("/relations")
-		{
-			relations.POST("", BindParam)
-			relations.DELETE("/:componentId/:paramId", UnbindParam)
-		}
-		paramIndicators := v1.Group("/param-indicators")
-		{
-			paramIndicators.POST("", CreateParamIndicator)
-			paramIndicators.GET("", GetAllParamIndicators)
-			paramIndicators.GET("/:id", GetParamIndicator)
-			paramIndicators.PUT("/:id", UpdateParamIndicator)
-			paramIndicators.DELETE("/:id", DeleteParamIndicator)
-		}
-		mappings := v1.Group("/mappings")
-		{
-			mappings.POST("", CreateMapping)
-			mappings.GET("", GetAllMappings)
-			mappings.GET("/:id", GetMapping)
-			mappings.PUT("/:id", UpdateMapping)
-			mappings.DELETE("/:id", DeleteMapping)
-		}
-		deviceComponents := v1.Group("/device-components")
-		{
-			deviceComponents.POST("", CreateDeviceComponent)
-			deviceComponents.GET("", GetAllDeviceComponents)
-			deviceComponents.POST("/bind", BindDeviceMapping)
-			deviceComponents.GET("/:id", GetDeviceComponent)
-			deviceComponents.PUT("/:id", UpdateDeviceComponent)
-			deviceComponents.DELETE("/:id", DeleteDeviceComponent)
-			deviceComponents.DELETE("/bind/:deviceComponentId/:mappingId", UnbindDeviceMapping)
-		}
-		configurations := v1.Group("/configurations")
-		{
-			configurations.POST("", CreateConfiguration)
-			configurations.GET("", GetAllConfigurations)
-			configurations.POST("/bind", BindConfigThreshold)
-			configurations.DELETE("/bind/:configurationId/:thresholdId", UnbindConfigThreshold)
-			configurations.GET("/:id", GetConfiguration)
-			configurations.PUT("/:id", UpdateConfiguration)
-			configurations.DELETE("/:id", DeleteConfiguration)
-		}
-		defaultConfigurations := v1.Group("/default-configurations")
-		{
-			defaultConfigurations.POST("", CreateDefaultConfiguration)
-			defaultConfigurations.GET("", GetAllDefaultConfigurations)
-			defaultConfigurations.POST("/bind", BindDefaultConfigThreshold)
-			defaultConfigurations.DELETE("/bind/:defaultConfigurationId/:thresholdId", UnbindDefaultConfigThreshold)
-			defaultConfigurations.GET("/:id", GetDefaultConfiguration)
-			defaultConfigurations.PUT("/:id", UpdateDefaultConfiguration)
-			defaultConfigurations.DELETE("/:id", DeleteDefaultConfiguration)
-		}
-		thresholds := v1.Group("/thresholds")
-		{
-			thresholds.POST("", CreateThreshold)
-			thresholds.GET("", GetAllThresholds)
-			thresholds.GET("/:id", GetThreshold)
-			thresholds.PUT("/:id", UpdateThreshold)
-			thresholds.DELETE("/:id", DeleteThreshold)
+			relation.POST("", BindParam)
+			relation.DELETE("/:componentId/:paramId", UnbindParam)
 		}
 	}
 	return &Server{router: r}
 }
 
 func (s *Server) Run() error {
-	cfg := config.Get()
-	addr := fmt.Sprintf(":%d", cfg.Server.Port)
-	return s.router.Run(addr)
+	var cfg *config.Config
+	cfg = config.Get()
+	var addr string
+	addr = fmt.Sprintf(":%d", cfg.Server.Port)
+	var err error
+	err = s.router.Run(addr)
+	return err
 }

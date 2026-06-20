@@ -1,18 +1,6 @@
 package dao
 
-import (
-	"configurator/internal/database"
-	"configurator/internal/dto"
-	"configurator/internal/model"
-	"context"
-	"database/sql"
-	"encoding/json"
-	"errors"
-
-	"github.com/jackc/pgx/v5"
-)
-
-// Вспомогательный метод выгрузки плоского списка и сборки в дерево
+/*// Вспомогательный метод выгрузки плоского списка и сборки в дерево
 func buildTreeFromRows(rows pgx.Rows) ([]model.DeviceComponent, error) {
 	type rawNode struct {
 		dc       model.DeviceComponent
@@ -260,7 +248,7 @@ func GetAllDeviceComponents(ctx context.Context) ([]model.DeviceComponent, error
 func UpdateDeviceComponent(ctx context.Context, id int64, d dto.DeviceComponentUpdate) (*model.DeviceComponent, error) {
 	conn := database.Get()
 	query := `
-		UPDATE public.device_component 
+		UPDATE public.device_component
 		SET model = $1, internal_order = $2, parent = $3
 		WHERE id = $4
 		RETURNING id, model, internal_order, parent`
@@ -310,3 +298,4 @@ func UnbindDeviceMapping(ctx context.Context, dcID, mID int64) (bool, error) {
 	}
 	return commandTag.RowsAffected() > 0, nil
 }
+*/

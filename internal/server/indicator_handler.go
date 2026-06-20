@@ -1,18 +1,10 @@
 package server
 
 import (
-	"configurator/internal/dao"
-	"configurator/internal/dto"
-	"configurator/internal/logger"
-	"net/http"
-	"strconv"
-
 	_ "configurator/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
-// CreateIndicator создает новую запись индикатора
+/*// CreateIndicator создает новую запись индикатора
 // @Summary         Создать индикатор устройства
 // @Tags            5. Конфигурация: Индикаторы устройств
 // @Accept          json
@@ -148,3 +140,4 @@ func DeleteIndicator(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+*/

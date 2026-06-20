@@ -1,717 +1,254 @@
 definitions:
-  configurator_internal_dto.BindDeviceMappingRequest:
+  configurator_internal_dto.ComponentCreateDto:
     properties:
-      device_component_id:
+      access:
+        example: USER
+        type: string
+      base_component:
+        type: integer
+        x-nullable: true
+      description_en:
+        type: string
+        x-nullable: true
+      description_ru:
+        type: string
+        x-nullable: true
+      name_en:
+        example: component
+        type: string
+      name_ru:
+        example: Компонент
+        type: string
+      plural_name_en:
+        example: Components
+        type: string
+      plural_name_ru:
+        example: Компоненты
+        type: string
+      title:
+        example: Component
+        type: string
+    required:
+    - name_en
+    - name_ru
+    - plural_name_en
+    - plural_name_ru
+    - title
+    type: object
+  configurator_internal_dto.ComponentDto:
+    properties:
+      access:
+        example: USER
+        type: string
+      base_component:
+        type: integer
+        x-nullable: true
+      description_en:
+        type: string
+        x-nullable: true
+      description_ru:
+        type: string
+        x-nullable: true
+      id:
         example: 1
         type: integer
-      mapping_id:
-        example: 5
-        type: integer
-    required:
-    - device_component_id
-    - mapping_id
+      name_en:
+        example: component
+        type: string
+      name_ru:
+        example: Компонент
+        type: string
+      params:
+        items:
+          $ref: '#/definitions/configurator_internal_dto.ParamDto'
+        type: array
+      plural_name_en:
+        example: Components
+        type: string
+      plural_name_ru:
+        example: Компоненты
+        type: string
+      title:
+        example: Component
+        type: string
     type: object
-  configurator_internal_dto.BindParamRequest:
+  configurator_internal_dto.ComponentParamLinkDto:
     properties:
       component_id:
-        example: 10
+        example: 1
         type: integer
       param_id:
-        example: 5
+        example: 2
         type: integer
     required:
     - component_id
     - param_id
     type: object
-  configurator_internal_dto.ComponentCreate:
+  configurator_internal_dto.ComponentUpdateDto:
     properties:
       access:
         example: USER
         type: string
       base_component:
-        example: 1
         type: integer
+        x-nullable: true
       description_en:
-        example: Physical device - Device with dimensional characteristics
         type: string
+        x-nullable: true
       description_ru:
-        example: Физическое устройство - устройство, имеющее габаритные характеристики
         type: string
-      name_en:
-        example: Physical device
-        type: string
-      name_ru:
-        example: Физическое устройство
-        type: string
-      title:
-        example: physical
-        type: string
-    required:
-    - access
-    - name_en
-    - name_ru
-    - title
-    type: object
-  configurator_internal_dto.ComponentUpdate:
-    properties:
-      access:
-        example: USER
-        type: string
-      base_component:
-        example: 1
-        type: integer
-      description_en:
-        example: Updated main power controller unit
-        type: string
-      description_ru:
-        example: Обновленный главный контроллер питания
-        type: string
-      name_en:
-        example: power_module_v2
-        type: string
-      name_ru:
-        example: модуль_питания_в2
-        type: string
-      title:
-        example: Обновленный Модуль
-        type: string
-    required:
-    - access
-    - name_en
-    - name_ru
-    - title
-    type: object
-  configurator_internal_dto.ConfigurationCreate:
-    properties:
-      device_component_id:
-        example: 4
-        type: integer
-      indicator_id:
-        example: 2
-        type: integer
-    required:
-    - indicator_id
-    type: object
-  configurator_internal_dto.ConfigurationUpdate:
-    properties:
-      device_component_id:
-        example: 5
-        type: integer
-      indicator_id:
-        example: 2
-        type: integer
-    required:
-    - indicator_id
-    type: object
-  configurator_internal_dto.DeviceComponentCreate:
-    properties:
-      internal_order:
-        example: 1
-        type: integer
-      model_id:
-        example: 10
-        type: integer
-      parent_id:
-        example: 3
-        type: integer
-    required:
-    - model_id
-    type: object
-  configurator_internal_dto.DeviceComponentUpdate:
-    properties:
-      internal_order:
-        example: 2
-        type: integer
-      model_id:
-        example: 10
-        type: integer
-      parent_id:
-        example: 3
-        type: integer
-    required:
-    - model_id
-    type: object
-  configurator_internal_dto.DeviceIndicatorCreate:
-    properties:
-      contact:
-        example: sysadmin@company.com
-        type: string
-      description:
-        example: 'Hardware: x86 family'
-        type: string
-      location:
-        example: Server Room, Rack 3
-        type: string
-      name:
-        example: Core-Switch-01
-        type: string
-      object_id:
-        example: 1.3.6.1.4.1.9.1.516
-        type: string
-      services:
-        example: 72
-        type: integer
-    type: object
-  configurator_internal_dto.DeviceIndicatorUpdate:
-    properties:
-      contact:
-        example: sysadmin_new@company.com
-        type: string
-      description:
-        example: Updated Hardware info
-        type: string
-      location:
-        example: Server Room, Rack 4
-        type: string
-      name:
-        example: Core-Switch-01-Updated
-        type: string
-      object_id:
-        example: 1.3.6.1.4.1.9.1.516
-        type: string
-      services:
-        example: 74
-        type: integer
-    type: object
-  configurator_internal_dto.MappingCreate:
-    properties:
-      coefficient:
-        example: "1.5"
-        type: string
-      enum:
-        additionalProperties:
-          type: string
-        type: object
-      frequency:
-        example: MEDIUM
-        type: string
-      indicator_id:
-        example: 2
-        type: integer
-      param_id:
-        example: 5
-        type: integer
-    required:
-    - frequency
-    - indicator_id
-    - param_id
-    type: object
-  configurator_internal_dto.MappingUpdate:
-    properties:
-      coefficient:
-        example: "2.0"
-        type: string
-      enum:
-        additionalProperties:
-          type: string
-        type: object
-      frequency:
-        example: HIGH
-        type: string
-      indicator_id:
-        example: 2
-        type: integer
-      param_id:
-        example: 5
-        type: integer
-    required:
-    - frequency
-    - indicator_id
-    - param_id
-    type: object
-  configurator_internal_dto.OidPageResponse:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/configurator_internal_model.Oid'
-        type: array
-      page:
-        example: 1
-        type: integer
-      per_page:
-        example: 100
-        type: integer
-      total_items:
-        example: 450
-        type: integer
-    type: object
-  configurator_internal_dto.ParamCreate:
-    properties:
-      access:
-        example: USER
-        type: string
-      description_en:
-        example: Operational Voltage
-        type: string
-      description_ru:
-        example: Рабочее напряжение
-        type: string
-      name_en:
-        example: Voltage
-        type: string
-      name_ru:
-        example: Напряжение
-        type: string
-      saved:
-        example: true
-        type: boolean
-      title:
-        example: voltage
-        type: string
-      type:
-        example: NUMERIC
-        type: string
-      units_en:
-        example: V
-        type: string
-      units_ru:
-        example: В
-        type: string
-      value:
-        example: "220"
-        type: string
-      visible:
-        example: true
-        type: boolean
-    required:
-    - access
-    - name_en
-    - name_ru
-    - title
-    - type
-    type: object
-  configurator_internal_dto.ParamIndicatorCreate:
-    properties:
-      dotter_notation:
-        example: 1.3.6.1.2.1.1.1.0
-        type: string
-      oid_id:
-        example: 00000000-0000-0000-0000-000000000000
-        type: string
-    required:
-    - oid_id
-    type: object
-  configurator_internal_dto.ParamIndicatorUpdate:
-    properties:
-      dotter_notation:
-        example: 1.3.6.1.2.1.1.3.0
-        type: string
-      oid_id:
-        example: 00000000-0000-0000-0000-000000000000
-        type: string
-    required:
-    - oid_id
-    type: object
-  configurator_internal_dto.ParamUpdate:
-    properties:
-      access:
-        example: ADMIN
-        type: string
-      description_en:
-        example: Maximum operational voltage
-        type: string
-      description_ru:
-        example: Максимальное рабочее напряжение
-        type: string
-      name_en:
-        example: max_voltage
-        type: string
-      name_ru:
-        example: макс_напряжение
-        type: string
-      saved:
-        example: true
-        type: boolean
-      title:
-        example: Макс. Напряжение
-        type: string
-      type:
-        example: INT
-        type: string
-      units_en:
-        example: V
-        type: string
-      units_ru:
-        example: В
-        type: string
-      value:
-        example: "240"
-        type: string
-      visible:
-        example: true
-        type: boolean
-    required:
-    - access
-    - name_en
-    - name_ru
-    - title
-    - type
-    type: object
-  configurator_internal_dto.ThresholdCreate:
-    properties:
-      enabled:
-        example: true
-        type: boolean
-      level:
-        example: WARNING
-        type: string
-      operator:
-        example: ==
-        type: string
-      prev_operator:
-        example: '&&'
-        type: string
-      previous_id:
-        example: 2
-        type: integer
-      source_internal_order:
-        example: 1
-        type: integer
-      source_model:
-        example: 10
-        type: integer
-      source_param:
-        example: temperature
-        type: string
-      target_device:
-        example: 5
-        type: integer
-      target_param:
-        example: alarm_state
-        type: string
-      type:
-        example: INT
-        type: string
-      value:
-        example: "85"
-        type: string
-    required:
-    - level
-    - operator
-    - prev_operator
-    - source_internal_order
-    - source_model
-    - source_param
-    - type
-    - value
-    type: object
-  configurator_internal_dto.ThresholdUpdate:
-    properties:
-      enabled:
-        example: true
-        type: boolean
-      level:
-        example: ALARM
-        type: string
-      operator:
-        example: '>='
-        type: string
-      prev_operator:
-        example: '&&'
-        type: string
-      previous_id:
-        example: 2
-        type: integer
-      source_internal_order:
-        example: 1
-        type: integer
-      source_model:
-        example: 10
-        type: integer
-      source_param:
-        example: temperature
-        type: string
-      target_device:
-        example: 5
-        type: integer
-      target_param:
-        example: alarm_state
-        type: string
-      type:
-        example: INT
-        type: string
-      value:
-        example: "90"
-        type: string
-    required:
-    - level
-    - operator
-    - prev_operator
-    - source_internal_order
-    - source_model
-    - source_param
-    - type
-    - value
-    type: object
-  configurator_internal_model.Component:
-    properties:
-      access:
-        example: USER
-        type: string
-      base_component:
-        example: 1
-        type: integer
-      description_en:
-        example: Main power controller unit
-        type: string
-      description_ru:
-        example: Главный контроллер питания
-        type: string
+        x-nullable: true
       id:
-        example: 10
+        example: 1
         type: integer
       name_en:
-        example: power_module
+        example: component
         type: string
       name_ru:
-        example: модуль_питания
+        example: Компонент
         type: string
       params:
         items:
-          $ref: '#/definitions/configurator_internal_model.Param'
+          $ref: '#/definitions/configurator_internal_dto.ParamDto'
         type: array
+      plural_name_en:
+        example: Components
+        type: string
+      plural_name_ru:
+        example: Компоненты
+        type: string
       title:
-        example: Модуль Питания
+        example: Component
         type: string
     type: object
-  configurator_internal_model.Configuration:
-    properties:
-      device_component:
-        $ref: '#/definitions/configurator_internal_model.DeviceComponent'
-      id:
-        example: 1
-        type: integer
-      indicator:
-        $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
-      thresholds:
-        items:
-          $ref: '#/definitions/configurator_internal_model.Threshold'
-        type: array
-    type: object
-  configurator_internal_model.DefaultConfiguration:
-    properties:
-      device_component:
-        $ref: '#/definitions/configurator_internal_model.DeviceComponent'
-      id:
-        example: 1
-        type: integer
-      indicator:
-        $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
-      thresholds:
-        items:
-          $ref: '#/definitions/configurator_internal_model.Threshold'
-        type: array
-    type: object
-  configurator_internal_model.DeviceComponent:
-    properties:
-      components:
-        items:
-          $ref: '#/definitions/configurator_internal_model.DeviceComponent'
-        type: array
-      id:
-        example: 1
-        type: integer
-      internal_order:
-        example: 1
-        type: integer
-      mappings:
-        items:
-          $ref: '#/definitions/configurator_internal_model.Mapping'
-        type: array
-      model_id:
-        example: 10
-        type: integer
-      parent_id:
-        example: 3
-        type: integer
-    type: object
-  configurator_internal_model.DeviceIndicator:
-    properties:
-      contact:
-        example: sysadmin@company.com
-        type: string
-      description:
-        example: 'Hardware: x86 family'
-        type: string
-      id:
-        example: 1
-        type: integer
-      location:
-        example: Server Room, Rack 3
-        type: string
-      name:
-        example: Core-Switch-01
-        type: string
-      object_id:
-        example: 1.3.6.1.4.1.9.1.516
-        type: string
-      services:
-        example: 12
-        type: integer
-    type: object
-  configurator_internal_model.Mapping:
-    properties:
-      coefficient:
-        example: "1.500000000000"
-        type: string
-      enum:
-        additionalProperties:
-          type: string
-        type: object
-      frequency:
-        example: MEDIUM
-        type: string
-      id:
-        example: 1
-        type: integer
-      indicator:
-        $ref: '#/definitions/configurator_internal_model.ParamIndicator'
-      param:
-        $ref: '#/definitions/configurator_internal_model.Param'
-    type: object
-  configurator_internal_model.Oid:
+  configurator_internal_dto.ParamCreateDto:
     properties:
       access:
-        example: read-only
-        type: string
-      category:
-        example: system
-        type: string
-      description:
-        example: A textual description of the entity.
-        type: string
-      dotter_notation:
-        example: 1.3.6.1.2.1.1.1
-        type: string
-      enum:
-        type: object
-      id:
-        example: 00000000-0000-0000-0000-000000000000
-        type: string
-      mib_id:
-        example: 1
-        type: integer
-      name:
-        example: sysDescr
-        type: string
-      number:
-        example: 1
-        type: integer
-      object_descriptor:
-        example: 1.3.6.1.2.1.1.1
-        type: string
-      status:
-        example: current
-        type: string
-      syntax:
-        example: DisplayString
-        type: string
-      type:
-        example: OBJECT-TYPE
-        type: string
-      units:
-        example: seconds
-        type: string
-    type: object
-  configurator_internal_model.Param:
-    properties:
-      access:
-        example: ADMIN
+        example: USER
         type: string
       description_en:
-        example: Maximum operational voltage
         type: string
+        x-nullable: true
       description_ru:
-        example: Максимальное рабочее напряжение
         type: string
-      id:
-        example: 1
-        type: integer
+        x-nullable: true
       name_en:
-        example: max_voltage
+        example: name
         type: string
       name_ru:
-        example: макс_напряжение
+        example: Имя
         type: string
       saved:
         example: true
         type: boolean
       title:
-        example: Макс. Напряжение
+        example: Component name
         type: string
       type:
-        example: INT
+        example: VARCHAR
         type: string
       units_en:
-        example: V
         type: string
+        x-nullable: true
       units_ru:
-        example: В
         type: string
+        x-nullable: true
       value:
-        example: "220"
         type: string
+        x-nullable: true
+      visible:
+        example: true
+        type: boolean
+    required:
+    - access
+    - name_en
+    - name_ru
+    - title
+    - type
+    type: object
+  configurator_internal_dto.ParamDto:
+    properties:
+      access:
+        example: USER
+        type: string
+      description_en:
+        type: string
+        x-nullable: true
+      description_ru:
+        type: string
+        x-nullable: true
+      id:
+        example: 2
+        type: integer
+      name_en:
+        example: name
+        type: string
+      name_ru:
+        example: Имя
+        type: string
+      saved:
+        example: true
+        type: boolean
+      title:
+        example: Component name
+        type: string
+      type:
+        example: VARCHAR
+        type: string
+      units_en:
+        type: string
+        x-nullable: true
+      units_ru:
+        type: string
+        x-nullable: true
+      value:
+        type: string
+        x-nullable: true
       visible:
         example: true
         type: boolean
     type: object
-  configurator_internal_model.ParamIndicator:
+  configurator_internal_dto.ParamUpdateDto:
     properties:
-      dotter_notation:
-        example: 1.3.6.1.2.1.1.1.0
+      access:
+        example: USER
         type: string
+      description_en:
+        type: string
+        x-nullable: true
+      description_ru:
+        type: string
+        x-nullable: true
       id:
-        example: 1
-        type: integer
-      oid:
-        $ref: '#/definitions/configurator_internal_model.Oid'
-      oid_id:
-        example: 00000000-0000-0000-0000-000000000000
-        type: string
-    type: object
-  configurator_internal_model.Threshold:
-    properties:
-      enabled:
-        example: true
-        type: boolean
-      id:
-        example: 1
-        type: integer
-      level:
-        example: WARNING
-        type: string
-      operator:
-        example: ==
-        type: string
-      prev_operator:
-        example: '&&'
-        type: string
-      previous_id:
         example: 2
         type: integer
-      previous_threshold:
-        $ref: '#/definitions/configurator_internal_model.Threshold'
-      source_internal_order:
-        example: 1
-        type: integer
-      source_model:
-        example: 10
-        type: integer
-      source_param:
-        example: temperature
+      name_en:
+        example: name
         type: string
-      target_device:
-        example: 5
-        type: integer
-      target_param:
-        example: alarm_state
+      name_ru:
+        example: Имя
+        type: string
+      saved:
+        example: true
+        type: boolean
+      title:
+        example: Component name
         type: string
       type:
-        example: INT
+        example: VARCHAR
         type: string
+      units_en:
+        type: string
+        x-nullable: true
+      units_ru:
+        type: string
+        x-nullable: true
       value:
-        example: "85"
         type: string
+        x-nullable: true
+      visible:
+        example: true
+        type: boolean
     type: object
 host: localhost:8082
 info:
@@ -726,47 +263,24 @@ info:
   title: Configurator
   version: "1.0"
 paths:
-  /api/v1/components:
-    get:
-      description: Возвращает список всех составных частей устройств вместе со всеми
-        собственными и унаследованными параметрами
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.Component'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить все компоненты вместе с параметрами
-      tags:
-      - '1. Модельный каталог: Компоненты'
+  /api/v1/component:
     post:
       consumes:
       - application/json
-      description: Создает новую запись составной части устройства. Если base_component
-        равен null, создается базовый компонент.
       parameters:
-      - description: Данные компонента
+      - description: Данные узла
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/configurator_internal_dto.ComponentCreate'
+          $ref: '#/definitions/configurator_internal_dto.ComponentCreateDto'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/configurator_internal_model.Component'
+            $ref: '#/definitions/configurator_internal_dto.ComponentDto'
         "400":
           description: Bad Request
           schema:
@@ -779,15 +293,13 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Создать компонент
+      summary: Создать узел состава устройства
       tags:
       - '1. Модельный каталог: Компоненты'
-  /api/v1/components/{id}:
+  /api/v1/component/{id}:
     delete:
-      description: Удаляет компонент по ID, а также автоматически стирает всю иерархию
-        дочерних элементов
       parameters:
-      - description: ID Компонента
+      - description: ID Узла
         in: path
         name: id
         required: true
@@ -795,32 +307,12 @@ paths:
       responses:
         "204":
           description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить компонент и всех его наследников
+      summary: Удалить узел состава по ID
       tags:
       - '1. Модельный каталог: Компоненты'
     get:
-      description: Возвращает компонент и иерархически объединенный список его параметров
-        из БД
       parameters:
-      - description: ID Компонента
+      - description: ID Узла
         in: path
         name: id
         required: true
@@ -831,7 +323,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/configurator_internal_model.Component'
+            $ref: '#/definitions/configurator_internal_dto.ComponentDto'
         "400":
           description: Bad Request
           schema:
@@ -850,14 +342,14 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Получить компонент по ID
+      summary: Получить узел состава по ID
       tags:
       - '1. Модельный каталог: Компоненты'
     put:
       consumes:
       - application/json
       parameters:
-      - description: ID Компонента
+      - description: ID Узла
         in: path
         name: id
         required: true
@@ -867,39 +359,21 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/configurator_internal_dto.ComponentUpdate'
+          $ref: '#/definitions/configurator_internal_dto.ComponentUpdateDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/configurator_internal_model.Component'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Обновить компонент
+            $ref: '#/definitions/configurator_internal_dto.ComponentDto'
+      summary: Обновить узел состава по ID
       tags:
       - '1. Модельный каталог: Компоненты'
-  /api/v1/components/search:
+  /api/v1/component/search:
     get:
-      description: Ищет компоненты, у которых строка совпадает с title, name_en, name_ru,
-        description_en или description_ru
+      description: Ищет компоненты, у которых title, name_en, name_ru, description_en
+        или description_ru частично совпадают с переданной строкой query
       parameters:
       - description: Строка поиска
         in: query
@@ -913,24 +387,24 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/configurator_internal_model.Component'
+              $ref: '#/definitions/configurator_internal_dto.ComponentDto'
             type: array
         "400":
-          description: Bad Request
+          description: Пустой запрос
           schema:
             additionalProperties:
               type: string
             type: object
         "500":
-          description: Internal Server Error
+          description: Ошибка базы данных
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: Поиск компонентов по подстроке
+      summary: Поиск компонентов по строке
       tags:
       - '1. Модельный каталог: Компоненты'
-  /api/v1/configurations:
+  /api/v1/components:
     get:
       produces:
       - application/json
@@ -939,7 +413,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/configurator_internal_model.Configuration'
+              $ref: '#/definitions/configurator_internal_dto.ComponentDto'
             type: array
         "500":
           description: Internal Server Error
@@ -947,1262 +421,10 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Получить все рабочие конфигурации
-      tags:
-      - '11. Конфигурация: Конфигурации устройств'
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Данные конфигурации
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.ConfigurationCreate'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Возвращает полностью раскрытое содержание созданной конфигурации
-          schema:
-            $ref: '#/definitions/configurator_internal_model.Configuration'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Создать рабочую конфигурацию
-      tags:
-      - '11. Конфигурация: Конфигурации устройств'
-  /api/v1/configurations/{id}:
-    delete:
-      parameters:
-      - description: ID Конфигурации
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить рабочую конфигурацию по ID
-      tags:
-      - '11. Конфигурация: Конфигурации устройств'
-    get:
-      parameters:
-      - description: ID Конфигурации
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Возвращает полностью раскрытое содержание
-          schema:
-            $ref: '#/definitions/configurator_internal_model.Configuration'
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить рабочую конфигурацию по ID
-      tags:
-      - '11. Конфигурация: Конфигурации устройств'
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID Конфигурации
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Новые данные
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.ConfigurationUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Возвращает полностью раскрытое обновленное содержание
-          schema:
-            $ref: '#/definitions/configurator_internal_model.Configuration'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Обновить рабочую конфигурацию по ID
-      tags:
-      - '11. Конфигурация: Конфигурации устройств'
-  /api/v1/configurations/bind:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID конфигурации и ID порога (используем BindParamRequest для
-          совместимости структуры)
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.BindParamRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Привязать порог к рабочей конфигурации
-      tags:
-      - '14. Конфигурация: Привязка порога к рабочей конфигурации'
-  /api/v1/configurations/bind/{configurationId}/{thresholdId}:
-    delete:
-      parameters:
-      - description: ID Рабочей конфигурации
-        in: path
-        name: configurationId
-        required: true
-        type: integer
-      - description: ID Порога
-        in: path
-        name: thresholdId
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить связь рабочей конфигурации с порогом
-      tags:
-      - '14. Конфигурация: Привязка порога к рабочей конфигурации'
-  /api/v1/default-configurations:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.DefaultConfiguration'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить все конфигурации по умолчанию
-      tags:
-      - '10. Конфигурация: Конфигурации по-умолчанию'
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Данные конфигурации
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.ConfigurationCreate'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Возвращает полностью раскрытое содержание созданной конфигурации
-          schema:
-            $ref: '#/definitions/configurator_internal_model.DefaultConfiguration'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Создать конфигурацию по умолчанию
-      tags:
-      - '10. Конфигурация: Конфигурации по-умолчанию'
-  /api/v1/default-configurations/{id}:
-    delete:
-      parameters:
-      - description: ID Конфигурации
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить дефолтную конфигурацию по ID
-      tags:
-      - '10. Конфигурация: Конфигурации по-умолчанию'
-    get:
-      parameters:
-      - description: ID Конфигурации
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Возвращает полностью раскрытое содержание
-          schema:
-            $ref: '#/definitions/configurator_internal_model.DefaultConfiguration'
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить дефолтную конфигурацию по ID
-      tags:
-      - '10. Конфигурация: Конфигурации по-умолчанию'
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID Конфигурации
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Новые данные
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.ConfigurationUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Возвращает полностью раскрытое обновленное содержание
-          schema:
-            $ref: '#/definitions/configurator_internal_model.DefaultConfiguration'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Обновить конфигурацию по умолчанию по ID
-      tags:
-      - '10. Конфигурация: Конфигурации по-умолчанию'
-  /api/v1/default-configurations/bind:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID конфигурации и ID порога
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.BindParamRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Привязать порог к конфигурации по умолчанию
-      tags:
-      - '13. Конфигурация: Привязка порога к конфигурации по умолчанию'
-  /api/v1/default-configurations/bind/{defaultConfigurationId}/{thresholdId}:
-    delete:
-      parameters:
-      - description: ID Дефолтной конфигурации
-        in: path
-        name: defaultConfigurationId
-        required: true
-        type: integer
-      - description: ID Порога
-        in: path
-        name: thresholdId
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить связь конфигурации по умолчанию с порогом
-      tags:
-      - '13. Конфигурация: Привязка порога к конфигурации по умолчанию'
-  /api/v1/device-components:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.DeviceComponent'
-            type: array
       summary: Получить всю структуру подчиненности устройств
       tags:
-      - '8. Конфигурация: Структура компонентов устройства'
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Данные узла
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.DeviceComponentCreate'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/configurator_internal_model.DeviceComponent'
-      summary: Создать узел состава устройства
-      tags:
-      - '8. Конфигурация: Структура компонентов устройства'
-  /api/v1/device-components/{id}:
-    delete:
-      parameters:
-      - description: ID Узла
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-      summary: Удалить узел состава по ID
-      tags:
-      - '8. Конфигурация: Структура компонентов устройства'
-    get:
-      parameters:
-      - description: ID Узла
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.DeviceComponent'
-      summary: Получить узел состава по ID
-      tags:
-      - '8. Конфигурация: Структура компонентов устройства'
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID Узла
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Новые данные
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.DeviceComponentUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.DeviceComponent'
-      summary: Обновить узел состава по ID
-      tags:
-      - '8. Конфигурация: Структура компонентов устройства'
-  /api/v1/device-components/bind:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Данные связывания
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.BindDeviceMappingRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Связать узел устройства с сопоставлением параметра
-      tags:
-      - '9. Конфигурация: Связь компонентов устройства и сопоставлений параметров'
-  /api/v1/device-components/bind/{deviceComponentId}/{mappingId}:
-    delete:
-      parameters:
-      - description: ID Узла
-        in: path
-        name: deviceComponentId
-        required: true
-        type: integer
-      - description: ID Маппинга
-        in: path
-        name: mappingId
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-      summary: Удалить связь узла устройства с сопоставлением параметра
-      tags:
-      - '9. Конфигурация: Связь компонентов устройства и сопоставлений параметров'
-  /api/v1/indicators:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить все индикаторы устройств
-      tags:
-      - '5. Конфигурация: Индикаторы устройств'
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Данные индикатора
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorCreate'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Создать индикатор устройства
-      tags:
-      - '5. Конфигурация: Индикаторы устройств'
-  /api/v1/indicators/{id}:
-    delete:
-      parameters:
-      - description: ID Индикатора
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить индикатор по ID
-      tags:
-      - '5. Конфигурация: Индикаторы устройств'
-    get:
-      parameters:
-      - description: ID Индикатора
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить индикатор по ID
-      tags:
-      - '5. Конфигурация: Индикаторы устройств'
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID Индикатора
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Новые данные
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.DeviceIndicator'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Обновить индикатор по ID
-      tags:
-      - '5. Конфигурация: Индикаторы устройств'
-  /api/v1/mappings:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.Mapping'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить все сопоставления
-      tags:
-      - '7. Конфигурация: Сопоставления параметров'
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Данные сопоставления
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.MappingCreate'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/configurator_internal_model.Mapping'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Создать сопоставление
-      tags:
-      - '7. Конфигурация: Сопоставления параметров'
-  /api/v1/mappings/{id}:
-    delete:
-      parameters:
-      - description: ID сопоставления
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить сопоставление по ID
-      tags:
-      - '7. Конфигурация: Сопоставления параметров'
-    get:
-      parameters:
-      - description: ID сопоставления
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.Mapping'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить сопоставление по ID
-      tags:
-      - '7. Конфигурация: Сопоставления параметров'
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID сопоставления
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Новые данные
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.MappingUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.Mapping'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Обновить сопоставление по ID
-      tags:
-      - '7. Конфигурация: Сопоставления параметров'
-  /api/v1/oids/exact:
-    get:
-      parameters:
-      - description: Точная dotter_notation
-        in: query
-        name: notation
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.Oid'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Поиск OID по dotter notation
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/oids/exact-with-mib:
-    get:
-      parameters:
-      - description: Точная dotter_notation
-        in: query
-        name: notation
-        required: true
-        type: string
-      - description: Точное название MIB
-        in: query
-        name: mib
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.Oid'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Поиск OID по dotter notation и названию MIB
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/oids/exact-with-mib-and-vendor:
-    get:
-      parameters:
-      - description: Точная dotter_notation
-        in: query
-        name: notation
-        required: true
-        type: string
-      - description: Точное название MIB
-        in: query
-        name: mib
-        required: true
-        type: string
-      - description: Имя или директория вендора (передайте null или оставьте пустым
-          для фильтрации по NULL вендорам)
-        in: query
-        name: vendor
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.Oid'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Поиск OID по dotter notation, названию MIB и производителю
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/oids/mib:
-    get:
-      parameters:
-      - description: Название MIB
-        in: query
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.Oid'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить OID по названию MIB
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/oids/prefix:
-    get:
-      description: Возвращает отсортированный по dotter notation список OID (по 100
-        на страницу)
-      parameters:
-      - description: Префикс dotter_notation
-        in: query
-        name: prefix
-        required: true
-        type: string
-      - description: 'Номер страницы (дефолт: 1)'
-        in: query
-        name: page
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_dto.OidPageResponse'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Поиск OID по префиксу с пагинацией
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/oids/vendor:
-    get:
-      description: Находит производителя в кэше памяти, выгружает OID, сортирует и
-        отдаёт по 100 штук на страницу
-      parameters:
-      - description: Имя вендора или его директория
-        in: query
-        name: identity
-        required: true
-        type: string
-      - description: 'Номер страницы (дефолт: 1)'
-        in: query
-        name: page
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_dto.OidPageResponse'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить OID по производителю с пагинацией
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/param-indicators:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.ParamIndicator'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить все индикаторы параметров
-      tags:
-      - '6. Конфигурация: Индикаторы параметров'
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Данные
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.ParamIndicatorCreate'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/configurator_internal_model.ParamIndicator'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Создать индикатор параметров
-      tags:
-      - '6. Конфигурация: Индикаторы параметров'
-  /api/v1/param-indicators/{id}:
-    delete:
-      parameters:
-      - description: ID Индикатора
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить индикатор параметров по ID
-      tags:
-      - '6. Конфигурация: Индикаторы параметров'
-    get:
-      parameters:
-      - description: ID Индикатора
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.ParamIndicator'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить индикатор параметров по ID
-      tags:
-      - '6. Конфигурация: Индикаторы параметров'
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID Индикатора
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Новые данные
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.ParamIndicatorUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.ParamIndicator'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Обновить индикатор параметров по ID
-      tags:
-      - '6. Конфигурация: Индикаторы параметров'
-  /api/v1/params:
+      - '1. Модельный каталог: Компоненты'
+  /api/v1/param:
     post:
       consumes:
       - application/json
@@ -2213,14 +435,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/configurator_internal_dto.ParamCreate'
+          $ref: '#/definitions/configurator_internal_dto.ParamCreateDto'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/configurator_internal_model.Param'
+            $ref: '#/definitions/configurator_internal_dto.ParamDto'
         "400":
           description: Ошибка валидации
           schema:
@@ -2236,7 +458,7 @@ paths:
       summary: Создать параметр
       tags:
       - '2. Модельный каталог: Параметры'
-  /api/v1/params/{id}:
+  /api/v1/param/{id}:
     delete:
       parameters:
       - description: ID Параметра
@@ -2281,7 +503,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/configurator_internal_model.Param'
+            $ref: '#/definitions/configurator_internal_dto.ParamDto'
         "400":
           description: Неверный формат ID
           schema:
@@ -2317,14 +539,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/configurator_internal_dto.ParamUpdate'
+          $ref: '#/definitions/configurator_internal_dto.ParamUpdateDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/configurator_internal_model.Param'
+            $ref: '#/definitions/configurator_internal_dto.ParamDto'
         "400":
           description: Ошибка валидации или неверный ID
           schema:
@@ -2346,7 +568,7 @@ paths:
       summary: Обновить параметр
       tags:
       - '2. Модельный каталог: Параметры'
-  /api/v1/params/search:
+  /api/v1/param/search:
     get:
       description: Ищет параметры, у которых title, name_en, name_ru, description_en
         или description_ru частично совпадают с переданной строкой query
@@ -2363,7 +585,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/configurator_internal_model.Param'
+              $ref: '#/definitions/configurator_internal_dto.ParamDto'
             type: array
         "400":
           description: Пустой запрос
@@ -2380,7 +602,7 @@ paths:
       summary: Поиск параметров по строке
       tags:
       - '2. Модельный каталог: Параметры'
-  /api/v1/params/unattached:
+  /api/v1/param/unattached:
     get:
       description: Возвращает список всех параметров, которые не привязаны ни к одной
         составной части устройства
@@ -2391,7 +613,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/configurator_internal_model.Param'
+              $ref: '#/definitions/configurator_internal_dto.ParamDto'
             type: array
         "500":
           description: Ошибка базы данных
@@ -2402,7 +624,27 @@ paths:
       summary: Получить непривязанные параметры
       tags:
       - '2. Модельный каталог: Параметры'
-  /api/v1/relations:
+  /api/v1/params:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.ParamDto'
+            type: array
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все параметры
+      tags:
+      - '2. Модельный каталог: Параметры'
+  /api/v1/relation:
     post:
       consumes:
       - application/json
@@ -2413,7 +655,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/configurator_internal_dto.BindParamRequest'
+          $ref: '#/definitions/configurator_internal_dto.ComponentParamLinkDto'
       produces:
       - application/json
       responses:
@@ -2438,7 +680,7 @@ paths:
       summary: Связать компонент с параметром
       tags:
       - '3. Модельный каталог: Связи'
-  /api/v1/relations/{componentId}/{paramId}:
+  /api/v1/relation/{componentId}/{paramId}:
     delete:
       description: Удаляет запись из таблицы public.component_param
       parameters:
@@ -2476,192 +718,6 @@ paths:
       summary: Удалить связь компонента с параметром
       tags:
       - '3. Модельный каталог: Связи'
-  /api/v1/save-result:
-    post:
-      consumes:
-      - application/json
-      description: Выгружает данные основных таблиц в структурированные .sql файлы
-        в директорию 'sql' в корне проекта
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Сообщение об успешном создании файла
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Ошибка валидации данных
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Внутренняя ошибка при записи файла или чтении БД
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Экспортировать результаты в SQL скрипт
-      tags:
-      - '15. Результат: Экспортировать БД в SQL скрипт'
-  /api/v1/thresholds:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_model.Threshold'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить все пороги
-      tags:
-      - '12. Конфигурация: Пороги'
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Данные порога
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.ThresholdCreate'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Возвращает раскрытую цепочку условий
-          schema:
-            $ref: '#/definitions/configurator_internal_model.Threshold'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Создать порог
-      tags:
-      - '12. Конфигурация: Пороги'
-  /api/v1/thresholds/{id}:
-    delete:
-      parameters:
-      - description: ID Порога
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить порог по ID
-      tags:
-      - '12. Конфигурация: Пороги'
-    get:
-      parameters:
-      - description: ID Порога
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.Threshold'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить порог по ID вместе со всей цепочкой родителей
-      tags:
-      - '12. Конфигурация: Пороги'
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID Порога
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Новые данные
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.ThresholdUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_model.Threshold'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Обновить порог по ID
-      tags:
-      - '12. Конфигурация: Пороги'
 swagger: "2.0"
 tags:
 - name: '1. Модельный каталог: Компоненты'

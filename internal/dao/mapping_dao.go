@@ -1,17 +1,6 @@
 package dao
 
-import (
-	"configurator/internal/database"
-	"configurator/internal/dto"
-	"configurator/internal/model"
-	"context"
-	"encoding/json"
-	"errors"
-
-	"github.com/jackc/pgx/v5"
-)
-
-func CreateMapping(ctx context.Context, d dto.MappingCreate) (*model.Mapping, error) {
+/*func CreateMapping(ctx context.Context, d dto.MappingCreate) (*model.Mapping, error) {
 	conn := database.Get()
 	insertQuery := `
 		INSERT INTO public.mapping (indicator, param, frequency, coefficient, enum)
@@ -178,7 +167,7 @@ func GetAllMappings(ctx context.Context) ([]model.Mapping, error) {
 func UpdateMapping(ctx context.Context, id int64, d dto.MappingUpdate) (*model.Mapping, error) {
 	conn := database.Get()
 	query := `
-		UPDATE public.mapping 
+		UPDATE public.mapping
 		SET indicator = $1, param = $2, frequency = $3, coefficient = $4, enum = $5
 		WHERE id = $6
 		RETURNING id`
@@ -215,3 +204,4 @@ func unmarshalFullMapping(jsonBytes []byte) (*model.Mapping, error) {
 	}
 	return &m, nil
 }
+*/

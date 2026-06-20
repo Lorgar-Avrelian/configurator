@@ -1,17 +1,6 @@
 package dao
 
-import (
-	"configurator/internal/database"
-	"configurator/internal/dto"
-	"configurator/internal/model"
-	"context"
-	"database/sql"
-	"errors"
-
-	"github.com/jackc/pgx/v5"
-)
-
-// Вспомогательная функция для маппинга Null-типов в указатели Go структуры
+/*// Вспомогательная функция для маппинга Null-типов в указатели Go структуры
 func mapRowToIndicator(id int64, desc, obj, cont, name, loc sql.NullString, serv sql.NullInt16) model.DeviceIndicator {
 	ind := model.DeviceIndicator{ID: id}
 	if desc.Valid {
@@ -109,7 +98,7 @@ func GetAllIndicators(ctx context.Context) ([]model.DeviceIndicator, error) {
 func UpdateIndicator(ctx context.Context, id int64, d dto.DeviceIndicatorUpdate) (*model.DeviceIndicator, error) {
 	conn := database.Get()
 	query := `
-		UPDATE public.device_indicator 
+		UPDATE public.device_indicator
 		SET description = $1, object_id = $2, contact = $3, name = $4, location = $5, services = $6
 		WHERE id = $7
 		RETURNING id, description, object_id, contact, name, location, services`
@@ -135,4 +124,4 @@ func DeleteIndicator(ctx context.Context, id int64) (bool, error) {
 		return false, err
 	}
 	return commandTag.RowsAffected() > 0, nil
-}
+}*/

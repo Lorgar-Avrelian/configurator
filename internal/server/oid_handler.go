@@ -1,18 +1,6 @@
 package server
 
-import (
-	"configurator/internal/dao"
-	"configurator/internal/dto"
-	"configurator/internal/logger"
-	"configurator/internal/model"
-	"net/http"
-	"sort"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
-)
-
-// GetOidsByExactNotation возвращает OID по точному совпадению dotter notation
+/*// GetOidsByExactNotation возвращает OID по точному совпадению dotter notation
 // @Summary         Поиск OID по dotter notation
 // @Tags            4. Парсер: OID
 // @Produce         json
@@ -228,3 +216,4 @@ func GetOidsByDotterMibAndVendor(c *gin.Context) {
 	})
 	c.JSON(http.StatusOK, res)
 }
+*/

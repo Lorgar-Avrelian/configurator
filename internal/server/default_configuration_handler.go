@@ -1,19 +1,10 @@
 package server
 
 import (
-	"configurator/internal/dao"
-	"configurator/internal/dto"
-	"configurator/internal/logger"
-	"configurator/internal/model"
-	"net/http"
-	"strconv"
-
 	_ "configurator/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
-// CreateDefaultConfiguration создает конфигурацию по умолчанию
+/*// CreateDefaultConfiguration создает конфигурацию по умолчанию
 // @Summary         Создать конфигурацию по умолчанию
 // @Tags            10. Конфигурация: Конфигурации по-умолчанию
 // @Accept          json
@@ -131,3 +122,4 @@ func DeleteDefaultConfiguration(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+*/

@@ -2,37 +2,39 @@ package server
 
 import (
 	"configurator/internal/logger"
+	"configurator/internal/service"
 	"net/http"
 	"strconv"
 
-	"configurator/internal/dao"
 	"configurator/internal/dto"
 	_ "configurator/internal/model"
 
 	"github.com/gin-gonic/gin"
 )
 
-// CreateParam создает новый параметр
+// CreateParam создаёт новый параметр
 // @Summary         Создать параметр
 // @Description     Создает новый системный параметр в таблице public.param
 // @Tags            2. Модельный каталог: Параметры
 // @Accept          json
 // @Produce         json
-// @Param           request body dto.ParamCreate true "Данные параметра"
-// @Success         201  {object}  model.Param
+// @Param           request body dto.ParamCreateDto true "Данные параметра"
+// @Success         201  {object}  dto.ParamDto
 // @Failure         400  {object}  map[string]string "Ошибка валидации"
 // @Failure         500  {object}  map[string]string "Ошибка базы данных"
-// @Router          /api/v1/params [post]
+// @Router          /api/v1/param [post]
 func CreateParam(c *gin.Context) {
-	var input dto.ParamCreate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при создании параметра: %v", err)
+	var input dto.ParamCreateDto
+	var err error
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during parameter creation: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	res, err := dao.CreateParam(c.Request.Context(), input)
+	var res *dto.ParamDto
+	res, err = service.CreateParam(c.Request.Context(), input)
 	if err != nil {
-		logger.Error("Ошибка DAO при создании параметра: %v", err)
+		logger.Error("Service error occurred while creating parameter: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -44,62 +46,68 @@ func CreateParam(c *gin.Context) {
 // @Tags            2. Модельный каталог: Параметры
 // @Produce         json
 // @Param           id   path      int  true  "ID Параметра"
-// @Success         200  {object}  model.Param
+// @Success         200  {object}  dto.ParamDto
 // @Failure         400  {object}  map[string]string "Неверный формат ID"
 // @Failure         404  {object}  map[string]string "Параметр не найден"
 // @Failure         500  {object}  map[string]string "Ошибка базы данных"
-// @Router          /api/v1/params/{id} [get]
+// @Router          /api/v1/param/{id} [get]
 func GetParam(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID параметра"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid parameter ID format"})
 		return
 	}
-	res, err := dao.GetParamByID(c.Request.Context(), id)
+	var res *dto.ParamDto
+	res, err = service.GetParamByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при получении параметра %d: %v", id, err)
+		logger.Error("Service error occurred while retrieving parameter %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Параметр не найден"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Parameter not found"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// UpdateParam обновляет параметры
+// UpdateParam обновляет параметр
 // @Summary         Обновить параметр
 // @Tags            2. Модельный каталог: Параметры
 // @Accept          json
 // @Produce         json
 // @Param           id      path      int  true  "ID Параметра"
-// @Param           request body dto.ParamUpdate true "Новые данные"
-// @Success         200  {object}  model.Param
+// @Param           request body dto.ParamUpdateDto true "Новые данные"
+// @Success         200  {object}  dto.ParamDto
 // @Failure         400  {object}  map[string]string "Ошибка валидации или неверный ID"
 // @Failure         404  {object}  map[string]string "Параметр не найден"
 // @Failure         500  {object}  map[string]string "Ошибка базы данных"
-// @Router          /api/v1/params/{id} [put]
+// @Router          /api/v1/param/{id} [put]
 func UpdateParam(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID параметра"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid parameter ID format"})
 		return
 	}
-	var input dto.ParamUpdate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при обновлении параметра %d: %v", err)
+	var input dto.ParamUpdateDto
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during parameter update for ID %d: %v", id, err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	res, err := dao.UpdateParam(c.Request.Context(), id, input)
+	var res *dto.ParamDto
+	res, err = service.UpdateParam(c.Request.Context(), id, input)
 	if err != nil {
-		logger.Error("Ошибка DAO при обновлении параметра %d: %v", id, err)
+		logger.Error("Service error occurred while updating parameter %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Параметр не найден для обновления"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Parameter not found for update"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -113,24 +121,46 @@ func UpdateParam(c *gin.Context) {
 // @Failure         400  {object}  map[string]string "Неверный формат ID"
 // @Failure         404  {object}  map[string]string "Параметр не найден"
 // @Failure         500  {object}  map[string]string "Ошибка базы данных"
-// @Router          /api/v1/params/{id} [delete]
+// @Router          /api/v1/param/{id} [delete]
 func DeleteParam(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID параметра"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid parameter ID format"})
 		return
 	}
-	found, err := dao.DeleteParam(c.Request.Context(), id)
+	var found bool
+	found, err = service.DeleteParam(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при удалении параметра %d: %v", id, err)
+		logger.Error("Service error occurred while deleting parameter %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Параметр не найден"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Parameter not found"})
 		return
 	}
 	c.Status(http.StatusNoContent)
+}
+
+// GetAllParams возвращает все параметры модельного каталога
+// @Summary         Получить все параметры
+// @Tags            2. Модельный каталог: Параметры
+// @Produce         json
+// @Success         200  {array}   dto.ParamDto
+// @Failure         500  {object}  map[string]string "Ошибка базы данных"
+// @Router          /api/v1/params [get]
+func GetAllParams(c *gin.Context) {
+	var res []dto.ParamDto
+	var err error
+	res, err = service.GetAllParams(c.Request.Context())
+	if err != nil {
+		logger.Error("Service error occurred while retrieving all parameters: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, res)
 }
 
 // GetUnattachedParams возвращает параметры без связей
@@ -138,13 +168,15 @@ func DeleteParam(c *gin.Context) {
 // @Description		Возвращает список всех параметров, которые не привязаны ни к одной составной части устройства
 // @Tags            2. Модельный каталог: Параметры
 // @Produce			json
-// @Success			200   {array}   model.Param
+// @Success			200   {array}   dto.ParamDto
 // @Failure			500  {object}  map[string]string "Ошибка базы данных"
-// @Router			/api/v1/params/unattached [get]
+// @Router			/api/v1/param/unattached [get]
 func GetUnattachedParams(c *gin.Context) {
-	res, err := dao.GetUnattachedParams(c.Request.Context())
+	var res []dto.ParamDto
+	var err error
+	res, err = service.GetUnattachedParams(c.Request.Context())
 	if err != nil {
-		logger.Error("Ошибка DAO при получении непривязанных параметров: %v", err)
+		logger.Error("Service error occurred while retrieving unattached parameters: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -157,19 +189,22 @@ func GetUnattachedParams(c *gin.Context) {
 // @Tags            2. Модельный каталог: Параметры
 // @Produce         json
 // @Param           query query     string  true  "Строка поиска"
-// @Success         200   {array}   model.Param
+// @Success         200   {array}   dto.ParamDto
 // @Failure         400   {object}  map[string]string "Пустой запрос"
 // @Failure         500   {object}  map[string]string "Ошибка базы данных"
-// @Router          /api/v1/params/search [get]
+// @Router          /api/v1/param/search [get]
 func SearchParams(c *gin.Context) {
-	q := c.Query("query")
-	if q == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Параметр 'query' не должен быть пустым"})
+	var queryText string
+	queryText = c.Query("query")
+	if queryText == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query parameter cannot be empty"})
 		return
 	}
-	res, err := dao.SearchParams(c.Request.Context(), q)
+	var res []dto.ParamDto
+	var err error
+	res, err = service.SearchParams(c.Request.Context(), queryText)
 	if err != nil {
-		logger.Error("Ошибка DAO при поиске параметров по запросу '%s': %v", q, err)
+		logger.Error("Service error occurred while searching parameters for query '%s': %v", queryText, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

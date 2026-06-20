@@ -1,16 +1,6 @@
 package dao
 
-import (
-	"configurator/internal/database"
-	"configurator/internal/model"
-	"context"
-	"database/sql"
-	"encoding/json"
-
-	"github.com/jackc/pgx/v5"
-)
-
-func scanOidRows(pgxRows pgx.Rows) ([]model.Oid, error) {
+/*func scanOidRows(pgxRows pgx.Rows) ([]model.Oid, error) {
 	var oids []model.Oid
 	for pgxRows.Next() {
 		var o model.Oid
@@ -80,7 +70,7 @@ func GetOidsByDotterPrefix(ctx context.Context, prefix string) ([]model.Oid, err
 func GetOidsByMibName(ctx context.Context, mibName string) ([]model.Oid, error) {
 	conn := database.Get()
 	query := `
-		SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category 
+		SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
 		FROM public.oid o
 		JOIN public.mib m ON o.mib = m.id
 		WHERE m.name = $1`
@@ -95,7 +85,7 @@ func GetOidsByMibName(ctx context.Context, mibName string) ([]model.Oid, error) 
 func GetOidsByVendorID(ctx context.Context, vID model.VendorID) ([]model.Oid, error) {
 	conn := database.Get()
 	query := `
-		SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category 
+		SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
 		FROM public.oid o
 		JOIN public.mib m ON o.mib = m.id
 		WHERE m.vendor = $1`
@@ -111,7 +101,7 @@ func GetOidsByVendorID(ctx context.Context, vID model.VendorID) ([]model.Oid, er
 func GetOidsByDotterAndMibName(ctx context.Context, dotter string, mibName string) ([]model.Oid, error) {
 	conn := database.Get()
 	query := `
-		SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category 
+		SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
 		FROM public.oid o
 		JOIN public.mib m ON o.mib = m.id
 		WHERE o.dotter_notation = $1 AND m.name = $2`
@@ -130,14 +120,14 @@ func GetOidsByDotterMibAndVendor(ctx context.Context, dotter string, mibName str
 	var err error
 	if vendorIdentity == nil {
 		query := `
-			SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category 
+			SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
 			FROM public.oid o
 			JOIN public.mib m ON o.mib = m.id
 			WHERE o.dotter_notation = $1 AND m.name = $2 AND m.vendor IS NULL`
 		rows, err = conn.Query(ctx, query, dotter, mibName)
 	} else {
 		query := `
-			SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category 
+			SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
 			FROM public.oid o
 			JOIN public.mib m ON o.mib = m.id
 			JOIN public.vendor v ON m.vendor = v.id
@@ -150,3 +140,4 @@ func GetOidsByDotterMibAndVendor(ctx context.Context, dotter string, mibName str
 	defer rows.Close()
 	return scanOidRows(rows)
 }
+*/

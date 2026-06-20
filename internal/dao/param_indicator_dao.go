@@ -1,19 +1,6 @@
 package dao
 
-import (
-	"configurator/internal/database"
-	"configurator/internal/dto"
-	"configurator/internal/model"
-	"context"
-	"database/sql"
-	"encoding/json"
-	"errors"
-
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
-)
-
-func CreateParamIndicator(ctx context.Context, d dto.ParamIndicatorCreate) (*model.ParamIndicator, error) {
+/*func CreateParamIndicator(ctx context.Context, d dto.ParamIndicatorCreate) (*model.ParamIndicator, error) {
 	conn := database.Get()
 	query := `
 		WITH inserted AS (
@@ -21,7 +8,7 @@ func CreateParamIndicator(ctx context.Context, d dto.ParamIndicatorCreate) (*mod
 			VALUES ($1, $2)
 			RETURNING id, oid_id, dotter_notation
 		)
-		SELECT 
+		SELECT
 			i.id, i.oid_id, i.dotter_notation,
 			o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor,
 			o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
@@ -232,12 +219,12 @@ func UpdateParamIndicator(ctx context.Context, id int64, d dto.ParamIndicatorUpd
 	conn := database.Get()
 	query := `
 		WITH updated AS (
-			UPDATE public.param_indicator 
+			UPDATE public.param_indicator
 			SET oid_id = $1, dotter_notation = $2
 			WHERE id = $3
 			RETURNING id, oid_id, dotter_notation
 		)
-		SELECT 
+		SELECT
 			u.id, u.oid_id, u.dotter_notation,
 			o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor,
 			o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
@@ -310,3 +297,4 @@ func DeleteParamIndicator(ctx context.Context, id int64) (bool, error) {
 	}
 	return commandTag.RowsAffected() > 0, nil
 }
+*/

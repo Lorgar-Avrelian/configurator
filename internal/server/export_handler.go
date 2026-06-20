@@ -1,14 +1,6 @@
 package server
 
-import (
-	"configurator/internal/dao"
-	"configurator/internal/logger"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-)
-
-// SaveResult выгружает содержание основных таблиц в файлы формата SQL
+/*// SaveResult выгружает содержание основных таблиц в файлы формата SQL
 // @Summary         Экспортировать результаты в SQL скрипт
 // @Description     Выгружает данные основных таблиц в структурированные .sql файлы в директорию 'sql' в корне проекта
 // @Tags            15. Результат: Экспортировать БД в SQL скрипт
@@ -31,3 +23,4 @@ func SaveResult(c *gin.Context) {
 		"directory": "sql/",
 	})
 }
+*/

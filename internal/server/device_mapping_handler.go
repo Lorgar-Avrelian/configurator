@@ -1,16 +1,6 @@
 package server
 
-import (
-	"configurator/internal/dao"
-	"configurator/internal/dto"
-	"configurator/internal/logger"
-	"net/http"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
-)
-
-// BindDeviceMapping связывает узловой компонент и сопоставление параметра
+/*// BindDeviceMapping связывает узловой компонент и сопоставление параметра
 // @Summary         Связать узел устройства с сопоставлением параметра
 // @Tags            9. Конфигурация: Связь компонентов устройства и сопоставлений параметров
 // @Accept          json
@@ -60,3 +50,4 @@ func UnbindDeviceMapping(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+*/

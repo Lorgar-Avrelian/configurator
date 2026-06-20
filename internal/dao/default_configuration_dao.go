@@ -1,17 +1,6 @@
 package dao
 
-import (
-	"configurator/internal/database"
-	"configurator/internal/dto"
-	"configurator/internal/model"
-	"context"
-	"database/sql"
-	"errors"
-
-	"github.com/jackc/pgx/v5"
-)
-
-func CreateDefaultConfiguration(ctx context.Context, d dto.ConfigurationCreate) (int64, error) {
+/*func CreateDefaultConfiguration(ctx context.Context, d dto.ConfigurationCreate) (int64, error) {
 	conn := database.Get()
 	query := `INSERT INTO public.default_configuration (indicator, device_component_id) VALUES ($1, $2) RETURNING id`
 	var dcID sql.NullInt64
@@ -92,3 +81,4 @@ func UnbindDefaultConfigThreshold(ctx context.Context, defCfgID, tID int64) (boo
 	}
 	return tag.RowsAffected() > 0, nil
 }
+*/

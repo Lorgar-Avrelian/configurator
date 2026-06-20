@@ -1,20 +1,6 @@
 package dao
 
-import (
-	"configurator/internal/database"
-	"configurator/internal/dto"
-	"configurator/internal/logger"
-	"configurator/internal/model"
-	"context"
-	"database/sql"
-	"encoding/json"
-	"errors"
-	"fmt"
-
-	"github.com/jackc/pgx/v5"
-)
-
-type ConfigFlatRow struct {
+/*type ConfigFlatRow struct {
 	ConfigID  int64
 	IndID     sql.NullInt64
 	IndDesc   sql.NullString
@@ -203,7 +189,7 @@ func executeGenericConfigSelect(ctx context.Context, table string, idFilter int6
 			LEFT JOIN public.logic_operator lo_prev ON t.prev_operator = lo_prev.id
 			GROUP BY ct.%s
 		)
-		SELECT 
+		SELECT
 			cfg.id,
 			i.id, i.description, i.object_id, i.contact, i.name, i.location, i.services,
 			dt.id, dt.model, dt.internal_order, dt.parent,
@@ -364,3 +350,4 @@ func UnbindConfigThreshold(ctx context.Context, cfgID, tID int64) (bool, error) 
 	}
 	return tag.RowsAffected() > 0, nil
 }
+*/

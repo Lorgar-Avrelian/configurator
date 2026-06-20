@@ -1,0 +1,162 @@
+package dao
+
+import (
+	"configurator/internal/database"
+	"configurator/internal/logger"
+	"configurator/internal/model"
+	"context"
+	"database/sql"
+	"encoding/json"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+func LoadEnumsFromDB(ctx context.Context) error {
+	var conn *pgxpool.Pool
+	conn = database.Get()
+	var accessMap map[int16]string
+	var err error
+	accessMap, err = fetchSimpleEnum(ctx, conn, "public.access")
+	if err != nil {
+		return err
+	}
+	var alarmMap map[int16]string
+	alarmMap, err = fetchSimpleEnum(ctx, conn, "public.alarm_level")
+	if err != nil {
+		return err
+	}
+	var asn1Map map[int16]string
+	asn1Map, err = fetchSimpleEnum(ctx, conn, "public.asn1_type")
+	if err != nil {
+		return err
+	}
+	var logicMap map[int16]string
+	logicMap, err = fetchSimpleEnum(ctx, conn, "public.logic_operator")
+	if err != nil {
+		return err
+	}
+	var oidAccessMap map[int16]string
+	oidAccessMap, err = fetchSimpleEnum(ctx, conn, "public.oid_access")
+	if err != nil {
+		return err
+	}
+	var statusMap map[int16]string
+	statusMap, err = fetchSimpleEnum(ctx, conn, "public.oid_status")
+	if err != nil {
+		return err
+	}
+	var pollMap map[int16]string
+	pollMap, err = fetchSimpleEnum(ctx, conn, "public.polling_frequency")
+	if err != nil {
+		return err
+	}
+	var varTypeMap map[int16]string
+	varTypeMap, err = fetchSimpleEnum(ctx, conn, "public.var_type")
+	if err != nil {
+		return err
+	}
+	var vendors []map[string]interface{}
+	vendors, err = fetchVendorsList(ctx, conn)
+	if err != nil {
+		return err
+	}
+	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicMap, alarmMap, vendors)
+	logger.Info("System registries successfully loaded from DB: access=%d, alarms=%d, asn1=%d, logic=%d, oid_access=%d, status=%d, frequencies=%d, types=%d, vendors=%d", len(accessMap), len(alarmMap), len(asn1Map), len(logicMap), len(oidAccessMap), len(statusMap), len(pollMap), len(varTypeMap), len(vendors))
+	return nil
+}
+
+func fetchSimpleEnum(ctx context.Context, conn *pgxpool.Pool, table string) (map[int16]string, error) {
+	var query string
+	query = `SELECT "id", "value" FROM ` + table
+	var rows pgx.Rows
+	var err error
+	rows, err = conn.Query(ctx, query)
+	if err != nil {
+		logger.Error("Failed to fetch enum from table %s: %v", table, err)
+		return nil, err
+	}
+	defer rows.Close()
+	var m map[int16]string
+	m = make(map[int16]string)
+	var id int16
+	var val string
+	for rows.Next() {
+		err = rows.Scan(&id, &val)
+		if err != nil {
+			return nil, err
+		}
+		m[id] = val
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func fetchVendorsList(ctx context.Context, conn *pgxpool.Pool) ([]map[string]interface{}, error) {
+	var query string
+	query = `SELECT "id", "name", "number", "contact", "email", "directory" FROM public.vendor`
+	var rows pgx.Rows
+	var err error
+	rows, err = conn.Query(ctx, query)
+	if err != nil {
+		logger.Error("Failed to fetch vendors from DB: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	var list []map[string]interface{}
+	list = []map[string]interface{}{}
+	var id int64
+	var name string
+	var num int32
+	var dir sql.NullString
+	var email sql.NullString
+	var contact sql.NullString
+	for rows.Next() {
+		err = rows.Scan(&id, &name, &num, &contact, &email, &dir)
+		if err != nil {
+			return nil, err
+		}
+		var item map[string]interface{}
+		item = map[string]interface{}{
+			"id":        id,
+			"name":      name,
+			"number":    num,
+			"contact":   contact,
+			"email":     email,
+			"directory": dir,
+		}
+		list = append(list, item)
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+func stringToNull(s string) sql.NullString {
+	var ns sql.NullString
+	ns = sql.NullString{
+		String: s,
+		Valid:  s != "",
+	}
+	return ns
+}
+
+func mapToJSONB(m *map[string]string) ([]byte, error) {
+	var hasData bool
+	hasData = m != nil && len(*m) > 0
+	if !hasData {
+		return nil, nil
+	}
+	var bytes []byte
+	var err error
+	bytes, err = json.Marshal(m)
+	if err != nil {
+		return nil, err
+	}
+	return bytes, nil
+}

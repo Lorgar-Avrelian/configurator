@@ -1,17 +1,6 @@
 package dao
 
-import (
-	"configurator/internal/database"
-	"configurator/internal/dto"
-	"configurator/internal/model"
-	"context"
-	"database/sql"
-	"errors"
-
-	"github.com/jackc/pgx/v5"
-)
-
-type thresholdFlatRow struct {
+/*type thresholdFlatRow struct {
 	ID                  int64
 	SourceModel         int64
 	SourceInternalOrder int64
@@ -105,7 +94,7 @@ func GetDetailedThresholdByID(ctx context.Context, id int64) (*model.Threshold, 
 	conn := database.Get()
 	query := `
 		WITH RECURSIVE threshold_chain AS (
-			SELECT id, source_model, source_internal_order, source_param, value, type, operator, enabled, target_param, target_device, level, prev_operator, previous 
+			SELECT id, source_model, source_internal_order, source_param, value, type, operator, enabled, target_param, target_device, level, prev_operator, previous
 			FROM public.threshold WHERE id = $1
 			UNION ALL
 			SELECT t.id, t.source_model, t.source_internal_order, t.source_param, t.value, t.type, t.operator, t.enabled, t.target_param, t.target_device, t.level, t.prev_operator, t.previous
@@ -204,3 +193,4 @@ func toNullInt64(i *int64) sql.NullInt64 {
 	}
 	return sql.NullInt64{Int64: *i, Valid: true}
 }
+*/

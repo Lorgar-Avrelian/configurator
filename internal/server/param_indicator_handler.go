@@ -1,18 +1,10 @@
 package server
 
 import (
-	"configurator/internal/dao"
-	"configurator/internal/dto"
-	"configurator/internal/logger"
-	"net/http"
-	"strconv"
-
 	_ "configurator/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
-// CreateParamIndicator создает индикатор параметров
+/*// CreateParamIndicator создает индикатор параметров
 // @Summary         Создать индикатор параметров
 // @Tags            6. Конфигурация: Индикаторы параметров
 // @Accept          json
@@ -148,3 +140,4 @@ func DeleteParamIndicator(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+*/

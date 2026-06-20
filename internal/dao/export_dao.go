@@ -1,20 +1,6 @@
 package dao
 
-import (
-	"configurator/internal/database"
-	"context"
-	"database/sql"
-	"fmt"
-	"os"
-	"path/filepath"
-	"reflect"
-	"strconv"
-	"strings"
-
-	"golang.org/x/sync/errgroup"
-)
-
-var allTablesForExport = []string{
+/*var allTablesForExport = []string{
 	"public.polling_protocol", "public.access", "public.version_snmp",
 	"public.auth_protocol_snmp", "public.privacy_protocol_snmp", "public.oid_type",
 	"public.logic_operator", "public.alarm_level", "public.var_type",
@@ -57,15 +43,15 @@ func ExportDatabaseToSqlFiles(ctx context.Context) error {
 			cleanTableName = parts[1]
 		}
 		colQuery := `
-			SELECT 
-				column_name, 
-				data_type, 
-				is_nullable, 
+			SELECT
+				column_name,
+				data_type,
+				is_nullable,
 				character_maximum_length,
 				is_identity,
 				udt_name
-			FROM information_schema.columns 
-			WHERE table_schema = $1 AND table_name = $2 
+			FROM information_schema.columns
+			WHERE table_schema = $1 AND table_name = $2
 			ORDER BY ordinal_position`
 		colRows, err := conn.Query(ctx, colQuery, schema, cleanTableName)
 		if err != nil {
@@ -234,7 +220,7 @@ func ExportDatabaseToSqlFiles(ctx context.Context) error {
 	if err := g.Wait(); err != nil {
 		return fmt.Errorf("parallel file writing encountered an error: %w", err)
 	}
-	return ExportConstraintsToSqlFile(ctx)
+	return exportConstraintsToSqlFile(ctx)
 }
 
 func isNumericType(t string) bool {
@@ -456,7 +442,7 @@ func getStructTypeByTableName(name string) (reflect.Type, bool) {
 	return reflect.TypeOf(v), true
 }
 
-func ExportConstraintsToSqlFile(ctx context.Context) error {
+func exportConstraintsToSqlFile(ctx context.Context) error {
 	conn := database.Get()
 	outputDir := "sql"
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
@@ -469,7 +455,7 @@ func ExportConstraintsToSqlFile(ctx context.Context) error {
 	}
 	defer f.Close()
 	query := `
-		SELECT 
+		SELECT
 			ns.nspname AS table_schema,
 			conrel.relname AS table_name,
 			con.conname AS constraint_name,
@@ -477,7 +463,7 @@ func ExportConstraintsToSqlFile(ctx context.Context) error {
 		FROM pg_catalog.pg_constraint con
 		INNER JOIN pg_catalog.pg_class conrel ON conrel.oid = con.conrelid
 		INNER JOIN pg_catalog.pg_namespace ns ON ns.oid = conrel.relnamespace
-		WHERE ns.nspname = 'public' 
+		WHERE ns.nspname = 'public'
 		  AND con.contype IN ('f', 'u')
 		ORDER BY con.contype DESC, conrel.relname, con.conname`
 	rows, err := conn.Query(ctx, query)
@@ -597,3 +583,4 @@ func quoteIdentifier(s string) string {
 	}
 	return fmt.Sprintf("\"%s\"", s)
 }
+*/

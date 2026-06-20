@@ -1,17 +1,10 @@
 package server
 
 import (
-	"configurator/internal/dao"
-	"configurator/internal/dto"
-	"net/http"
-	"strconv"
-
 	_ "configurator/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
-// CreateThreshold создает порог
+/*// CreateThreshold создает порог
 // @Summary         Создать порог
 // @Tags            12. Конфигурация: Пороги
 // @Accept          json
@@ -137,3 +130,4 @@ func DeleteThreshold(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+*/

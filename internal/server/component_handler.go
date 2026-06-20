@@ -2,214 +2,184 @@ package server
 
 import (
 	"configurator/internal/logger"
+	"configurator/internal/service"
 	"net/http"
 	"strconv"
 
-	"configurator/internal/dao"
 	"configurator/internal/dto"
 	_ "configurator/internal/model"
 
 	"github.com/gin-gonic/gin"
 )
 
-// CreateComponent создает новый компонент
-// @Summary         Создать компонент
-// @Description     Создает новую запись составной части устройства. Если base_component равен null, создается базовый компонент.
+// CreateComponent создаёт новый узел состава устройства
+// @Summary         Создать узел состава устройства
 // @Tags            1. Модельный каталог: Компоненты
 // @Accept          json
 // @Produce         json
-// @Param           request body dto.ComponentCreate true "Данные компонента"
-// @Success         201  {object}  model.Component
+// @Param           request body dto.ComponentCreateDto true "Данные узла"
+// @Success         201  {object}  dto.ComponentDto
 // @Failure         400  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/components [post]
+// @Router          /api/v1/component [post]
 func CreateComponent(c *gin.Context) {
-	var input dto.ComponentCreate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при создании компонента: %v", err)
+	var input dto.ComponentCreateDto
+	var err error
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during component creation: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	res, err := dao.CreateComponent(c.Request.Context(), input)
+	var res *dto.ComponentDto
+	res, err = service.CreateComponent(c.Request.Context(), input)
 	if err != nil {
-		logger.Error("Ошибка DAO при создании компонента: %v", err)
+		logger.Error("Service error occurred while creating component: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, res)
 }
 
-// GetComponent возвращает компонент со всеми его параметрами (включая наследуемые)
-// @Summary         Получить компонент по ID
-// @Description     Возвращает компонент и иерархически объединенный список его параметров из БД
+// GetComponent возвращает узел состава по ID вместе с маппингами
+// @Summary         Получить узел состава по ID
 // @Tags            1. Модельный каталог: Компоненты
 // @Produce         json
-// @Param           id   path      int  true  "ID Компонента"
-// @Success         200  {object}  model.Component
+// @Param           id   path      int  true  "ID Узла"
+// @Success         200  {object}  dto.ComponentDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/components/{id} [get]
+// @Router          /api/v1/component/{id} [get]
 func GetComponent(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID компонента"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid component ID format"})
 		return
 	}
-	res, err := dao.GetComponentByID(c.Request.Context(), id)
+	var res *dto.ComponentDto
+	res, err = service.GetComponentByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при получении компонента %d: %v", id, err)
+		logger.Error("Service error occurred while retrieving component %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Компонент не найден"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Component not found"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// GetAllComponents возвращает все компоненты с их параметрами
-// @Summary         Получить все компоненты вместе с параметрами
-// @Description     Возвращает список всех составных частей устройств вместе со всеми собственными и унаследованными параметрами
-// @Tags            1. Модельный каталог: Компоненты
-// @Produce         json
-// @Success         200  {array}   model.Component
-// @Failure         500  {object}  map[string]string
-// @Router          /api/v1/components [get]
-func GetAllComponents(c *gin.Context) {
-	res, err := dao.GetAllComponentsWithParams(c.Request.Context())
-	if err != nil {
-		logger.Error("Ошибка DAO при получении списка всех компонентов: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, res)
-}
-
-// SearchComponents осуществляет полнотекстовый поиск компонентов по совпадению строки
-// @Summary         Поиск компонентов по подстроке
-// @Description     Ищет компоненты, у которых строка совпадает с title, name_en, name_ru, description_en или description_ru
-// @Tags            1. Модельный каталог: Компоненты
-// @Produce         json
-// @Param           query query     string true  "Строка поиска"
-// @Success         200  {array}   model.Component
-// @Failure         400  {object}  map[string]string
-// @Failure         500  {object}  map[string]string
-// @Router          /api/v1/components/search [get]
-func SearchComponents(c *gin.Context) {
-	queryText := c.Query("query")
-	if queryText == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Параметр поиска 'query' не может быть пустым"})
-		return
-	}
-	res, err := dao.SearchComponents(c.Request.Context(), queryText)
-	if err != nil {
-		logger.Error("Ошибка DAO при поиске компонентов по запросу '%s': %v", queryText, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, res)
-}
-
-// UpdateComponent обновляет существующий компонент
-// @Summary         Обновить компонент
+// UpdateComponent обновляет метаданные узла
+// @Summary         Обновить узел состава по ID
 // @Tags            1. Модельный каталог: Компоненты
 // @Accept          json
 // @Produce         json
-// @Param           id      path      int  true  "ID Компонента"
-// @Param           request body dto.ComponentUpdate true "Новые данные"
-// @Success         200  {object}  model.Component
-// @Failure         400  {object}  map[string]string
-// @Failure         404  {object}  map[string]string
-// @Failure         500  {object}  map[string]string
-// @Router          /api/v1/components/{id} [put]
+// @Param           id      path      int  true  "ID Узла"
+// @Param           request body dto.ComponentUpdateDto true "Новые данные"
+// @Success         200  {object}  dto.ComponentDto
+// @Router          /api/v1/component/{id} [put]
 func UpdateComponent(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID компонента"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid component ID format"})
 		return
 	}
-	var input dto.ComponentUpdate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при обновлении компонента %d: %v", err)
+	var input dto.ComponentUpdateDto
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during component update for ID %d: %v", id, err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	res, err := dao.UpdateComponent(c.Request.Context(), id, input)
+	var res *dto.ComponentDto
+	res, err = service.UpdateComponent(c.Request.Context(), id, input)
 	if err != nil {
-		logger.Error("Ошибка DAO при обновлении компонента %d: %v", id, err)
+		logger.Error("Service error occurred while updating component %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Компонент не найден для обновления"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Component not found for update"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// DeleteComponent удаляет компонент рекурсивно со всеми его наследниками
-// @Summary         Удалить компонент и всех его наследников
-// @Description     Удаляет компонент по ID, а также автоматически стирает всю иерархию дочерних элементов
+// DeleteComponent удаляет узел из дерева подчиненности
+// @Summary         Удалить узел состава по ID
 // @Tags            1. Модельный каталог: Компоненты
-// @Param           id   path      int  true  "ID Компонента"
+// @Param           id   path      int  true  "ID Узла"
 // @Success         204  "No Content"
-// @Failure         400  {object}  map[string]string
-// @Failure         404  {object}  map[string]string
-// @Failure         500  {object}  map[string]string
-// @Router          /api/v1/components/{id} [delete]
+// @Router          /api/v1/component/{id} [delete]
 func DeleteComponent(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID компонента"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid component ID format"})
 		return
 	}
-	found, err := dao.DeleteComponent(c.Request.Context(), id)
+	var found bool
+	found, err = service.DeleteComponent(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при удалении компонента %d: %v", id, err)
+		logger.Error("Service error occurred while deleting component %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Компонент не найден"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Component not found"})
 		return
 	}
 	c.Status(http.StatusNoContent)
 }
 
-/*// ShiftComponent сдвигает компонент вверх или вниз по списку ID
-// @Summary         Переместить компонент в списке компонентов
-// @Description     Меняет ID указанного компонента с соседним в зависимости от направления (up/down) с каскадным обновлением связей. Проверяет условие base_component > id.
+// GetAllComponents возвращает все узлы с их маппингами параметров
+// @Summary         Получить всю структуру подчиненности устройств
 // @Tags            1. Модельный каталог: Компоненты
 // @Produce         json
-// @Param           id        path      int     true  "ID компонента"
-// @Param           target_id query     int     true  "Целевой ID"
-// @Success         200       {object}  map[string]string "Сообщение об успешном сдвиге"
-// @Failure         400       {object}  map[string]string "Неверный ID, нарушение иерархии или параметров"
-// @Failure         404       {object}  map[string]string "Компонент или целевой ID не найден"
-// @Failure         500       {object}  map[string]string "Внутренняя ошибка сервера"
-// @Router          /api/v1/components/{id}/shift [patch]
-func ShiftComponent(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+// @Success         200  {array}   dto.ComponentDto
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/components [get]
+func GetAllComponents(c *gin.Context) {
+	var res []dto.ComponentDto
+	var err error
+	res, err = service.GetAllComponents(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID компонента"})
+		logger.Error("Service error occurred while retrieving all components: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	targetID, err := strconv.ParseInt(c.Query("target_id"), 10, 64)
+	c.JSON(http.StatusOK, res)
+}
+
+// SearchComponents выполняет полнотекстовый поиск компонента
+// @Summary         Поиск компонентов по строке
+// @Description     Ищет компоненты, у которых title, name_en, name_ru, description_en или description_ru частично совпадают с переданной строкой query
+// @Tags            1. Модельный каталог: Компоненты
+// @Produce         json
+// @Param           query query     string  true  "Строка поиска"
+// @Success         200   {array}   dto.ComponentDto
+// @Failure         400   {object}  map[string]string "Пустой запрос"
+// @Failure         500   {object}  map[string]string "Ошибка базы данных"
+// @Router          /api/v1/component/search [get]
+func SearchComponents(c *gin.Context) {
+	var queryText string
+	queryText = c.Query("query")
+	if queryText == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query parameter cannot be empty"})
+		return
+	}
+	var res []dto.ComponentDto
+	var err error
+	res, err = service.SearchComponents(c.Request.Context(), queryText)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный target_id"})
+		logger.Error("Service error occurred while searching components for query '%s': %v", queryText, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	moved, err := dao.ShiftComponent(c.Request.Context(), id, targetID)
-	if err != nil {
-		logger.Error("Ошибка при сдвиге компонента %d к %d: %v", id, targetID, err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	if !moved {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Компонент или целевая позиция не найдены"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "Компонент успешно сдвинут на целевую позицию"})
-}*/
+	c.JSON(http.StatusOK, res)
+}

@@ -1,18 +1,10 @@
 package server
 
 import (
-	"configurator/internal/dao"
-	"configurator/internal/dto"
-	"configurator/internal/logger"
-	"net/http"
-	"strconv"
-
 	_ "configurator/internal/model"
-
-	"github.com/gin-gonic/gin"
 )
 
-// CreateDeviceComponent создает новый узел состава устройства
+/*// CreateDeviceComponent создает новый узел состава устройства
 // @Summary         Создать узел состава устройства
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Accept          json
@@ -136,3 +128,4 @@ func DeleteDeviceComponent(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+*/
