@@ -75,32 +75,3 @@ func UnbindParam(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
-
-// GetComponentsByParam возвращает список компонентов, к которым напрямую привязан параметр
-// @Summary         Получить компоненты по ID параметра
-// @Description     Возвращает список компонентов, для которых параметр с данным ID является их собственным, а не унаследованным
-// @Tags            3. Модельный каталог: Связи
-// @Produce         json
-// @Param           id   path      int  true  "ID Параметра"
-// @Success         200  {array}   dto.ComponentDto
-// @Failure         400  {object}  map[string]string "Неверный формат ID"
-// @Failure         500  {object}  map[string]string "Ошибка базы данных"
-// @Router          /api/v1/relation/search/{id} [get]
-func GetComponentsByParam(c *gin.Context) {
-	var id int64
-	var err error
-	id = 0
-	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid parameter ID format"})
-		return
-	}
-	var res []dto.ComponentDto
-	res, err = service.GetComponentsByDirectParamID(c.Request.Context(), id)
-	if err != nil {
-		logger.Error("Service error occurred while fetching components for direct param %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, res)
-}

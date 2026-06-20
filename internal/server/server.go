@@ -40,6 +40,7 @@ func NewServer() *Server {
 			param.POST("", CreateParam)
 			param.GET("/unattached", GetUnattachedParams)
 			param.GET("/search", SearchParams)
+			param.GET("/search/:id", GetComponentsByParam)
 			param.GET("/:id", GetParam)
 			param.PUT("/:id", UpdateParam)
 			param.DELETE("/:id", DeleteParam)
@@ -49,7 +50,6 @@ func NewServer() *Server {
 		{
 			relation.POST("", BindParam)
 			relation.DELETE("/:componentId/:paramId", UnbindParam)
-			relation.GET("/search/:id", GetComponentsByParam)
 		}
 	}
 	return &Server{router: r}

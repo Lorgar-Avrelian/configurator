@@ -602,6 +602,40 @@ paths:
       summary: Поиск параметров по строке
       tags:
       - '2. Модельный каталог: Параметры'
+  /api/v1/param/search/{id}:
+    get:
+      description: Возвращает список компонентов, для которых параметр с данным ID
+        является их собственным, а не унаследованным
+      parameters:
+      - description: ID Параметра
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.ComponentDto'
+            type: array
+        "400":
+          description: Неверный формат ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка базы данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить компоненты по ID параметра
+      tags:
+      - '2. Модельный каталог: Параметры'
   /api/v1/param/unattached:
     get:
       description: Возвращает список всех параметров, которые не привязаны ни к одной
@@ -716,40 +750,6 @@ paths:
               type: string
             type: object
       summary: Удалить связь компонента с параметром
-      tags:
-      - '3. Модельный каталог: Связи'
-  /api/v1/relation/search/{id}:
-    get:
-      description: Возвращает список компонентов, для которых параметр с данным ID
-        является их собственным, а не унаследованным
-      parameters:
-      - description: ID Параметра
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_dto.ComponentDto'
-            type: array
-        "400":
-          description: Неверный формат ID
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Ошибка базы данных
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить компоненты по ID параметра
       tags:
       - '3. Модельный каталог: Связи'
 swagger: "2.0"

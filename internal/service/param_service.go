@@ -113,3 +113,15 @@ func SearchParams(ctx context.Context, query string) ([]dto.ParamDto, error) {
 	}
 	return res, nil
 }
+
+func GetComponentsByDirectParamID(ctx context.Context, paramID int64) ([]dto.ComponentDto, error) {
+	var arr []dao.ComponentDao
+	var err error
+	arr, err = dao.GetComponentsByDirectParamID(ctx, paramID)
+	if err != nil {
+		return nil, err
+	}
+	var res []dto.ComponentDto
+	res = mapper.ComponentDaoArrayToComponentDtoArray(arr)
+	return res, nil
+}

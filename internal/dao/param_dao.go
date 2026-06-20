@@ -163,3 +163,29 @@ func SearchParams(ctx context.Context, queryText string) ([]ParamDao, error) {
 	}
 	return list, rows.Err()
 }
+
+func GetComponentsByDirectParamID(ctx context.Context, paramID int64) ([]ComponentDao, error) {
+	var conn *pgxpool.Pool
+	conn = database.Get()
+	var query string
+	query = `SELECT c."id", c."title", c."name_en", c."name_ru", c."plural_name_en", c."plural_name_ru", c."base_component", c."description_en", c."description_ru", c."access" FROM public.component c JOIN public.component_param cp ON c."id" = cp."component_id" WHERE cp."param_id" = $1 ORDER BY c."id" ASC`
+	var rows pgx.Rows
+	var err error
+	rows, err = conn.Query(ctx, query, paramID)
+	if err != nil {
+		logger.Error("Failed to fetch components by direct param ID %d: %v", paramID, err)
+		return nil, err
+	}
+	defer rows.Close()
+	var list []ComponentDao
+	list = []ComponentDao{}
+	var c ComponentDao
+	for rows.Next() {
+		err = rows.Scan(&c.ID, &c.Title, &c.NameEn, &c.NameRu, &c.PluralNameEn, &c.PluralNameRu, &c.BaseComponent, &c.DescriptionEn, &c.DescriptionRu, &c.Access)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, c)
+	}
+	return list, rows.Err()
+}
