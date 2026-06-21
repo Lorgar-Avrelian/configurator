@@ -190,5 +190,6 @@ type DeviceComponentDto struct {
 	Component     ComponentInfoDto     `json:"component"`
 	InternalOrder *int32               `json:"internal_order" swaggertype:"integer" extensions:"x-nullable" example:"1"`
 	Parent        *int64               `json:"parent" swaggertype:"integer" extensions:"x-nullable"`
+	Mappings      []MappingDto         `json:"mappings"`
 	Children      []DeviceComponentDto `json:"children"`
 }

@@ -158,3 +158,46 @@ func DeleteDeviceComponent(ctx context.Context, id int64) (bool, error) {
 	}
 	return affected > 0, nil
 }
+
+func GetMappingsByDeviceComponentID(ctx context.Context, devCompID int64) ([]Mapping, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	var list []Mapping
+	var m Mapping
+	conn = database.Get()
+	query = `WITH RECURSIVE mapping_branches AS (
+			     SELECT m."id", m."indicator", m."param", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type"
+			     FROM public.mapping m
+			         JOIN public.device_component_mapping dcm ON m."id" = dcm."mapping_id"
+			     WHERE dcm."device_component_id" = $1
+			     UNION ALL
+			     SELECT m."id", m."indicator", m."param", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type"
+			     FROM public.mapping m
+			         JOIN mapping_branches mb ON m."from" = mb."id"
+			 )
+			 SELECT mb."id", mb."indicator", mb."param", mb."frequency", mb."value", mb."coefficient", mb."enum", mb."position", mb."from", mb."position_type",
+			        pi."oid_id", pi."dotter_notation", o."mib", mib."path", mib."name", mib."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category",
+			        p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+			 FROM mapping_branches mb
+			     LEFT JOIN public.param_indicator pi ON mb."indicator" = pi."id"
+			     LEFT JOIN public.oid o ON pi."oid_id" = o."id"
+			     LEFT JOIN public.mib mib ON o."mib" = mib."id"
+			     LEFT JOIN public.param p ON mb."param" = p."id"`
+	rows, err = conn.Query(ctx, query, devCompID)
+	if err != nil {
+		logger.Error("Failed to fetch recursive mappings for device component: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	list = []Mapping{}
+	for rows.Next() {
+		err = rows.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, m)
+	}
+	return list, rows.Err()
+}

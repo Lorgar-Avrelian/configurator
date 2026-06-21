@@ -59,7 +59,7 @@ func GetDeviceComponentByID(ctx context.Context, id int64) (*dto.DeviceComponent
 	if !found {
 		return nil, nil
 	}
-	buildDeviceComponentTree(&targetRoot, childrenMap)
+	buildDeviceComponentTree(ctx, &targetRoot, childrenMap)
 	return &targetRoot, nil
 }
 
@@ -88,7 +88,7 @@ func GetAllDeviceComponents(ctx context.Context) ([]dto.DeviceComponentDto, erro
 	roots = []dto.DeviceComponentDto{}
 	for _, d = range flatDto {
 		if d.Parent == nil {
-			buildDeviceComponentTree(&d, childrenMap)
+			buildDeviceComponentTree(ctx, &d, childrenMap)
 			roots = append(roots, d)
 		}
 	}
@@ -118,7 +118,8 @@ func DeleteDeviceComponent(ctx context.Context, id int64) (bool, error) {
 	return found, err
 }
 
-func buildDeviceComponentTree(parent *dto.DeviceComponentDto, childrenMap map[int64][]dto.DeviceComponentDto) {
+func buildDeviceComponentTree(ctx context.Context, parent *dto.DeviceComponentDto, childrenMap map[int64][]dto.DeviceComponentDto) {
+	enrichComponentWithMappings(ctx, parent)
 	var directChildren []dto.DeviceComponentDto
 	var ok bool
 	directChildren, ok = childrenMap[parent.ID]
@@ -145,7 +146,43 @@ func buildDeviceComponentTree(parent *dto.DeviceComponentDto, childrenMap map[in
 	var child dto.DeviceComponentDto
 	for i = 0; len(directChildren) > i; i++ {
 		child = directChildren[i]
-		buildDeviceComponentTree(&child, childrenMap)
+		buildDeviceComponentTree(ctx, &child, childrenMap)
 		parent.Children = append(parent.Children, child)
 	}
+}
+
+func enrichComponentWithMappings(ctx context.Context, node *dto.DeviceComponentDto) {
+	var dbMappings []dao.Mapping
+	var err error
+	dbMappings, err = dao.GetMappingsByDeviceComponentID(ctx, node.ID)
+	if err != nil || len(dbMappings) == 0 {
+		node.Mappings = []dto.MappingDto{}
+		return
+	}
+	var flatDto []dto.MappingDto
+	var item dao.Mapping
+	flatDto = []dto.MappingDto{}
+	for _, item = range dbMappings {
+		flatDto = append(flatDto, mapper.MappingToMappingDto(item))
+	}
+	var childrenMap map[int64][]dto.MappingDto
+	var d dto.MappingDto
+	childrenMap = make(map[int64][]dto.MappingDto)
+	for _, d = range flatDto {
+		if d.From != nil {
+			childrenMap[*d.From] = append(childrenMap[*d.From], d)
+		}
+	}
+	var roots []dto.MappingDto
+	roots = []dto.MappingDto{}
+	for _, d = range flatDto {
+		if d.From == nil {
+			buildMappingTree(&d, childrenMap)
+			roots = append(roots, d)
+		}
+	}
+	sort.Slice(roots, func(i, j int) bool {
+		return roots[j].ID > roots[i].ID
+	})
+	node.Mappings = roots
 }

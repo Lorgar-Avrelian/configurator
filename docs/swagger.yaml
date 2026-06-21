@@ -166,6 +166,10 @@ definitions:
         example: 1
         type: integer
         x-nullable: true
+      mappings:
+        items:
+          $ref: '#/definitions/configurator_internal_dto.MappingDto'
+        type: array
       parent:
         type: integer
         x-nullable: true

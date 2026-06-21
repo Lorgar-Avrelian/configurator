@@ -2252,6 +2252,12 @@ const docTemplate = `{
                     "x-nullable": true,
                     "example": 1
                 },
+                "mappings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/configurator_internal_dto.MappingDto"
+                    }
+                },
                 "parent": {
                     "type": "integer",
                     "x-nullable": true
