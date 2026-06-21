@@ -885,6 +885,87 @@ paths:
       summary: Получить изолированную составную часть устройства по ID
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
+  /api/v1/device-component/bind/{deviceComponentId}/{mappingId}:
+    delete:
+      parameters:
+      - description: ID составной части
+        in: path
+        name: deviceComponentId
+        required: true
+        type: integer
+      - description: ID сопоставления
+        in: path
+        name: mappingId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить связь составной части устройства с сопоставлением параметра
+      tags:
+      - '9. Конфигурация: Связь компонентов устройства и сопоставлений параметров'
+    post:
+      parameters:
+      - description: ID составной части
+        in: path
+        name: deviceComponentId
+        required: true
+        type: integer
+      - description: ID сопоставления
+        in: path
+        name: mappingId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Связать составную часть устройства с сопоставлением параметра
+      tags:
+      - '9. Конфигурация: Связь компонентов устройства и сопоставлений параметров'
   /api/v1/device-components:
     get:
       produces:

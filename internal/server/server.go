@@ -78,12 +78,12 @@ func NewServer() *Server {
 			indicatorParam.PUT("/:id", UpdateParamIndicator)
 			indicatorParam.DELETE("/:id", DeleteParamIndicator)
 		}
+		v1.GET("/mappings", GetAllMappings)
 		var mapping *gin.RouterGroup
 		mapping = v1.Group("/mapping")
 		{
 			mapping.POST("", CreateMapping)
 			mapping.GET("/:id", GetMapping)
-			mapping.GET("/:id/own", GetMappingOwn)
 			mapping.PUT("/:id", UpdateMapping)
 			mapping.DELETE("/:id", DeleteMapping)
 		}
@@ -96,6 +96,12 @@ func NewServer() *Server {
 			deviceComponent.GET("/:id/own", GetDeviceComponentOwn)
 			deviceComponent.PUT("/:id", UpdateDeviceComponent)
 			deviceComponent.DELETE("/:id", DeleteDeviceComponent)
+		}
+		var devCompBind *gin.RouterGroup
+		devCompBind = v1.Group("/device-component/bind")
+		{
+			devCompBind.POST("/:deviceComponentId/:mappingId", BindDeviceMapping)
+			devCompBind.DELETE("/:deviceComponentId/:mappingId", UnbindDeviceMapping)
 		}
 	}
 	return &Server{router: r}
