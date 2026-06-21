@@ -11,12 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CreateDeviceComponent создает новый узел состава устройства
-// @Summary         Создать узел состава устройства
+// CreateDeviceComponent создаёт новую составную часть устройства
+// @Summary         Создать составную часть устройства
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Accept          json
 // @Produce         json
-// @Param           request body dto.DeviceComponentCreateDto true "Данные узла"
+// @Param           request body dto.DeviceComponentCreateDto true "Данные составной части"
 // @Success         201  {object}  dto.DeviceComponentDto
 // @Failure         400  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
@@ -39,11 +39,11 @@ func CreateDeviceComponent(c *gin.Context) {
 	c.JSON(http.StatusCreated, res)
 }
 
-// GetDeviceComponent возвращает узел состава по ID вместе с иерархией подчиненности
-// @Summary         Получить узел состава по ID
+// GetDeviceComponent возвращает составную часть устройства по ID с указанием положения внутри структуры устройства
+// @Summary         Получить составную часть устройства по ID
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Produce         json
-// @Param           id   path      int  true  "ID Узла"
+// @Param           id   path      int  true  "ID составной части устройства"
 // @Success         200  {object}  dto.DeviceComponentDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
@@ -71,8 +71,8 @@ func GetDeviceComponent(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// GetAllDeviceComponents возвращает все узлы с их иерархией подчиненности
-// @Summary         Получить всю структуру подчиненности устройств
+// GetAllDeviceComponents возвращает всю структуру составных частей устройств
+// @Summary         Получить всю структуру составных частей устройств
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Produce         json
 // @Success         200  {array}   dto.DeviceComponentDto
@@ -90,12 +90,12 @@ func GetAllDeviceComponents(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// UpdateDeviceComponent обновляет метаданные узла по ID
-// @Summary         Обновить узел состава по ID
+// UpdateDeviceComponent обновляет метаданные составной части устройства по ID
+// @Summary         Обновить составную часть устройства по ID
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Accept          json
 // @Produce         json
-// @Param           id      path      int  true  "ID Узла"
+// @Param           id      path      int  true  "ID составной части"
 // @Param           request body dto.DeviceComponentCreateDto true "Новые данные"
 // @Success         200  {object}  dto.DeviceComponentDto
 // @Failure         400  {object}  map[string]string
@@ -130,10 +130,10 @@ func UpdateDeviceComponent(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// DeleteDeviceComponent удаляет узел из дерева подчиненности
-// @Summary         Удалить узел состава по ID
+// DeleteDeviceComponent удаляет составную часть устройства
+// @Summary         Удалить составную часть устройства по ID
 // @Tags            8. Конфигурация: Структура компонентов устройства
-// @Param           id   path      int  true  "ID Узла"
+// @Param           id   path      int  true  "ID составной части"
 // @Success         204  "No Content"
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
@@ -161,11 +161,11 @@ func DeleteDeviceComponent(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// GetDeviceComponentOwn возвращает изолированный узел состава по ID без дерева подчиненности
-// @Summary         Получить изолированный узел состава по ID
+// GetDeviceComponentOwn возвращает составную часть устройства по ID без указания положения внутри структуры устройства
+// @Summary         Получить изолированную составную часть устройства по ID
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Produce         json
-// @Param           id   path      int  true  "ID Узла"
+// @Param           id   path      int  true  "ID составной части"
 // @Success         200  {object}  dto.DeviceComponentDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string

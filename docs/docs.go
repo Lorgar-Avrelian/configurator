@@ -280,10 +280,10 @@ const docTemplate = `{
                 "tags": [
                     "8. Конфигурация: Структура компонентов устройства"
                 ],
-                "summary": "Создать узел состава устройства",
+                "summary": "Создать составную часть устройства",
                 "parameters": [
                     {
-                        "description": "Данные узла",
+                        "description": "Данные составной части",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -328,11 +328,11 @@ const docTemplate = `{
                 "tags": [
                     "8. Конфигурация: Структура компонентов устройства"
                 ],
-                "summary": "Получить узел состава по ID",
+                "summary": "Получить составную часть устройства по ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID Узла",
+                        "description": "ID составной части устройства",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -384,11 +384,11 @@ const docTemplate = `{
                 "tags": [
                     "8. Конфигурация: Структура компонентов устройства"
                 ],
-                "summary": "Обновить узел состава по ID",
+                "summary": "Обновить составную часть устройства по ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID Узла",
+                        "description": "ID составной части",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -443,11 +443,11 @@ const docTemplate = `{
                 "tags": [
                     "8. Конфигурация: Структура компонентов устройства"
                 ],
-                "summary": "Удалить узел состава по ID",
+                "summary": "Удалить составную часть устройства по ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID Узла",
+                        "description": "ID составной части",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -495,11 +495,11 @@ const docTemplate = `{
                 "tags": [
                     "8. Конфигурация: Структура компонентов устройства"
                 ],
-                "summary": "Получить изолированный узел состава по ID",
+                "summary": "Получить изолированную составную часть устройства по ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID Узла",
+                        "description": "ID составной части",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -550,7 +550,7 @@ const docTemplate = `{
                 "tags": [
                     "8. Конфигурация: Структура компонентов устройства"
                 ],
-                "summary": "Получить всю структуру подчиненности устройств",
+                "summary": "Получить всю структуру составных частей устройств",
                 "responses": {
                     "200": {
                         "description": "OK",

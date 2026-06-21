@@ -711,7 +711,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Данные узла
+      - description: Данные составной части
         in: body
         name: request
         required: true
@@ -736,13 +736,13 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Создать узел состава устройства
+      summary: Создать составную часть устройства
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
   /api/v1/device-component/{id}:
     delete:
       parameters:
-      - description: ID Узла
+      - description: ID составной части
         in: path
         name: id
         required: true
@@ -768,12 +768,12 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Удалить узел состава по ID
+      summary: Удалить составную часть устройства по ID
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
     get:
       parameters:
-      - description: ID Узла
+      - description: ID составной части устройства
         in: path
         name: id
         required: true
@@ -803,14 +803,14 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Получить узел состава по ID
+      summary: Получить составную часть устройства по ID
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
     put:
       consumes:
       - application/json
       parameters:
-      - description: ID Узла
+      - description: ID составной части
         in: path
         name: id
         required: true
@@ -846,13 +846,13 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Обновить узел состава по ID
+      summary: Обновить составную часть устройства по ID
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
   /api/v1/device-component/{id}/own:
     get:
       parameters:
-      - description: ID Узла
+      - description: ID составной части
         in: path
         name: id
         required: true
@@ -882,7 +882,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Получить изолированный узел состава по ID
+      summary: Получить изолированную составную часть устройства по ID
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
   /api/v1/device-components:
@@ -902,7 +902,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Получить всю структуру подчиненности устройств
+      summary: Получить всю структуру составных частей устройств
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
   /api/v1/indicator/device:

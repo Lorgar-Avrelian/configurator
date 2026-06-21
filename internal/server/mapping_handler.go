@@ -161,7 +161,7 @@ func DeleteMapping(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// GetMappingOwn возвращает изолированное сопоставление по ID без дерева вложенности
+// GetMappingOwn возвращает сопоставление по ID без указания положения внутри дерева вложенности
 // @Summary         Получить изолированное сопоставление по ID
 // @Tags            7. Конфигурация: Сопоставления параметров
 // @Produce         json
