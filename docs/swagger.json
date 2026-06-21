@@ -312,128 +312,6 @@
                 }
             }
         },
-        "/api/v1/device-component/bind/{deviceComponentId}/{mappingId}": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "9. Конфигурация: Связь компонентов устройства и сопоставлений параметров"
-                ],
-                "summary": "Связать составную часть устройства с сопоставлением параметра",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID составной части",
-                        "name": "deviceComponentId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "ID сопоставления",
-                        "name": "mappingId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "9. Конфигурация: Связь компонентов устройства и сопоставлений параметров"
-                ],
-                "summary": "Удалить связь составной части устройства с сопоставлением параметра",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID составной части",
-                        "name": "deviceComponentId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "ID сопоставления",
-                        "name": "mappingId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/device-component/{id}": {
             "get": {
                 "produces": [
@@ -1170,6 +1048,252 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/link/component-param/{componentId}/{paramId}": {
+            "post": {
+                "description": "Добавляет запись в таблицу public.component_param и возвращает состояние компонента",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "3. Модельный каталог: Связи"
+                ],
+                "summary": "Связать компонент с параметром",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Компонента",
+                        "name": "componentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID Параметра",
+                        "name": "paramId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ComponentDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет запись из таблицы public.component_param и возвращает обновленное состояние компонента",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "3. Модельный каталог: Связи"
+                ],
+                "summary": "Удалить связь компонента с параметром",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Компонента",
+                        "name": "componentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID Параметра",
+                        "name": "paramId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ComponentDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/link/device-component-mapping/{deviceComponentId}/{mappingId}": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "9. Конфигурация: Связь компонентов устройства и сопоставлений параметров"
+                ],
+                "summary": "Связать составную часть устройства с сопоставлением параметра",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID составной части",
+                        "name": "deviceComponentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID сопоставления",
+                        "name": "mappingId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "9. Конфигурация: Связь компонентов устройства и сопоставлений параметров"
+                ],
+                "summary": "Удалить связь составной части устройства с сопоставлением параметра",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID составной части",
+                        "name": "deviceComponentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID сопоставления",
+                        "name": "mappingId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
                             }
                         }
                     },
@@ -2131,118 +2255,6 @@
                     }
                 }
             }
-        },
-        "/api/v1/relation": {
-            "post": {
-                "description": "Добавляет запись в таблицу public.component_param",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "3. Модельный каталог: Связи"
-                ],
-                "summary": "Связать компонент с параметром",
-                "parameters": [
-                    {
-                        "description": "ID сущностей для связывания",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/configurator_internal_dto.ComponentParamLinkDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Сообщение об успешном связывании",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Ошибка валидации JSON",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка базы данных",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/relation/{componentId}/{paramId}": {
-            "delete": {
-                "description": "Удаляет запись из таблицы public.component_param",
-                "tags": [
-                    "3. Модельный каталог: Связи"
-                ],
-                "summary": "Удалить связь компонента с параметром",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID Компонента",
-                        "name": "componentId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "ID Параметра",
-                        "name": "paramId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "400": {
-                        "description": "Неверный формат ID",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Связь не найдена",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка базы данных",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -2363,23 +2375,6 @@
                 "title": {
                     "type": "string",
                     "example": "Chassis"
-                }
-            }
-        },
-        "configurator_internal_dto.ComponentParamLinkDto": {
-            "type": "object",
-            "required": [
-                "component_id",
-                "param_id"
-            ],
-            "properties": {
-                "component_id": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "param_id": {
-                    "type": "integer",
-                    "example": 2
                 }
             }
         },

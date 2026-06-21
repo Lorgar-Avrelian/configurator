@@ -20,7 +20,7 @@ import (
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/device-component/bind/{deviceComponentId}/{mappingId} [post]
+// @Router          /api/v1/link/device-component-mapping/{deviceComponentId}/{mappingId} [post]
 func BindDeviceMapping(c *gin.Context) {
 	var dcID int64
 	var mID int64
@@ -55,7 +55,7 @@ func BindDeviceMapping(c *gin.Context) {
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/device-component/bind/{deviceComponentId}/{mappingId} [delete]
+// @Router          /api/v1/link/device-component-mapping/{deviceComponentId}/{mappingId} [delete]
 func UnbindDeviceMapping(c *gin.Context) {
 	var dcID int64
 	var mID int64

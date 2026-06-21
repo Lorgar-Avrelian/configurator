@@ -45,11 +45,11 @@ func NewServer() *Server {
 			param.PUT("/:id", UpdateParam)
 			param.DELETE("/:id", DeleteParam)
 		}
-		var relation *gin.RouterGroup
-		relation = v1.Group("/relation")
+		var linkComponentParam *gin.RouterGroup
+		linkComponentParam = v1.Group("/link/component-param")
 		{
-			relation.POST("", BindParam)
-			relation.DELETE("/:componentId/:paramId", UnbindParam)
+			linkComponentParam.POST("/:componentId/:paramId", BindParam)
+			linkComponentParam.DELETE("/:componentId/:paramId", UnbindParam)
 		}
 		var oid *gin.RouterGroup
 		oid = v1.Group("/oid")
@@ -97,11 +97,11 @@ func NewServer() *Server {
 			deviceComponent.PUT("/:id", UpdateDeviceComponent)
 			deviceComponent.DELETE("/:id", DeleteDeviceComponent)
 		}
-		var devCompBind *gin.RouterGroup
-		devCompBind = v1.Group("/device-component/bind")
+		var linkDeviceComponentMapping *gin.RouterGroup
+		linkDeviceComponentMapping = v1.Group("/link/device-component-mapping")
 		{
-			devCompBind.POST("/:deviceComponentId/:mappingId", BindDeviceMapping)
-			devCompBind.DELETE("/:deviceComponentId/:mappingId", UnbindDeviceMapping)
+			linkDeviceComponentMapping.POST("/:deviceComponentId/:mappingId", BindDeviceMapping)
+			linkDeviceComponentMapping.DELETE("/:deviceComponentId/:mappingId", UnbindDeviceMapping)
 		}
 	}
 	return &Server{router: r}

@@ -87,18 +87,6 @@ definitions:
         example: Chassis
         type: string
     type: object
-  configurator_internal_dto.ComponentParamLinkDto:
-    properties:
-      component_id:
-        example: 1
-        type: integer
-      param_id:
-        example: 2
-        type: integer
-    required:
-    - component_id
-    - param_id
-    type: object
   configurator_internal_dto.ComponentUpdateDto:
     properties:
       access:
@@ -885,87 +873,6 @@ paths:
       summary: Получить изолированную составную часть устройства по ID
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
-  /api/v1/device-component/bind/{deviceComponentId}/{mappingId}:
-    delete:
-      parameters:
-      - description: ID составной части
-        in: path
-        name: deviceComponentId
-        required: true
-        type: integer
-      - description: ID сопоставления
-        in: path
-        name: mappingId
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить связь составной части устройства с сопоставлением параметра
-      tags:
-      - '9. Конфигурация: Связь компонентов устройства и сопоставлений параметров'
-    post:
-      parameters:
-      - description: ID составной части
-        in: path
-        name: deviceComponentId
-        required: true
-        type: integer
-      - description: ID сопоставления
-        in: path
-        name: mappingId
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Связать составную часть устройства с сопоставлением параметра
-      tags:
-      - '9. Конфигурация: Связь компонентов устройства и сопоставлений параметров'
   /api/v1/device-components:
     get:
       produces:
@@ -1312,6 +1219,172 @@ paths:
       summary: Получить все индикаторы параметров
       tags:
       - '6. Конфигурация: Индикаторы параметров'
+  /api/v1/link/component-param/{componentId}/{paramId}:
+    delete:
+      description: Удаляет запись из таблицы public.component_param и возвращает обновленное
+        состояние компонента
+      parameters:
+      - description: ID Компонента
+        in: path
+        name: componentId
+        required: true
+        type: integer
+      - description: ID Параметра
+        in: path
+        name: paramId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить связь компонента с параметром
+      tags:
+      - '3. Модельный каталог: Связи'
+    post:
+      description: Добавляет запись в таблицу public.component_param и возвращает
+        состояние компонента
+      parameters:
+      - description: ID Компонента
+        in: path
+        name: componentId
+        required: true
+        type: integer
+      - description: ID Параметра
+        in: path
+        name: paramId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Связать компонент с параметром
+      tags:
+      - '3. Модельный каталог: Связи'
+  /api/v1/link/device-component-mapping/{deviceComponentId}/{mappingId}:
+    delete:
+      parameters:
+      - description: ID составной части
+        in: path
+        name: deviceComponentId
+        required: true
+        type: integer
+      - description: ID сопоставления
+        in: path
+        name: mappingId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить связь составной части устройства с сопоставлением параметра
+      tags:
+      - '9. Конфигурация: Связь компонентов устройства и сопоставлений параметров'
+    post:
+      parameters:
+      - description: ID составной части
+        in: path
+        name: deviceComponentId
+        required: true
+        type: integer
+      - description: ID сопоставления
+        in: path
+        name: mappingId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Связать составную часть устройства с сопоставлением параметра
+      tags:
+      - '9. Конфигурация: Связь компонентов устройства и сопоставлений параметров'
   /api/v1/mapping:
     post:
       consumes:
@@ -1936,80 +2009,6 @@ paths:
       summary: Получить все параметры
       tags:
       - '2. Модельный каталог: Параметры'
-  /api/v1/relation:
-    post:
-      consumes:
-      - application/json
-      description: Добавляет запись в таблицу public.component_param
-      parameters:
-      - description: ID сущностей для связывания
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/configurator_internal_dto.ComponentParamLinkDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Сообщение об успешном связывании
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Ошибка валидации JSON
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Ошибка базы данных
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Связать компонент с параметром
-      tags:
-      - '3. Модельный каталог: Связи'
-  /api/v1/relation/{componentId}/{paramId}:
-    delete:
-      description: Удаляет запись из таблицы public.component_param
-      parameters:
-      - description: ID Компонента
-        in: path
-        name: componentId
-        required: true
-        type: integer
-      - description: ID Параметра
-        in: path
-        name: paramId
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Неверный формат ID
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Связь не найдена
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Ошибка базы данных
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Удалить связь компонента с параметром
-      tags:
-      - '3. Модельный каталог: Связи'
 swagger: "2.0"
 tags:
 - name: '1. Модельный каталог: Компоненты'
