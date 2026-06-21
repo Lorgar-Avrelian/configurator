@@ -5,6 +5,7 @@ import (
 	"configurator/internal/logger"
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -176,4 +177,24 @@ func GetOidsByDotterMibAndVendor(ctx context.Context, notation string, mibName s
 		list = append(list, o)
 	}
 	return list, rows.Err()
+}
+
+func GetDotterNotationByOidID(ctx context.Context, id uuid.UUID) (string, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var notation string
+	var err error
+	conn = database.Get()
+	query = `SELECT "dotter_notation"
+			 FROM public.oid
+			 WHERE "id" = $1`
+	err = conn.QueryRow(ctx, query, id).Scan(&notation)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return "", nil
+		}
+		logger.Error("Failed to fetch dotter notation by OID ID: %v", err)
+		return "", err
+	}
+	return notation, nil
 }

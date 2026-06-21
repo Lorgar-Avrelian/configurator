@@ -134,3 +134,14 @@ type DeviceIndicatorDto struct {
 	Location    *string `json:"location" swaggertype:"string" extensions:"x-nullable" example:"Rack 04, Room 202"`
 	Services    *int16  `json:"services" swaggertype:"integer" extensions:"x-nullable" example:"72"`
 }
+
+type ParamIndicatorCreateDto struct {
+	OidID          *string `json:"oid_id,omitempty" swaggertype:"string" extensions:"x-nullable" example:"14e8713a-2f3c-3af1-8e6f-449d7a612227"`
+	DotterNotation *string `json:"dotter_notation,omitempty" swaggertype:"string" extensions:"x-nullable" example:".1.3.6.1.2.1.1.2"`
+}
+
+type ParamIndicatorDto struct {
+	ID             int64   `json:"id" example:"1"`
+	Oid            *OidDto `json:"oid" extensions:"x-nullable"`
+	DotterNotation *string `json:"dotter_notation" swaggertype:"string" extensions:"x-nullable" example:".1.3.6.1.2.1.1.2"`
+}

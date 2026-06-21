@@ -1,300 +1,137 @@
 package dao
 
-/*func CreateParamIndicator(ctx context.Context, d dto.ParamIndicatorCreate) (*model.ParamIndicator, error) {
-	conn := database.Get()
-	query := `
-		WITH inserted AS (
-			INSERT INTO public.param_indicator (oid_id, dotter_notation)
-			VALUES ($1, $2)
-			RETURNING id, oid_id, dotter_notation
-		)
-		SELECT
-			i.id, i.oid_id, i.dotter_notation,
-			o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor,
-			o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
-		FROM inserted i
-		LEFT JOIN public.oid o ON i.oid_id = o.id;`
-	var pi model.ParamIndicator
-	var dotter sql.NullString
-	var oID sql.NullString
-	var oMib sql.NullInt64
-	var oType sql.NullInt16
-	var oName sql.NullString
-	var oNum sql.NullInt32
-	var oDotter sql.NullString
-	var oObj sql.NullString
-	var oSyn sql.NullString
-	var oEnumBytes []byte
-	var oStRaw sql.NullInt16
-	var oAcRaw sql.NullInt16
-	var oUnits sql.NullString
-	var oDesc sql.NullString
-	var oCat sql.NullString
-	err := conn.QueryRow(ctx, query, d.OidID, toNullString(d.DotterNotation)).
-		Scan(
-			&pi.ID, &pi.OidID, &dotter,
-			&oID, &oMib, &oType, &oName, &oNum, &oDotter, &oObj,
-			&oSyn, &oEnumBytes, &oStRaw, &oAcRaw, &oUnits, &oDesc, &oCat,
-		)
+import (
+	"configurator/internal/database"
+	"configurator/internal/logger"
+	"context"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+func CreateParamIndicator(ctx context.Context, d ParamIndicatorDao) (*ParamIndicator, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var insertedID int64
+	var err error
+	var res *ParamIndicator
+	conn = database.Get()
+	query = `INSERT INTO public.param_indicator ("oid_id", "dotter_notation")
+			 VALUES (NULLIF($1, '00000000-0000-0000-0000-000000000000'::uuid), $2)
+			 RETURNING "id"`
+	err = conn.QueryRow(ctx, query, d.OidID, d.DotterNotation).Scan(&insertedID)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, nil
-		}
+		logger.Error("Failed to insert param indicator into DB: %v", err)
 		return nil, err
 	}
-	if dotter.Valid {
-		pi.DotterNotation = &dotter.String
-	}
-	if oID.Valid && oID.String != "" {
-		parsedUUID, err := uuid.Parse(oID.String)
-		if err == nil {
-			o := model.Oid{ID: parsedUUID}
-			o.Type = model.Asn1Type(oType.Int16)
-			if oMib.Valid {
-				o.MibID = &oMib.Int64
-			}
-			if oNum.Valid {
-				o.Number = &oNum.Int32
-			}
-			o.Name = oName.String
-			o.DotterNotation = oDotter.String
-			o.ObjectDescriptor = oObj.String
-			o.Syntax = oSyn.String
-			if len(oEnumBytes) > 0 {
-				o.Enum = json.RawMessage(oEnumBytes)
-			}
-			o.Units = oUnits.String
-			o.Description = oDesc.String
-			o.Category = oCat.String
-			if oStRaw.Valid {
-				st := model.OidStatus(oStRaw.Int16)
-				o.Status = &st
-			}
-			if oAcRaw.Valid {
-				ac := model.OidAccess(oAcRaw.Int16)
-				o.Access = &ac
-			}
-			pi.Oid = &o
-		}
-	}
-	return &pi, nil
+	res, err = GetParamIndicatorByID(ctx, insertedID)
+	return res, err
 }
 
-func GetParamIndicatorByID(ctx context.Context, id int64) (*model.ParamIndicator, error) {
-	conn := database.Get()
-	query := `
-		SELECT pi.id, pi.oid_id, pi.dotter_notation,
-		       o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
-		FROM public.param_indicator pi
-		LEFT JOIN public.oid o ON pi.oid_id = o.id
-		WHERE pi.id = $1`
-	var pi model.ParamIndicator
-	var dotter sql.NullString
-	var oID sql.NullString
-	var oMib sql.NullInt64
-	var oNum sql.NullInt32
-	var oType sql.NullInt16
-	var oName, oDotter, oDesc, oSyn, oUnits, oCat, oObj sql.NullString
-	var oStRaw, oAcRaw sql.NullInt16
-	var oEnumBytes []byte
-	err := conn.QueryRow(ctx, query, id).Scan(
-		&pi.ID, &pi.OidID, &dotter,
-		&oID, &oMib, &oType, &oName, &oNum, &oDotter, &oObj, &oSyn, &oEnumBytes, &oStRaw, &oAcRaw, &oUnits, &oDesc, &oCat,
-	)
+func GetParamIndicatorByID(ctx context.Context, id int64) (*ParamIndicator, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var row pgx.Row
+	var p ParamIndicator
+	var err error
+	conn = database.Get()
+	query = `SELECT pi."id", pi."oid_id", pi."dotter_notation",
+			        o."mib", m."path", m."name", m."vendor",
+			        o."type", o."name", o."number", o."dotter_notation", o."object_descriptor",
+			        o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category"
+			 FROM public.param_indicator pi
+			     LEFT JOIN public.oid o ON pi."oid_id" = o."id"
+			     LEFT JOIN public.mib m ON o."mib" = m."id"
+			 WHERE pi."id" = $1`
+	row = conn.QueryRow(ctx, query, id)
+	err = row.Scan(&p.ID, &p.OidID, &p.DotterNotation, &p.OidMibID, &p.OidMibPath, &p.OidMibName, &p.OidMibVendor, &p.OidType, &p.OidName, &p.OidNumber, &p.OidDotterNotation, &p.OidObjectDescriptor, &p.OidSyntax, &p.OidEnum, &p.OidStatus, &p.OidAccess, &p.OidUnits, &p.OidDescription, &p.OidCategory)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if err == pgx.ErrNoRows {
 			return nil, nil
 		}
+		logger.Error("Failed to retrieve param indicator ID %d: %v", id, err)
 		return nil, err
 	}
-	if dotter.Valid {
-		pi.DotterNotation = &dotter.String
-	}
-	if oID.Valid && oID.String != "" {
-		parsedUUID, err := uuid.Parse(oID.String)
-		if err == nil {
-			o := model.Oid{ID: parsedUUID}
-			o.Type = model.Asn1Type(oType.Int16)
-			if oMib.Valid {
-				o.MibID = &oMib.Int64
-			}
-			if oNum.Valid {
-				o.Number = &oNum.Int32
-			}
-			o.Name = oName.String
-			o.DotterNotation = oDotter.String
-			o.ObjectDescriptor = oObj.String
-			o.Syntax = oSyn.String
-			if len(oEnumBytes) > 0 {
-				o.Enum = json.RawMessage(oEnumBytes)
-			}
-			o.Units = oUnits.String
-			o.Description = oDesc.String
-			o.Category = oCat.String
-			if oStRaw.Valid {
-				st := model.OidStatus(oStRaw.Int16)
-				o.Status = &st
-			}
-			if oAcRaw.Valid {
-				ac := model.OidAccess(oAcRaw.Int16)
-				o.Access = &ac
-			}
-			pi.Oid = &o
-		}
-	}
-	return &pi, nil
+	return &p, nil
 }
 
-func GetAllParamIndicators(ctx context.Context) ([]model.ParamIndicator, error) {
-	conn := database.Get()
-	query := `
-		SELECT pi.id, pi.oid_id, pi.dotter_notation,
-		       o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
-		FROM public.param_indicator pi
-		LEFT JOIN public.oid o ON pi.oid_id = o.id`
-	rows, err := conn.Query(ctx, query)
+func GetAllParamIndicators(ctx context.Context) ([]ParamIndicator, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	var list []ParamIndicator
+	var p ParamIndicator
+	conn = database.Get()
+	query = `SELECT pi."id", pi."oid_id", pi."dotter_notation",
+			        o."mib", m."path", m."name", m."vendor",
+			        o."type", o."name", o."number", o."dotter_notation", o."object_descriptor",
+			        o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category"
+			 FROM public.param_indicator pi
+			     LEFT JOIN public.oid o ON pi."oid_id" = o."id"
+			     LEFT JOIN public.mib m ON o."mib" = m."id"
+			 ORDER BY pi."id" ASC`
+	rows, err = conn.Query(ctx, query)
 	if err != nil {
+		logger.Error("Failed to fetch all param indicators from DB: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
-	var list []model.ParamIndicator
+	list = []ParamIndicator{}
 	for rows.Next() {
-		var pi model.ParamIndicator
-		var dotter sql.NullString
-		var oID sql.NullString
-		var oMib sql.NullInt64
-		var oNum sql.NullInt32
-		var oType sql.NullInt16
-		var oName, oDotter, oDesc, oSyn, oUnits, oCat, oObj sql.NullString
-		var oStRaw, oAcRaw sql.NullInt16
-		var oEnumBytes []byte
-		err := rows.Scan(
-			&pi.ID, &pi.OidID, &dotter,
-			&oID, &oMib, &oType, &oName, &oNum, &oDotter, &oObj, &oSyn, &oEnumBytes, &oStRaw, &oAcRaw, &oUnits, &oDesc, &oCat,
-		)
+		err = rows.Scan(&p.ID, &p.OidID, &p.DotterNotation, &p.OidMibID, &p.OidMibPath, &p.OidMibName, &p.OidMibVendor, &p.OidType, &p.OidName, &p.OidNumber, &p.OidDotterNotation, &p.OidObjectDescriptor, &p.OidSyntax, &p.OidEnum, &p.OidStatus, &p.OidAccess, &p.OidUnits, &p.OidDescription, &p.OidCategory)
 		if err != nil {
 			return nil, err
 		}
-		if dotter.Valid {
-			pi.DotterNotation = &dotter.String
-		}
-		if oID.Valid && oID.String != "" {
-			parsedUUID, err := uuid.Parse(oID.String)
-			if err == nil {
-				o := model.Oid{ID: parsedUUID}
-				o.Type = model.Asn1Type(oType.Int16)
-				if oMib.Valid {
-					o.MibID = &oMib.Int64
-				}
-				if oNum.Valid {
-					o.Number = &oNum.Int32
-				}
-				o.Name = oName.String
-				o.DotterNotation = oDotter.String
-				o.ObjectDescriptor = oObj.String
-				o.Syntax = oSyn.String
-				if len(oEnumBytes) > 0 {
-					o.Enum = json.RawMessage(oEnumBytes)
-				}
-				o.Units = oUnits.String
-				o.Description = oDesc.String
-				o.Category = oCat.String
-				if oStRaw.Valid {
-					st := model.OidStatus(oStRaw.Int16)
-					o.Status = &st
-				}
-				if oAcRaw.Valid {
-					ac := model.OidAccess(oAcRaw.Int16)
-					o.Access = &ac
-				}
-				pi.Oid = &o
-			}
-		}
-		list = append(list, pi)
+		list = append(list, p)
 	}
-	return list, nil
+	return list, rows.Err()
 }
 
-func UpdateParamIndicator(ctx context.Context, id int64, d dto.ParamIndicatorUpdate) (*model.ParamIndicator, error) {
-	conn := database.Get()
-	query := `
-		WITH updated AS (
-			UPDATE public.param_indicator
-			SET oid_id = $1, dotter_notation = $2
-			WHERE id = $3
-			RETURNING id, oid_id, dotter_notation
-		)
-		SELECT
-			u.id, u.oid_id, u.dotter_notation,
-			o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor,
-			o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
-		FROM updated u
-		LEFT JOIN public.oid o ON u.oid_id = o.id;`
-	var pi model.ParamIndicator
-	var dotter sql.NullString
-	var oID sql.NullString
-	var oMib sql.NullInt64
-	var oType sql.NullInt16
-	var oNum sql.NullInt32 // Переменная добавлена
-	var oName, oDotter, oDesc, oSyn, oUnits, oCat, oObj sql.NullString
-	var oStRaw, oAcRaw sql.NullInt16
-	var oEnumBytes []byte
-	err := conn.QueryRow(ctx, query, d.OidID, toNullString(d.DotterNotation), id).
-		Scan(
-			&pi.ID, &pi.OidID, &dotter,
-			&oID, &oMib, &oType, &oName, &oNum, &oDotter, &oObj, &oSyn, &oEnumBytes, &oStRaw, &oAcRaw, &oUnits, &oDesc, &oCat,
-		)
+func UpdateParamIndicator(ctx context.Context, id int64, d ParamIndicatorDao) (*ParamIndicator, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var commandTag interface{ RowsAffected() int64 }
+	var err error
+	var res *ParamIndicator
+	conn = database.Get()
+	query = `UPDATE public.param_indicator
+			 SET "oid_id" = NULLIF($1, '00000000-0000-0000-0000-000000000000'::uuid), "dotter_notation" = $2
+			 WHERE "id" = $3`
+	commandTag, err = conn.Exec(ctx, query, d.OidID, d.DotterNotation, id)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, nil
-		}
+		logger.Error("Failed to update param indicator ID %d: %v", id, err)
 		return nil, err
 	}
-	if dotter.Valid {
-		pi.DotterNotation = &dotter.String
+	if commandTag.RowsAffected() == 0 {
+		return nil, nil
 	}
-	if oID.Valid && oID.String != "" {
-		parsedUUID, err := uuid.Parse(oID.String)
-		if err == nil {
-			o := model.Oid{ID: parsedUUID}
-			o.Type = model.Asn1Type(oType.Int16)
-			if oMib.Valid {
-				o.MibID = &oMib.Int64
-			}
-			if oNum.Valid {
-				o.Number = &oNum.Int32
-			}
-			o.Name = oName.String
-			o.DotterNotation = oDotter.String
-			o.ObjectDescriptor = oObj.String
-			o.Syntax = oSyn.String
-			if len(oEnumBytes) > 0 {
-				o.Enum = json.RawMessage(oEnumBytes)
-			}
-			o.Units = oUnits.String
-			o.Description = oDesc.String
-			o.Category = oCat.String
-			if oStRaw.Valid {
-				st := model.OidStatus(oStRaw.Int16)
-				o.Status = &st
-			}
-			if oAcRaw.Valid {
-				ac := model.OidAccess(oAcRaw.Int16)
-				o.Access = &ac
-			}
-			pi.Oid = &o
-		}
-	}
-	return &pi, nil
+	res, err = GetParamIndicatorByID(ctx, id)
+	return res, err
 }
 
 func DeleteParamIndicator(ctx context.Context, id int64) (bool, error) {
-	conn := database.Get()
-	query := `DELETE FROM public.param_indicator WHERE id = $1`
-	commandTag, err := conn.Exec(ctx, query, id)
+	var conn *pgxpool.Pool
+	var query string
+	var seqQuery string
+	var commandTag interface{ RowsAffected() int64 }
+	var err error
+	var affected int64
+	conn = database.Get()
+	query = `DELETE FROM public.param_indicator
+			 WHERE "id" = $1`
+	commandTag, err = conn.Exec(ctx, query, id)
 	if err != nil {
+		logger.Error("Failed to delete param indicator ID %d: %v", id, err)
 		return false, err
 	}
-	return commandTag.RowsAffected() > 0, nil
+	affected = commandTag.RowsAffected()
+	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.param_indicator', 'id'), COALESCE(MAX("id"), 1))
+				FROM public.param_indicator`
+	_, err = conn.Exec(ctx, seqQuery)
+	if err != nil {
+		logger.Error("Failed to reset param indicator sequence: %v", err)
+		return true, err
+	}
+	return affected > 0, nil
 }
-*/

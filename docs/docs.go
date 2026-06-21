@@ -516,6 +516,253 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/indicator/param": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Получить все индикаторы параметров",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Создать индикатор параметров",
+                "parameters": [
+                    {
+                        "description": "Данные индикатора параметров",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorCreateDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/indicator/param/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Получить индикатор параметров по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Индикатора",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Обновить индикатор параметров по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Индикатора",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorCreateDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Удалить индикатор параметров по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Индикатора",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/oid": {
             "get": {
                 "produces": [
@@ -1723,6 +1970,43 @@ const docTemplate = `{
                 "visible": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "configurator_internal_dto.ParamIndicatorCreateDto": {
+            "type": "object",
+            "properties": {
+                "dotter_notation": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": ".1.3.6.1.2.1.1.2"
+                },
+                "oid_id": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "14e8713a-2f3c-3af1-8e6f-449d7a612227"
+                }
+            }
+        },
+        "configurator_internal_dto.ParamIndicatorDto": {
+            "type": "object",
+            "properties": {
+                "dotter_notation": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": ".1.3.6.1.2.1.1.2"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "oid": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.OidDto"
+                        }
+                    ],
+                    "x-nullable": true
                 }
             }
         },

@@ -131,6 +131,28 @@ type ParamIndicatorDao struct {
 	DotterNotation sql.NullString `db:"dotter_notation" json:"dotter_notation"`
 }
 
+type ParamIndicator struct {
+	ID                  int64           `db:"id" json:"id"`
+	OidID               *uuid.UUID      `db:"oid_id" json:"oid_id"`
+	DotterNotation      sql.NullString  `db:"dotter_notation" json:"dotter_notation"`
+	OidMibID            sql.NullInt64   `db:"oid_mib_id" json:"oid_mib_id"`
+	OidMibPath          sql.NullString  `db:"oid_mib_path" json:"oid_mib_path"`
+	OidMibName          sql.NullString  `db:"oid_mib_name" json:"oid_mib_name"`
+	OidMibVendor        sql.NullInt64   `db:"oid_mib_vendor" json:"oid_mib_vendor"`
+	OidType             sql.NullInt16   `db:"oid_type" json:"oid_type"`
+	OidName             sql.NullString  `db:"oid_name" json:"oid_name"`
+	OidNumber           sql.NullInt32   `db:"oid_number" json:"oid_number"`
+	OidDotterNotation   sql.NullString  `db:"oid_dotter_notation" json:"oid_dotter_notation"`
+	OidObjectDescriptor sql.NullString  `db:"oid_object_descriptor" json:"oid_object_descriptor"`
+	OidSyntax           sql.NullString  `db:"oid_syntax" json:"oid_syntax"`
+	OidEnum             json.RawMessage `db:"oid_enum" json:"oid_enum"`
+	OidStatus           sql.NullInt16   `db:"oid_status" json:"oid_status"`
+	OidAccess           sql.NullInt16   `db:"oid_access" json:"oid_access"`
+	OidUnits            sql.NullString  `db:"oid_units" json:"oid_units"`
+	OidDescription      sql.NullString  `db:"oid_description" json:"oid_description"`
+	OidCategory         sql.NullString  `db:"oid_category" json:"oid_category"`
+}
+
 type MappingDao struct {
 	ID           int64           `db:"id" json:"id"`
 	Indicator    int64           `db:"indicator" json:"indicator"`

@@ -1,29 +1,38 @@
 package server
 
 import (
+	"configurator/internal/dto"
+	"configurator/internal/logger"
 	_ "configurator/internal/model"
+	"configurator/internal/service"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-/*// CreateParamIndicator создает индикатор параметров
+// CreateParamIndicator создает индикатор параметров
 // @Summary         Создать индикатор параметров
 // @Tags            6. Конфигурация: Индикаторы параметров
 // @Accept          json
 // @Produce         json
-// @Param           request body dto.ParamIndicatorCreate true "Данные"
-// @Success         201  {object}  model.ParamIndicator
+// @Param           request body dto.ParamIndicatorCreateDto true "Данные индикатора параметров"
+// @Success         201  {object}  dto.ParamIndicatorDto
 // @Failure         400  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/param-indicators [post]
+// @Router          /api/v1/indicator/param [post]
 func CreateParamIndicator(c *gin.Context) {
-	var input dto.ParamIndicatorCreate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при создании индикатора параметров: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var input dto.ParamIndicatorCreateDto
+	var err error
+	var res *dto.ParamIndicatorDto
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during param indicator creation: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
-	res, err := dao.CreateParamIndicator(c.Request.Context(), input)
+	res, err = service.CreateParamIndicator(c.Request.Context(), input)
 	if err != nil {
-		logger.Error("Ошибка DAO при создании индикатора параметров: %v", err)
+		logger.Error("Service error occurred while creating param indicator: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -35,25 +44,28 @@ func CreateParamIndicator(c *gin.Context) {
 // @Tags            6. Конфигурация: Индикаторы параметров
 // @Produce         json
 // @Param           id   path      int  true  "ID Индикатора"
-// @Success         200  {object}  model.ParamIndicator
+// @Success         200  {object}  dto.ParamIndicatorDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/param-indicators/{id} [get]
+// @Router          /api/v1/indicator/param/{id} [get]
 func GetParamIndicator(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	var res *dto.ParamIndicatorDto
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID индикатора параметров"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid param indicator ID format"})
 		return
 	}
-	res, err := dao.GetParamIndicatorByID(c.Request.Context(), id)
+	res, err = service.GetParamIndicatorByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при получении индикатора параметров %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while retrieving param indicator %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve param indicator"})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Индикатор параметров не найден"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Param indicator not found"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -63,14 +75,16 @@ func GetParamIndicator(c *gin.Context) {
 // @Summary         Получить все индикаторы параметров
 // @Tags            6. Конфигурация: Индикаторы параметров
 // @Produce         json
-// @Success         200  {array}   model.ParamIndicator
+// @Success         200  {array}   dto.ParamIndicatorDto
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/param-indicators [get]
+// @Router          /api/v1/indicator/param [get]
 func GetAllParamIndicators(c *gin.Context) {
-	res, err := dao.GetAllParamIndicators(c.Request.Context())
+	var res []dto.ParamIndicatorDto
+	var err error
+	res, err = service.GetAllParamIndicators(c.Request.Context())
 	if err != nil {
-		logger.Error("Ошибка DAO при выгрузке всех индикаторов параметров: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while retrieving all param indicators: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve all param indicators"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -82,32 +96,35 @@ func GetAllParamIndicators(c *gin.Context) {
 // @Accept          json
 // @Produce         json
 // @Param           id      path      int  true  "ID Индикатора"
-// @Param           request body dto.ParamIndicatorUpdate true "Новые данные"
-// @Success         200  {object}  model.ParamIndicator
+// @Param           request body dto.ParamIndicatorCreateDto true "Новые данные"
+// @Success         200  {object}  dto.ParamIndicatorDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/param-indicators/{id} [put]
+// @Router          /api/v1/indicator/param/{id} [put]
 func UpdateParamIndicator(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	var input dto.ParamIndicatorCreateDto
+	var res *dto.ParamIndicatorDto
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID индикатора"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid param indicator ID format"})
 		return
 	}
-	var input dto.ParamIndicatorUpdate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при обновлении индикатора параметров %d: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during param indicator update for ID %d: %v", id, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
-	res, err := dao.UpdateParamIndicator(c.Request.Context(), id, input)
+	res, err = service.UpdateParamIndicator(c.Request.Context(), id, input)
 	if err != nil {
-		logger.Error("Ошибка DAO при обновлении индикатора параметров %d: %v", id, err)
+		logger.Error("Service error occurred while updating param indicator %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Индикатор параметров не найден для обновления"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Param indicator not found for update"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -121,23 +138,25 @@ func UpdateParamIndicator(c *gin.Context) {
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/param-indicators/{id} [delete]
+// @Router          /api/v1/indicator/param/{id} [delete]
 func DeleteParamIndicator(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	var found bool
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID индикатора"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid param indicator ID format"})
 		return
 	}
-	found, err := dao.DeleteParamIndicator(c.Request.Context(), id)
+	found, err = service.DeleteParamIndicator(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при удалении индикатора параметров %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while deleting param indicator %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete param indicator"})
 		return
 	}
 	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Индикатор параметров не найден в системе"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Param indicator not found"})
 		return
 	}
 	c.Status(http.StatusNoContent)
 }
-*/

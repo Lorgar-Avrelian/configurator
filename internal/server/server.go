@@ -69,6 +69,15 @@ func NewServer() *Server {
 			indicatorDevice.PUT("/:id", UpdateIndicator)
 			indicatorDevice.DELETE("/:id", DeleteIndicator)
 		}
+		var indicatorParam *gin.RouterGroup
+		indicatorParam = v1.Group("/indicator/param")
+		{
+			indicatorParam.POST("", CreateParamIndicator)
+			indicatorParam.GET("", GetAllParamIndicators)
+			indicatorParam.GET("/:id", GetParamIndicator)
+			indicatorParam.PUT("/:id", UpdateParamIndicator)
+			indicatorParam.DELETE("/:id", DeleteParamIndicator)
+		}
 	}
 	return &Server{router: r}
 }

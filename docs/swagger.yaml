@@ -335,6 +335,31 @@ definitions:
         example: true
         type: boolean
     type: object
+  configurator_internal_dto.ParamIndicatorCreateDto:
+    properties:
+      dotter_notation:
+        example: .1.3.6.1.2.1.1.2
+        type: string
+        x-nullable: true
+      oid_id:
+        example: 14e8713a-2f3c-3af1-8e6f-449d7a612227
+        type: string
+        x-nullable: true
+    type: object
+  configurator_internal_dto.ParamIndicatorDto:
+    properties:
+      dotter_notation:
+        example: .1.3.6.1.2.1.1.2
+        type: string
+        x-nullable: true
+      id:
+        example: 1
+        type: integer
+      oid:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.OidDto'
+        x-nullable: true
+    type: object
   configurator_internal_dto.ParamUpdateDto:
     properties:
       access:
@@ -713,6 +738,168 @@ paths:
       summary: Обновить индикатор по ID
       tags:
       - '5. Конфигурация: Индикаторы устройств'
+  /api/v1/indicator/param:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.ParamIndicatorDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все индикаторы параметров
+      tags:
+      - '6. Конфигурация: Индикаторы параметров'
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные индикатора параметров
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.ParamIndicatorCreateDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ParamIndicatorDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать индикатор параметров
+      tags:
+      - '6. Конфигурация: Индикаторы параметров'
+  /api/v1/indicator/param/{id}:
+    delete:
+      parameters:
+      - description: ID Индикатора
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить индикатор параметров по ID
+      tags:
+      - '6. Конфигурация: Индикаторы параметров'
+    get:
+      parameters:
+      - description: ID Индикатора
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ParamIndicatorDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить индикатор параметров по ID
+      tags:
+      - '6. Конфигурация: Индикаторы параметров'
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Индикатора
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.ParamIndicatorCreateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ParamIndicatorDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить индикатор параметров по ID
+      tags:
+      - '6. Конфигурация: Индикаторы параметров'
   /api/v1/oid:
     get:
       parameters:
