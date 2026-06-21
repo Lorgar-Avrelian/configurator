@@ -269,6 +269,255 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/device-component": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "8. Конфигурация: Структура компонентов устройства"
+                ],
+                "summary": "Создать узел состава устройства",
+                "parameters": [
+                    {
+                        "description": "Данные узла",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentCreateDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/device-component/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "8. Конфигурация: Структура компонентов устройства"
+                ],
+                "summary": "Получить узел состава по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Узла",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "8. Конфигурация: Структура компонентов устройства"
+                ],
+                "summary": "Обновить узел состава по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Узла",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentCreateDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "8. Конфигурация: Структура компонентов устройства"
+                ],
+                "summary": "Удалить узел состава по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Узла",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/device-components": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "8. Конфигурация: Структура компонентов устройства"
+                ],
+                "summary": "Получить всю структуру подчиненности устройств",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/indicator/device": {
             "post": {
                 "consumes": [
@@ -1872,6 +2121,27 @@ const docTemplate = `{
                 }
             }
         },
+        "configurator_internal_dto.ComponentInfoDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name_en": {
+                    "type": "string",
+                    "example": "chassis"
+                },
+                "name_ru": {
+                    "type": "string",
+                    "example": "Шасси"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Chassis"
+                }
+            }
+        },
         "configurator_internal_dto.ComponentParamLinkDto": {
             "type": "object",
             "required": [
@@ -1937,6 +2207,54 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "Component"
+                }
+            }
+        },
+        "configurator_internal_dto.DeviceComponentCreateDto": {
+            "type": "object",
+            "required": [
+                "model"
+            ],
+            "properties": {
+                "internal_order": {
+                    "type": "integer",
+                    "x-nullable": true,
+                    "example": 1
+                },
+                "model": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "parent": {
+                    "type": "integer",
+                    "x-nullable": true
+                }
+            }
+        },
+        "configurator_internal_dto.DeviceComponentDto": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
+                    }
+                },
+                "component": {
+                    "$ref": "#/definitions/configurator_internal_dto.ComponentInfoDto"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "internal_order": {
+                    "type": "integer",
+                    "x-nullable": true,
+                    "example": 1
+                },
+                "parent": {
+                    "type": "integer",
+                    "x-nullable": true
                 }
             }
         },

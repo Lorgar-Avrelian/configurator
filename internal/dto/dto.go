@@ -171,3 +171,24 @@ type MappingDto struct {
 	PositionType *string            `json:"position_type" swaggertype:"string" extensions:"x-nullable" example:"INTEGER"`
 	Children     []MappingDto       `json:"children"`
 }
+
+type ComponentInfoDto struct {
+	ID     int64  `json:"id" example:"1"`
+	Title  string `json:"title" example:"Chassis"`
+	NameEn string `json:"name_en" example:"chassis"`
+	NameRu string `json:"name_ru" example:"Шасси"`
+}
+
+type DeviceComponentCreateDto struct {
+	ModelID       int64  `json:"model" binding:"required" example:"1"`
+	InternalOrder *int32 `json:"internal_order,omitempty" swaggertype:"integer" extensions:"x-nullable" example:"1"`
+	Parent        *int64 `json:"parent,omitempty" swaggertype:"integer" extensions:"x-nullable"`
+}
+
+type DeviceComponentDto struct {
+	ID            int64                `json:"id" example:"1"`
+	Component     ComponentInfoDto     `json:"component"`
+	InternalOrder *int32               `json:"internal_order" swaggertype:"integer" extensions:"x-nullable" example:"1"`
+	Parent        *int64               `json:"parent" swaggertype:"integer" extensions:"x-nullable"`
+	Children      []DeviceComponentDto `json:"children"`
+}

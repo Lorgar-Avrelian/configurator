@@ -66,7 +66,7 @@ func LoadEnumsFromDB(ctx context.Context) error {
 		return err
 	}
 	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicMap, alarmMap, vendors, oidTypeMap)
-	logger.Info("System registries successfully loaded from DB: access=%d, alarms=%d, asn1=%d, logic=%d, oid_access=%d, status=%d, frequencies=%d, types=%d, vendors=%d, oid_types=%d", len(accessMap), len(alarmMap), len(asn1Map), len(logicMap), len(oidAccessMap), len(statusMap), len(pollMap), len(varTypeMap), len(vendors), len(oidTypeMap))
+	logger.Info("System enums successfully loaded from DB: access=%d, alarms=%d, asn1=%d, logic=%d, oid_access=%d, status=%d, frequencies=%d, types=%d, vendors=%d, oid_types=%d", len(accessMap), len(alarmMap), len(asn1Map), len(logicMap), len(oidAccessMap), len(statusMap), len(pollMap), len(varTypeMap), len(vendors), len(oidTypeMap))
 	return nil
 }
 

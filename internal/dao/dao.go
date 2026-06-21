@@ -216,6 +216,16 @@ type DeviceComponentDao struct {
 	Parent        sql.NullInt64 `db:"parent" json:"parent"`
 }
 
+type DeviceComponent struct {
+	ID            int64         `db:"id" json:"id"`
+	ModelID       int64         `db:"model" json:"model"`
+	InternalOrder sql.NullInt32 `db:"internal_order" json:"internal_order"`
+	Parent        sql.NullInt64 `db:"parent" json:"parent"`
+	CompTitle     string        `db:"comp_title" json:"comp_title"`
+	CompNameEn    string        `db:"comp_name_en" json:"comp_name_en"`
+	CompNameRu    string        `db:"comp_name_ru" json:"comp_name_ru"`
+}
+
 type DeviceComponentMappingDao struct {
 	DeviceComponentID int64 `db:"device_component_id" json:"device_component_id"`
 	MappingID         int64 `db:"mapping_id" json:"mapping_id"`

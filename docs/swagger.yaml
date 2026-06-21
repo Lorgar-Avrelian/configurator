@@ -72,6 +72,21 @@ definitions:
         example: Component
         type: string
     type: object
+  configurator_internal_dto.ComponentInfoDto:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name_en:
+        example: chassis
+        type: string
+      name_ru:
+        example: Шасси
+        type: string
+      title:
+        example: Chassis
+        type: string
+    type: object
   configurator_internal_dto.ComponentParamLinkDto:
     properties:
       component_id:
@@ -120,6 +135,40 @@ definitions:
       title:
         example: Component
         type: string
+    type: object
+  configurator_internal_dto.DeviceComponentCreateDto:
+    properties:
+      internal_order:
+        example: 1
+        type: integer
+        x-nullable: true
+      model:
+        example: 1
+        type: integer
+      parent:
+        type: integer
+        x-nullable: true
+    required:
+    - model
+    type: object
+  configurator_internal_dto.DeviceComponentDto:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        type: array
+      component:
+        $ref: '#/definitions/configurator_internal_dto.ComponentInfoDto'
+      id:
+        example: 1
+        type: integer
+      internal_order:
+        example: 1
+        type: integer
+        x-nullable: true
+      parent:
+        type: integer
+        x-nullable: true
     type: object
   configurator_internal_dto.DeviceIndicatorCreateDto:
     properties:
@@ -653,6 +702,169 @@ paths:
       summary: Получить всю структуру подчиненности устройств
       tags:
       - '1. Модельный каталог: Компоненты'
+  /api/v1/device-component:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные узла
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.DeviceComponentCreateDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать узел состава устройства
+      tags:
+      - '8. Конфигурация: Структура компонентов устройства'
+  /api/v1/device-component/{id}:
+    delete:
+      parameters:
+      - description: ID Узла
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить узел состава по ID
+      tags:
+      - '8. Конфигурация: Структура компонентов устройства'
+    get:
+      parameters:
+      - description: ID Узла
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить узел состава по ID
+      tags:
+      - '8. Конфигурация: Структура компонентов устройства'
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Узла
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.DeviceComponentCreateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить узел состава по ID
+      tags:
+      - '8. Конфигурация: Структура компонентов устройства'
+  /api/v1/device-components:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить всю структуру подчиненности устройств
+      tags:
+      - '8. Конфигурация: Структура компонентов устройства'
   /api/v1/indicator/device:
     post:
       consumes:

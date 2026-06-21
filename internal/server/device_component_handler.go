@@ -1,104 +1,130 @@
 package server
 
 import (
+	"configurator/internal/dto"
+	"configurator/internal/logger"
 	_ "configurator/internal/model"
+	"configurator/internal/service"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-/*// CreateDeviceComponent создает новый узел состава устройства
+// CreateDeviceComponent создает новый узел состава устройства
 // @Summary         Создать узел состава устройства
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Accept          json
 // @Produce         json
-// @Param           request body dto.DeviceComponentCreate true "Данные узла"
-// @Success         201  {object}  model.DeviceComponent
-// @Router          /api/v1/device-components [post]
+// @Param           request body dto.DeviceComponentCreateDto true "Данные узла"
+// @Success         201  {object}  dto.DeviceComponentDto
+// @Failure         400  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/device-component [post]
 func CreateDeviceComponent(c *gin.Context) {
-	var input dto.DeviceComponentCreate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при создании узла устройства: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var input dto.DeviceComponentCreateDto
+	var err error
+	var res *dto.DeviceComponentDto
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during device component creation: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
-	res, err := dao.CreateDeviceComponent(c.Request.Context(), input)
+	res, err = service.CreateDeviceComponent(c.Request.Context(), input)
 	if err != nil {
-		logger.Error("Ошибка DAO при создании узла устройства: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while creating device component: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create device component"})
 		return
 	}
 	c.JSON(http.StatusCreated, res)
 }
 
-// GetDeviceComponent возвращает узел состава по ID вместе с маппингами
+// GetDeviceComponent возвращает узел состава по ID вместе с иерархией подчиненности
 // @Summary         Получить узел состава по ID
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Produce         json
 // @Param           id   path      int  true  "ID Узла"
-// @Success         200  {object}  model.DeviceComponent
-// @Router          /api/v1/device-components/{id} [get]
+// @Success         200  {object}  dto.DeviceComponentDto
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/device-component/{id} [get]
 func GetDeviceComponent(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	var res *dto.DeviceComponentDto
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID узла"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid device component ID format"})
 		return
 	}
-	res, err := dao.GetDeviceComponentByID(c.Request.Context(), id)
+	res, err = service.GetDeviceComponentByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при получении узла %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while retrieving device component %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve device component"})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Узел устройства не найден"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Device component not found"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// GetAllDeviceComponents возвращает все узлы с их маппингами параметров
+// GetAllDeviceComponents возвращает все узлы с их иерархией подчиненности
 // @Summary         Получить всю структуру подчиненности устройств
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Produce         json
-// @Success         200  {array}   model.DeviceComponent
+// @Success         200  {array}   dto.DeviceComponentDto
+// @Failure         500  {object}  map[string]string
 // @Router          /api/v1/device-components [get]
 func GetAllDeviceComponents(c *gin.Context) {
-	res, err := dao.GetAllDeviceComponents(c.Request.Context())
+	var res []dto.DeviceComponentDto
+	var err error
+	res, err = service.GetAllDeviceComponents(c.Request.Context())
 	if err != nil {
-		logger.Error("Ошибка DAO при выгрузке структуры подчиненности устройств: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while retrieving all device components: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve all device components"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// UpdateDeviceComponent обновляет метаданные узла
+// UpdateDeviceComponent обновляет метаданные узла по ID
 // @Summary         Обновить узел состава по ID
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Accept          json
 // @Produce         json
 // @Param           id      path      int  true  "ID Узла"
-// @Param           request body dto.DeviceComponentUpdate true "Новые данные"
-// @Success         200  {object}  model.DeviceComponent
-// @Router          /api/v1/device-components/{id} [put]
+// @Param           request body dto.DeviceComponentCreateDto true "Новые данные"
+// @Success         200  {object}  dto.DeviceComponentDto
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/device-component/{id} [put]
 func UpdateDeviceComponent(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	var input dto.DeviceComponentCreateDto
+	var res *dto.DeviceComponentDto
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID узла"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid device component ID format"})
 		return
 	}
-	var input dto.DeviceComponentUpdate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при обновлении узла %d: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during device component update for ID %d: %v", id, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
-	res, err := dao.UpdateDeviceComponent(c.Request.Context(), id, input)
+	res, err = service.UpdateDeviceComponent(c.Request.Context(), id, input)
 	if err != nil {
-		logger.Error("Ошибка DAO при обновлении узла %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while updating device component %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update device component"})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Узел не найден для обновления"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Device component not found for update"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -109,23 +135,28 @@ func UpdateDeviceComponent(c *gin.Context) {
 // @Tags            8. Конфигурация: Структура компонентов устройства
 // @Param           id   path      int  true  "ID Узла"
 // @Success         204  "No Content"
-// @Router          /api/v1/device-components/{id} [delete]
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/device-component/{id} [delete]
 func DeleteDeviceComponent(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	var found bool
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID узла"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid device component ID format"})
 		return
 	}
-	found, err := dao.DeleteDeviceComponent(c.Request.Context(), id)
+	found, err = service.DeleteDeviceComponent(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при удалении узла %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while deleting device component %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete device component"})
 		return
 	}
 	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Узел не найден в системе"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Device component not found"})
 		return
 	}
 	c.Status(http.StatusNoContent)
 }
-*/

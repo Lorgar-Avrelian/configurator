@@ -87,6 +87,15 @@ func NewServer() *Server {
 			mapping.PUT("/:id", UpdateMapping)
 			mapping.DELETE("/:id", DeleteMapping)
 		}
+		v1.GET("/device-components", GetAllDeviceComponents)
+		var deviceComponent *gin.RouterGroup
+		deviceComponent = v1.Group("/device-component")
+		{
+			deviceComponent.POST("", CreateDeviceComponent)
+			deviceComponent.GET("/:id", GetDeviceComponent)
+			deviceComponent.PUT("/:id", UpdateDeviceComponent)
+			deviceComponent.DELETE("/:id", DeleteDeviceComponent)
+		}
 	}
 	return &Server{router: r}
 }
