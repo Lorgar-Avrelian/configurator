@@ -178,6 +178,83 @@ definitions:
         type: integer
         x-nullable: true
     type: object
+  configurator_internal_dto.MappingCreateDto:
+    properties:
+      coefficient:
+        type: number
+        x-nullable: true
+      enum:
+        type: object
+        x-nullable: true
+      frequency:
+        example: MEDIUM
+        type: string
+      from:
+        type: integer
+        x-nullable: true
+      indicator:
+        example: 1
+        type: integer
+      param:
+        example: 2
+        type: integer
+      position:
+        example: 1
+        type: integer
+        x-nullable: true
+      position_type:
+        example: INTEGER
+        type: string
+        x-nullable: true
+      value:
+        type: string
+        x-nullable: true
+    required:
+    - frequency
+    - indicator
+    - param
+    type: object
+  configurator_internal_dto.MappingDto:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/configurator_internal_dto.MappingDto'
+        type: array
+      coefficient:
+        type: number
+        x-nullable: true
+      enum:
+        type: object
+        x-nullable: true
+      frequency:
+        example: MEDIUM
+        type: string
+      from:
+        type: integer
+        x-nullable: true
+      id:
+        example: 1
+        type: integer
+      indicator:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.ParamIndicatorDto'
+        x-nullable: true
+      param:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.ParamDto'
+        x-nullable: true
+      position:
+        example: 1
+        type: integer
+        x-nullable: true
+      position_type:
+        example: INTEGER
+        type: string
+        x-nullable: true
+      value:
+        type: string
+        x-nullable: true
+    type: object
   configurator_internal_dto.MibDto:
     properties:
       id:
@@ -902,6 +979,169 @@ paths:
       summary: Получить все индикаторы параметров
       tags:
       - '6. Конфигурация: Индикаторы параметров'
+  /api/v1/mapping:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные сопоставления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.MappingCreateDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.MappingDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать сопоставление
+      tags:
+      - '7. Конфигурация: Сопоставления параметров'
+  /api/v1/mapping/{id}:
+    delete:
+      parameters:
+      - description: ID сопоставления
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить сопоставление по ID
+      tags:
+      - '7. Конфигурация: Сопоставления параметров'
+    get:
+      parameters:
+      - description: ID сопоставления
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.MappingDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить сопоставление по ID
+      tags:
+      - '7. Конфигурация: Сопоставления параметров'
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID сопоставления
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.MappingCreateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.MappingDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить сопоставление по ID
+      tags:
+      - '7. Конфигурация: Сопоставления параметров'
+  /api/v1/mappings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.MappingDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все сопоставления
+      tags:
+      - '7. Конфигурация: Сопоставления параметров'
   /api/v1/oid:
     get:
       parameters:

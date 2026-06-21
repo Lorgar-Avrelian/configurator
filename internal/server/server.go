@@ -78,6 +78,15 @@ func NewServer() *Server {
 			indicatorParam.PUT("/:id", UpdateParamIndicator)
 			indicatorParam.DELETE("/:id", DeleteParamIndicator)
 		}
+		v1.GET("/mappings", GetAllMappings)
+		var mapping *gin.RouterGroup
+		mapping = v1.Group("/mapping")
+		{
+			mapping.POST("", CreateMapping)
+			mapping.GET("/:id", GetMapping)
+			mapping.PUT("/:id", UpdateMapping)
+			mapping.DELETE("/:id", DeleteMapping)
+		}
 	}
 	return &Server{router: r}
 }

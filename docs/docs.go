@@ -767,6 +767,255 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/mapping": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "7. Конфигурация: Сопоставления параметров"
+                ],
+                "summary": "Создать сопоставление",
+                "parameters": [
+                    {
+                        "description": "Данные сопоставления",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.MappingCreateDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.MappingDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/mapping/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "7. Конфигурация: Сопоставления параметров"
+                ],
+                "summary": "Получить сопоставление по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID сопоставления",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.MappingDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "7. Конфигурация: Сопоставления параметров"
+                ],
+                "summary": "Обновить сопоставление по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID сопоставления",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Новые данные",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.MappingCreateDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.MappingDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "7. Конфигурация: Сопоставления параметров"
+                ],
+                "summary": "Удалить сопоставление по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID сопоставления",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/mappings": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "7. Конфигурация: Сопоставления параметров"
+                ],
+                "summary": "Получить все сопоставления",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.MappingDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/oid": {
             "get": {
                 "produces": [
@@ -1763,6 +2012,115 @@ const docTemplate = `{
                     "type": "integer",
                     "x-nullable": true,
                     "example": 72
+                }
+            }
+        },
+        "configurator_internal_dto.MappingCreateDto": {
+            "type": "object",
+            "required": [
+                "frequency",
+                "indicator",
+                "param"
+            ],
+            "properties": {
+                "coefficient": {
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "enum": {
+                    "type": "object",
+                    "x-nullable": true
+                },
+                "frequency": {
+                    "type": "string",
+                    "example": "MEDIUM"
+                },
+                "from": {
+                    "type": "integer",
+                    "x-nullable": true
+                },
+                "indicator": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "param": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "position": {
+                    "type": "integer",
+                    "x-nullable": true,
+                    "example": 1
+                },
+                "position_type": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "INTEGER"
+                },
+                "value": {
+                    "type": "string",
+                    "x-nullable": true
+                }
+            }
+        },
+        "configurator_internal_dto.MappingDto": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/configurator_internal_dto.MappingDto"
+                    }
+                },
+                "coefficient": {
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "enum": {
+                    "type": "object",
+                    "x-nullable": true
+                },
+                "frequency": {
+                    "type": "string",
+                    "example": "MEDIUM"
+                },
+                "from": {
+                    "type": "integer",
+                    "x-nullable": true
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "indicator": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorDto"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "param": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.ParamDto"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "position": {
+                    "type": "integer",
+                    "x-nullable": true,
+                    "example": 1
+                },
+                "position_type": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "INTEGER"
+                },
+                "value": {
+                    "type": "string",
+                    "x-nullable": true
                 }
             }
         },

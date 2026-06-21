@@ -166,6 +166,49 @@ type MappingDao struct {
 	PositionType sql.NullInt16   `db:"position_type" json:"position_type"`
 }
 
+type Mapping struct {
+	ID                  int64           `db:"id" json:"id"`
+	IndicatorID         int64           `db:"indicator" json:"indicator"`
+	ParamID             int64           `db:"param" json:"param"`
+	Frequency           int16           `db:"frequency" json:"frequency"`
+	Value               sql.NullString  `db:"value" json:"value"`
+	Coefficient         sql.NullFloat64 `db:"coefficient" json:"coefficient"`
+	Enum                json.RawMessage `db:"enum" json:"enum"`
+	Position            sql.NullInt16   `db:"position" json:"position"`
+	From                sql.NullInt64   `db:"from" json:"from"`
+	PositionType        sql.NullInt16   `db:"position_type" json:"position_type"`
+	IndOidID            *uuid.UUID      `db:"ind_oid_id" json:"ind_oid_id"`
+	IndDotterNotation   sql.NullString  `db:"ind_dotter_notation" json:"ind_dotter_notation"`
+	OidMibID            sql.NullInt64   `db:"oid_mib_id" json:"oid_mib_id"`
+	OidMibPath          sql.NullString  `db:"oid_mib_path" json:"oid_mib_path"`
+	OidMibName          sql.NullString  `db:"oid_mib_name" json:"oid_mib_name"`
+	OidMibVendor        sql.NullInt64   `db:"oid_mib_vendor" json:"oid_mib_vendor"`
+	OidType             sql.NullInt16   `db:"oid_type" json:"oid_type"`
+	OidName             sql.NullString  `db:"oid_name" json:"oid_name"`
+	OidNumber           sql.NullInt32   `db:"oid_number" json:"oid_number"`
+	OidDotterNotation   sql.NullString  `db:"oid_dotter_notation" json:"oid_dotter_notation"`
+	OidObjectDescriptor sql.NullString  `db:"oid_object_descriptor" json:"oid_object_descriptor"`
+	OidSyntax           sql.NullString  `db:"oid_syntax" json:"oid_syntax"`
+	OidEnum             json.RawMessage `db:"oid_enum" json:"oid_enum"`
+	OidStatus           sql.NullInt16   `db:"oid_status" json:"oid_status"`
+	OidAccess           sql.NullInt16   `db:"oid_access" json:"oid_access"`
+	OidUnits            sql.NullString  `db:"oid_units" json:"oid_units"`
+	OidDescription      sql.NullString  `db:"oid_description" json:"oid_description"`
+	OidCategory         sql.NullString  `db:"oid_category" json:"oid_category"`
+	ParamTitle          string          `db:"param_title" json:"param_title"`
+	ParamNameEn         string          `db:"param_name_en" json:"param_name_en"`
+	ParamNameRu         string          `db:"param_name_ru" json:"param_name_ru"`
+	ParamType           int16           `db:"param_type" json:"param_type"`
+	ParamValue          sql.NullString  `db:"param_value" json:"param_value"`
+	ParamDescriptionEn  sql.NullString  `db:"param_description_en" json:"param_description_en"`
+	ParamDescriptionRu  sql.NullString  `db:"param_description_ru" json:"param_description_ru"`
+	ParamUnitsEn        sql.NullString  `db:"param_units_en" json:"param_units_en"`
+	ParamUnitsRu        sql.NullString  `db:"param_units_ru" json:"param_units_ru"`
+	ParamAccess         int16           `db:"param_access" json:"param_access"`
+	ParamSaved          bool            `db:"param_saved" json:"param_saved"`
+	ParamVisible        bool            `db:"param_visible" json:"param_visible"`
+}
+
 type DeviceComponentDao struct {
 	ID            int64         `db:"id" json:"id"`
 	Model         int64         `db:"model" json:"model"`

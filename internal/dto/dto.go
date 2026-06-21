@@ -145,3 +145,29 @@ type ParamIndicatorDto struct {
 	Oid            *OidDto `json:"oid" extensions:"x-nullable"`
 	DotterNotation *string `json:"dotter_notation" swaggertype:"string" extensions:"x-nullable" example:".1.3.6.1.2.1.1.2"`
 }
+
+type MappingCreateDto struct {
+	IndicatorID  int64             `json:"indicator" binding:"required" example:"1"`
+	ParamID      int64             `json:"param" binding:"required" example:"2"`
+	Frequency    string            `json:"frequency" binding:"required" example:"MEDIUM"`
+	Value        *string           `json:"value,omitempty" swaggertype:"string" extensions:"x-nullable"`
+	Coefficient  *float64          `json:"coefficient,omitempty" swaggertype:"number" extensions:"x-nullable"`
+	Enum         map[string]string `json:"enum,omitempty" swaggertype:"object" extensions:"x-nullable"`
+	Position     *int16            `json:"position,omitempty" swaggertype:"integer" extensions:"x-nullable" example:"1"`
+	From         *int64            `json:"from,omitempty" swaggertype:"integer" extensions:"x-nullable"`
+	PositionType *string           `json:"position_type,omitempty" swaggertype:"string" extensions:"x-nullable" example:"INTEGER"`
+}
+
+type MappingDto struct {
+	ID           int64              `json:"id" example:"1"`
+	Indicator    *ParamIndicatorDto `json:"indicator,omitempty" extensions:"x-nullable"`
+	Param        *ParamDto          `json:"param,omitempty" extensions:"x-nullable"`
+	Frequency    string             `json:"frequency" example:"MEDIUM"`
+	Value        *string            `json:"value" swaggertype:"string" extensions:"x-nullable"`
+	Coefficient  *float64           `json:"coefficient" swaggertype:"number" extensions:"x-nullable"`
+	Enum         map[string]string  `json:"enum" swaggertype:"object" extensions:"x-nullable"`
+	Position     *int16             `json:"position" swaggertype:"integer" extensions:"x-nullable" example:"1"`
+	From         *int64             `json:"from" swaggertype:"integer" extensions:"x-nullable"`
+	PositionType *string            `json:"position_type" swaggertype:"string" extensions:"x-nullable" example:"INTEGER"`
+	Children     []MappingDto       `json:"children"`
+}

@@ -15,6 +15,7 @@ type OidAccess int16
 type OidStatus int16
 type PollingFrequency int16
 type VarType int16
+type OidType int16
 type Vendor int64
 
 type VendorData struct {
@@ -44,6 +45,8 @@ var (
 	pollingFrequencyIds     = make(map[string]PollingFrequency)
 	varTypeStrings          = make(map[VarType]string)
 	varTypeIds              = make(map[string]VarType)
+	oidTypeStrings          = make(map[OidType]string)
+	oidTypeIds              = make(map[string]OidType)
 	vendorsMap              = make(map[Vendor]*VendorData)
 	vendorNames             = make(map[string]Vendor)
 	vendorDirectories       = make(map[string]Vendor)
@@ -59,6 +62,7 @@ func LoadRegistries(
 	logicMap map[int16]string,
 	alarmMap map[int16]string,
 	vendors []map[string]interface{},
+	oidTypeMap map[int16]string,
 ) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -93,6 +97,10 @@ func LoadRegistries(
 	for id, val := range varTypeMap {
 		varTypeStrings[VarType(id)] = val
 		varTypeIds[strings.ToUpper(val)] = VarType(id)
+	}
+	for id, val := range oidTypeMap {
+		oidTypeStrings[OidType(id)] = val
+		oidTypeIds[strings.ToUpper(val)] = OidType(id)
 	}
 	for _, v := range vendors {
 		var vObj VendorData
@@ -180,6 +188,14 @@ func (v VarType) String() string {
 	return res
 }
 
+func (t OidType) String() string {
+	mu.RLock()
+	defer mu.RUnlock()
+	var res string
+	res = oidTypeStrings[t]
+	return res
+}
+
 func (v Vendor) Data() *VendorData {
 	mu.RLock()
 	defer mu.RUnlock()
@@ -236,6 +252,12 @@ func (v VarType) MarshalJSON() ([]byte, error) {
 	return res, nil
 }
 
+func (t OidType) MarshalJSON() ([]byte, error) {
+	var res []byte
+	res = []byte(fmt.Sprintf("%q", t.String()))
+	return res, nil
+}
+
 func (a *Access) UnmarshalJSON(b []byte) error {
 	var str string
 	str = strings.Trim(string(b), `"`)
@@ -289,6 +311,13 @@ func (v *VarType) UnmarshalJSON(b []byte) error {
 	var str string
 	str = strings.Trim(string(b), `"`)
 	*v = ParseVarType(str)
+	return nil
+}
+
+func (t *OidType) UnmarshalJSON(b []byte) error {
+	var str string
+	str = strings.Trim(string(b), `"`)
+	*t = ParseOidType(str)
 	return nil
 }
 
@@ -398,6 +427,20 @@ func ParseVarType(s string) VarType {
 	var id VarType
 	var ok bool
 	id, ok = varTypeIds[clean]
+	if ok {
+		return id
+	}
+	return 1
+}
+
+func ParseOidType(s string) OidType {
+	mu.RLock()
+	defer mu.RUnlock()
+	var clean string
+	clean = strings.ToUpper(strings.TrimSpace(s))
+	var id OidType
+	var ok bool
+	id, ok = oidTypeIds[clean]
 	if ok {
 		return id
 	}

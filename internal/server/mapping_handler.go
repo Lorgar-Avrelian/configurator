@@ -1,76 +1,90 @@
 package server
 
 import (
+	"configurator/internal/dto"
+	"configurator/internal/logger"
 	_ "configurator/internal/model"
+	"configurator/internal/service"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-/*// CreateMapping создает новое сопоставление
+// CreateMapping создаёт новое сопоставление
 // @Summary         Создать сопоставление
 // @Tags            7. Конфигурация: Сопоставления параметров
 // @Accept          json
 // @Produce         json
-// @Param           request body dto.MappingCreate true "Данные сопоставления"
-// @Success         201  {object}  model.Mapping
+// @Param           request body dto.MappingCreateDto true "Данные сопоставления"
+// @Success         201  {object}  dto.MappingDto
 // @Failure         400  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/mappings [post]
+// @Router          /api/v1/mapping [post]
 func CreateMapping(c *gin.Context) {
-	var input dto.MappingCreate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при создании маппинга: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var input dto.MappingCreateDto
+	var err error
+	var res *dto.MappingDto
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during mapping creation: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
-	res, err := dao.CreateMapping(c.Request.Context(), input)
+	res, err = service.CreateMapping(c.Request.Context(), input)
 	if err != nil {
-		logger.Error("Ошибка DAO при создании маппинга: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while creating mapping: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create mapping"})
 		return
 	}
 	c.JSON(http.StatusCreated, res)
 }
 
-// GetMapping возвращает сопоставление по ID
+// GetMapping возвращает сопоставление по ID вместе с иерархией дочерних элементов
 // @Summary         Получить сопоставление по ID
 // @Tags            7. Конфигурация: Сопоставления параметров
 // @Produce         json
 // @Param           id   path      int  true  "ID сопоставления"
-// @Success         200  {object}  model.Mapping
+// @Success         200  {object}  dto.MappingDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/mappings/{id} [get]
+// @Router          /api/v1/mapping/{id} [get]
 func GetMapping(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	var res *dto.MappingDto
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID маппинга"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid mapping ID format"})
 		return
 	}
-	res, err := dao.GetMappingByID(c.Request.Context(), id)
+	res, err = service.GetMappingByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при получении маппинга %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while retrieving mapping %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve mapping"})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Маппинг не найден"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Mapping not found"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// GetAllMappings возвращает все сопоставления
+// GetAllMappings возвращает все сопоставления в виде иерархического дерева
 // @Summary         Получить все сопоставления
 // @Tags            7. Конфигурация: Сопоставления параметров
 // @Produce         json
-// @Success         200  {array}   model.Mapping
+// @Success         200  {array}   dto.MappingDto
 // @Failure         500  {object}  map[string]string
 // @Router          /api/v1/mappings [get]
 func GetAllMappings(c *gin.Context) {
-	res, err := dao.GetAllMappings(c.Request.Context())
+	var res []dto.MappingDto
+	var err error
+	res, err = service.GetAllMappings(c.Request.Context())
 	if err != nil {
-		logger.Error("Ошибка DAO при выгрузке всех маппингов: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while retrieving all mappings: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve all mappings"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -82,32 +96,35 @@ func GetAllMappings(c *gin.Context) {
 // @Accept          json
 // @Produce         json
 // @Param           id      path      int  true  "ID сопоставления"
-// @Param           request body dto.MappingUpdate true "Новые данные"
-// @Success         200  {object}  model.Mapping
+// @Param           request body dto.MappingCreateDto true "Новые данные"
+// @Success         200  {object}  dto.MappingDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/mappings/{id} [put]
+// @Router          /api/v1/mapping/{id} [put]
 func UpdateMapping(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	var input dto.MappingCreateDto
+	var res *dto.MappingDto
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID маппинга"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid mapping ID format"})
 		return
 	}
-	var input dto.MappingUpdate
-	if err := c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Ошибка валидации при обновлении маппинга %d: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Warn("Validation failed during mapping update for ID %d: %v", id, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
-	res, err := dao.UpdateMapping(c.Request.Context(), id, input)
+	res, err = service.UpdateMapping(c.Request.Context(), id, input)
 	if err != nil {
-		logger.Error("Ошибка DAO при обновлении маппинга %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while updating mapping %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update mapping"})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Маппинг не найден для обновления"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Mapping not found for update"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -121,23 +138,25 @@ func UpdateMapping(c *gin.Context) {
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/mappings/{id} [delete]
+// @Router          /api/v1/mapping/{id} [delete]
 func DeleteMapping(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	var found bool
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID маппинга"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid mapping ID format"})
 		return
 	}
-	found, err := dao.DeleteMapping(c.Request.Context(), id)
+	found, err = service.DeleteMapping(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Ошибка DAO при удалении маппинга %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Service error occurred while deleting mapping %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete mapping"})
 		return
 	}
 	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Маппинг не найден в системе"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Mapping not found"})
 		return
 	}
 	c.Status(http.StatusNoContent)
 }
-*/

@@ -13,55 +13,60 @@ import (
 
 func LoadEnumsFromDB(ctx context.Context) error {
 	var conn *pgxpool.Pool
-	conn = database.Get()
 	var accessMap map[int16]string
+	var alarmMap map[int16]string
+	var asn1Map map[int16]string
+	var logicMap map[int16]string
+	var oidAccessMap map[int16]string
+	var statusMap map[int16]string
+	var pollMap map[int16]string
+	var varTypeMap map[int16]string
+	var oidTypeMap map[int16]string
+	var vendors []map[string]interface{}
 	var err error
+	conn = database.Get()
 	accessMap, err = fetchSimpleEnum(ctx, conn, "public.access")
 	if err != nil {
 		return err
 	}
-	var alarmMap map[int16]string
 	alarmMap, err = fetchSimpleEnum(ctx, conn, "public.alarm_level")
 	if err != nil {
 		return err
 	}
-	var asn1Map map[int16]string
 	asn1Map, err = fetchSimpleEnum(ctx, conn, "public.asn1_type")
 	if err != nil {
 		return err
 	}
-	var logicMap map[int16]string
 	logicMap, err = fetchSimpleEnum(ctx, conn, "public.logic_operator")
 	if err != nil {
 		return err
 	}
-	var oidAccessMap map[int16]string
 	oidAccessMap, err = fetchSimpleEnum(ctx, conn, "public.oid_access")
 	if err != nil {
 		return err
 	}
-	var statusMap map[int16]string
 	statusMap, err = fetchSimpleEnum(ctx, conn, "public.oid_status")
 	if err != nil {
 		return err
 	}
-	var pollMap map[int16]string
 	pollMap, err = fetchSimpleEnum(ctx, conn, "public.polling_frequency")
 	if err != nil {
 		return err
 	}
-	var varTypeMap map[int16]string
 	varTypeMap, err = fetchSimpleEnum(ctx, conn, "public.var_type")
 	if err != nil {
 		return err
 	}
-	var vendors []map[string]interface{}
 	vendors, err = fetchVendorsList(ctx, conn)
 	if err != nil {
 		return err
 	}
-	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicMap, alarmMap, vendors)
-	logger.Info("System registries successfully loaded from DB: access=%d, alarms=%d, asn1=%d, logic=%d, oid_access=%d, status=%d, frequencies=%d, types=%d, vendors=%d", len(accessMap), len(alarmMap), len(asn1Map), len(logicMap), len(oidAccessMap), len(statusMap), len(pollMap), len(varTypeMap), len(vendors))
+	oidTypeMap, err = fetchSimpleEnum(ctx, conn, "public.oid_type")
+	if err != nil {
+		return err
+	}
+	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicMap, alarmMap, vendors, oidTypeMap)
+	logger.Info("System registries successfully loaded from DB: access=%d, alarms=%d, asn1=%d, logic=%d, oid_access=%d, status=%d, frequencies=%d, types=%d, vendors=%d, oid_types=%d", len(accessMap), len(alarmMap), len(asn1Map), len(logicMap), len(oidAccessMap), len(statusMap), len(pollMap), len(varTypeMap), len(vendors), len(oidTypeMap))
 	return nil
 }
 
