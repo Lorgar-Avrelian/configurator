@@ -12,12 +12,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CreateComponent создаёт новый узел состава устройства
-// @Summary         Создать узел состава устройства
+// CreateComponent создаёт новый компонент устройства
+// @Summary         Создать компонент устройства
 // @Tags            1. Модельный каталог: Компоненты
 // @Accept          json
 // @Produce         json
-// @Param           request body dto.ComponentCreateDto true "Данные узла"
+// @Param           request body dto.ComponentCreateDto true "Данные компонента"
 // @Success         201  {object}  dto.ComponentDto
 // @Failure         400  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
@@ -40,11 +40,11 @@ func CreateComponent(c *gin.Context) {
 	c.JSON(http.StatusCreated, res)
 }
 
-// GetComponent возвращает узел состава по ID вместе с маппингами
-// @Summary         Получить узел состава по ID
+// GetComponent возвращает компонент по ID вместе с маппингами
+// @Summary         Получить компонент по ID
 // @Tags            1. Модельный каталог: Компоненты
 // @Produce         json
-// @Param           id   path      int  true  "ID Узла"
+// @Param           id   path      int  true  "ID компонента"
 // @Success         200  {object}  dto.ComponentDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
@@ -72,12 +72,12 @@ func GetComponent(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// UpdateComponent обновляет метаданные узла
-// @Summary         Обновить узел состава по ID
+// UpdateComponent обновляет метаданные компонент
+// @Summary         Обновить компонент по ID
 // @Tags            1. Модельный каталог: Компоненты
 // @Accept          json
 // @Produce         json
-// @Param           id      path      int  true  "ID Узла"
+// @Param           id      path      int  true  "ID компонента"
 // @Param           request body dto.ComponentUpdateDto true "Новые данные"
 // @Success         200  {object}  dto.ComponentDto
 // @Router          /api/v1/component/{id} [put]
@@ -109,10 +109,10 @@ func UpdateComponent(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// DeleteComponent удаляет узел из дерева подчиненности
-// @Summary         Удалить узел состава по ID
+// DeleteComponent удаляет компонент из дерева подчиненности
+// @Summary         Удалить компонент по ID
 // @Tags            1. Модельный каталог: Компоненты
-// @Param           id   path      int  true  "ID Узла"
+// @Param           id   path      int  true  "ID компонента"
 // @Success         204  "No Content"
 // @Router          /api/v1/component/{id} [delete]
 func DeleteComponent(c *gin.Context) {
@@ -137,7 +137,7 @@ func DeleteComponent(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// GetAllComponents возвращает все узлы с их маппингами параметров
+// GetAllComponents возвращает все компоненты с их параметрами
 // @Summary         Получить всю структуру подчиненности устройств
 // @Tags            1. Модельный каталог: Компоненты
 // @Produce         json
@@ -158,7 +158,7 @@ func GetAllComponents(c *gin.Context) {
 
 // SearchComponents выполняет полнотекстовый поиск компонента
 // @Summary         Поиск компонентов по строке
-// @Description     Ищет компоненты, у которых title, name_en, name_ru, description_en или description_ru частично совпадают с переданной строкой query
+// @Description     Ищет компоненты, у которых title, name_en, name_ru, description_en или description_ru частично совпадают с переданной строкой
 // @Tags            1. Модельный каталог: Компоненты
 // @Produce         json
 // @Param           query query     string  true  "Строка поиска"

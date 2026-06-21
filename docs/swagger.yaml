@@ -121,6 +121,63 @@ definitions:
         example: Component
         type: string
     type: object
+  configurator_internal_dto.DeviceIndicatorCreateDto:
+    properties:
+      contact:
+        example: sysadmin@company.com
+        type: string
+        x-nullable: true
+      description:
+        example: Linux server-node-01 5.4.0-74-generic
+        type: string
+        x-nullable: true
+      location:
+        example: Rack 04, Room 202
+        type: string
+        x-nullable: true
+      name:
+        example: node-01.local
+        type: string
+        x-nullable: true
+      object_id:
+        example: .1.3.6.1.4.1.8072.3.2.10
+        type: string
+      services:
+        example: 72
+        type: integer
+        x-nullable: true
+    required:
+    - object_id
+    type: object
+  configurator_internal_dto.DeviceIndicatorDto:
+    properties:
+      contact:
+        example: sysadmin@company.com
+        type: string
+        x-nullable: true
+      description:
+        example: Linux server-node-01 5.4.0-74-generic
+        type: string
+        x-nullable: true
+      id:
+        example: 1
+        type: integer
+      location:
+        example: Rack 04, Room 202
+        type: string
+        x-nullable: true
+      name:
+        example: node-01.local
+        type: string
+        x-nullable: true
+      object_id:
+        example: .1.3.6.1.4.1.8072.3.2.10
+        type: string
+      services:
+        example: 72
+        type: integer
+        x-nullable: true
+    type: object
   configurator_internal_dto.MibDto:
     properties:
       id:
@@ -338,7 +395,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Данные узла
+      - description: Данные компонента
         in: body
         name: request
         required: true
@@ -363,13 +420,13 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Создать узел состава устройства
+      summary: Создать компонент устройства
       tags:
       - '1. Модельный каталог: Компоненты'
   /api/v1/component/{id}:
     delete:
       parameters:
-      - description: ID Узла
+      - description: ID компонента
         in: path
         name: id
         required: true
@@ -377,12 +434,12 @@ paths:
       responses:
         "204":
           description: No Content
-      summary: Удалить узел состава по ID
+      summary: Удалить компонент по ID
       tags:
       - '1. Модельный каталог: Компоненты'
     get:
       parameters:
-      - description: ID Узла
+      - description: ID компонента
         in: path
         name: id
         required: true
@@ -412,14 +469,14 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Получить узел состава по ID
+      summary: Получить компонент по ID
       tags:
       - '1. Модельный каталог: Компоненты'
     put:
       consumes:
       - application/json
       parameters:
-      - description: ID Узла
+      - description: ID компонента
         in: path
         name: id
         required: true
@@ -437,13 +494,13 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/configurator_internal_dto.ComponentDto'
-      summary: Обновить узел состава по ID
+      summary: Обновить компонент по ID
       tags:
       - '1. Модельный каталог: Компоненты'
   /api/v1/component/search:
     get:
       description: Ищет компоненты, у которых title, name_en, name_ru, description_en
-        или description_ru частично совпадают с переданной строкой query
+        или description_ru частично совпадают с переданной строкой
       parameters:
       - description: Строка поиска
         in: query
@@ -494,6 +551,168 @@ paths:
       summary: Получить всю структуру подчиненности устройств
       tags:
       - '1. Модельный каталог: Компоненты'
+  /api/v1/indicator/device:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все индикаторы устройств
+      tags:
+      - '5. Конфигурация: Индикаторы устройств'
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные индикатора
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorCreateDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать индикатор устройства
+      tags:
+      - '5. Конфигурация: Индикаторы устройств'
+  /api/v1/indicator/device/{id}:
+    delete:
+      parameters:
+      - description: ID Индикатора
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить индикатор по ID
+      tags:
+      - '5. Конфигурация: Индикаторы устройств'
+    get:
+      parameters:
+      - description: ID Индикатора
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить индикатор по ID
+      tags:
+      - '5. Конфигурация: Индикаторы устройств'
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Индикатора
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorCreateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить индикатор по ID
+      tags:
+      - '5. Конфигурация: Индикаторы устройств'
   /api/v1/oid:
     get:
       parameters:

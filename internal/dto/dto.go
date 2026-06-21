@@ -115,3 +115,22 @@ type OidDto struct {
 	Description      *string           `json:"description,omitempty" swaggertype:"string" extensions:"x-nullable" example:"The vendor's authoritative identification of the network management subsystem contained in the entity."`
 	Category         *string           `json:"category,omitempty" swaggertype:"string" extensions:"x-nullable" example:"system"`
 }
+
+type DeviceIndicatorCreateDto struct {
+	Description *string `json:"description" swaggertype:"string" extensions:"x-nullable" example:"Linux server-node-01 5.4.0-74-generic"`
+	ObjectID    string  `json:"object_id" binding:"required" example:".1.3.6.1.4.1.8072.3.2.10"`
+	Contact     *string `json:"contact" swaggertype:"string" extensions:"x-nullable" example:"sysadmin@company.com"`
+	Name        *string `json:"name" swaggertype:"string" extensions:"x-nullable" example:"node-01.local"`
+	Location    *string `json:"location" swaggertype:"string" extensions:"x-nullable" example:"Rack 04, Room 202"`
+	Services    *int16  `json:"services" swaggertype:"integer" extensions:"x-nullable" example:"72"`
+}
+
+type DeviceIndicatorDto struct {
+	ID          int64   `json:"id" example:"1"`
+	Description *string `json:"description" swaggertype:"string" extensions:"x-nullable" example:"Linux server-node-01 5.4.0-74-generic"`
+	ObjectID    string  `json:"object_id" example:".1.3.6.1.4.1.8072.3.2.10"`
+	Contact     *string `json:"contact" swaggertype:"string" extensions:"x-nullable" example:"sysadmin@company.com"`
+	Name        *string `json:"name" swaggertype:"string" extensions:"x-nullable" example:"node-01.local"`
+	Location    *string `json:"location" swaggertype:"string" extensions:"x-nullable" example:"Rack 04, Room 202"`
+	Services    *int16  `json:"services" swaggertype:"integer" extensions:"x-nullable" example:"72"`
+}
