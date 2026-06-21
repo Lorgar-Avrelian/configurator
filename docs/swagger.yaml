@@ -849,6 +849,42 @@ paths:
       summary: Обновить узел состава по ID
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
+  /api/v1/device-component/{id}/own:
+    get:
+      parameters:
+      - description: ID Узла
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить изолированный узел состава по ID
+      tags:
+      - '8. Конфигурация: Структура компонентов устройства'
   /api/v1/device-components:
     get:
       produces:
@@ -1336,6 +1372,42 @@ paths:
               type: string
             type: object
       summary: Обновить сопоставление по ID
+      tags:
+      - '7. Конфигурация: Сопоставления параметров'
+  /api/v1/mapping/{id}/own:
+    get:
+      parameters:
+      - description: ID сопоставления
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.MappingDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить изолированное сопоставление по ID
       tags:
       - '7. Конфигурация: Сопоставления параметров'
   /api/v1/mappings:

@@ -6,6 +6,7 @@ import (
 	"configurator/internal/model"
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -66,7 +67,21 @@ func LoadEnumsFromDB(ctx context.Context) error {
 		return err
 	}
 	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicMap, alarmMap, vendors, oidTypeMap)
-	logger.Info("System enums successfully loaded from DB: access=%d, alarms=%d, asn1=%d, logic=%d, oid_access=%d, status=%d, frequencies=%d, types=%d, vendors=%d, oid_types=%d", len(accessMap), len(alarmMap), len(asn1Map), len(logicMap), len(oidAccessMap), len(statusMap), len(pollMap), len(varTypeMap), len(vendors), len(oidTypeMap))
+	var logMsg string
+	logMsg = fmt.Sprintf("\n%-17s | %s\n------------------+-------\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d",
+		"Registry Name", "Count",
+		"Access", len(accessMap),
+		"Alarm Level", len(alarmMap),
+		"ASN.1 Type", len(asn1Map),
+		"Logic Operator", len(logicMap),
+		"OID Access", len(oidAccessMap),
+		"OID Status", len(statusMap),
+		"OID Type", len(oidTypeMap),
+		"Polling Frequency", len(pollMap),
+		"Variable Type", len(varTypeMap),
+		"Vendor", len(vendors),
+	)
+	logger.Info("System registries successfully loaded from DB:%s", logMsg)
 	return nil
 }
 

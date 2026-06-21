@@ -160,3 +160,35 @@ func DeleteDeviceComponent(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+
+// GetDeviceComponentOwn возвращает изолированный узел состава по ID без дерева подчиненности
+// @Summary         Получить изолированный узел состава по ID
+// @Tags            8. Конфигурация: Структура компонентов устройства
+// @Produce         json
+// @Param           id   path      int  true  "ID Узла"
+// @Success         200  {object}  dto.DeviceComponentDto
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/device-component/{id}/own [get]
+func GetDeviceComponentOwn(c *gin.Context) {
+	var id int64
+	var err error
+	var res *dto.DeviceComponentDto
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid device component ID format"})
+		return
+	}
+	res, err = service.GetDeviceComponentByIDOwn(c.Request.Context(), id)
+	if err != nil {
+		logger.Error("Service error occurred while retrieving single device component %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve device component"})
+		return
+	}
+	if res == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Device component not found"})
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}

@@ -146,3 +146,18 @@ func buildMappingTree(parent *dto.MappingDto, childrenMap map[int64][]dto.Mappin
 		parent.Children = append(parent.Children, child)
 	}
 }
+
+func GetMappingByIDOwn(ctx context.Context, id int64) (*dto.MappingDto, error) {
+	var resPtr *dao.Mapping
+	var err error
+	var res dto.MappingDto
+	resPtr, err = dao.GetMappingByIDOwn(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if resPtr == nil {
+		return nil, nil
+	}
+	res = mapper.MappingToMappingDto(*resPtr)
+	return &res, nil
+}

@@ -160,3 +160,35 @@ func DeleteMapping(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+
+// GetMappingOwn возвращает изолированное сопоставление по ID без дерева вложенности
+// @Summary         Получить изолированное сопоставление по ID
+// @Tags            7. Конфигурация: Сопоставления параметров
+// @Produce         json
+// @Param           id   path      int  true  "ID сопоставления"
+// @Success         200  {object}  dto.MappingDto
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/mapping/{id}/own [get]
+func GetMappingOwn(c *gin.Context) {
+	var id int64
+	var err error
+	var res *dto.MappingDto
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid mapping ID format"})
+		return
+	}
+	res, err = service.GetMappingByIDOwn(c.Request.Context(), id)
+	if err != nil {
+		logger.Error("Service error occurred while retrieving single mapping %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve mapping"})
+		return
+	}
+	if res == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Mapping not found"})
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}

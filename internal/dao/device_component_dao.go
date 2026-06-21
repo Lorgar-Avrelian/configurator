@@ -201,3 +201,27 @@ func GetMappingsByDeviceComponentID(ctx context.Context, devCompID int64) ([]Map
 	}
 	return list, rows.Err()
 }
+
+func GetDeviceComponentByIDOwn(ctx context.Context, id int64) (*DeviceComponent, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var row pgx.Row
+	var dc DeviceComponent
+	var err error
+	conn = database.Get()
+	query = `SELECT dc."id", dc."model", dc."internal_order", dc."parent",
+			        c."title", c."name_en", c."name_ru"
+			 FROM public.device_component dc
+			     LEFT JOIN public.component c ON dc."model" = c."id"
+			 WHERE dc."id" = $1`
+	row = conn.QueryRow(ctx, query, id)
+	err = row.Scan(&dc.ID, &dc.ModelID, &dc.InternalOrder, &dc.Parent, &dc.CompTitle, &dc.CompNameEn, &dc.CompNameRu)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, nil
+		}
+		logger.Error("Failed to retrieve single device component own ID %d: %v", id, err)
+		return nil, err
+	}
+	return &dc, nil
+}

@@ -186,3 +186,19 @@ func enrichComponentWithMappings(ctx context.Context, node *dto.DeviceComponentD
 	})
 	node.Mappings = roots
 }
+
+func GetDeviceComponentByIDOwn(ctx context.Context, id int64) (*dto.DeviceComponentDto, error) {
+	var resPtr *dao.DeviceComponent
+	var err error
+	var res dto.DeviceComponentDto
+	resPtr, err = dao.GetDeviceComponentByIDOwn(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if resPtr == nil {
+		return nil, nil
+	}
+	res = mapper.DeviceComponentToDeviceComponentDto(*resPtr)
+	enrichComponentWithMappings(ctx, &res)
+	return &res, nil
+}

@@ -78,12 +78,12 @@ func NewServer() *Server {
 			indicatorParam.PUT("/:id", UpdateParamIndicator)
 			indicatorParam.DELETE("/:id", DeleteParamIndicator)
 		}
-		v1.GET("/mappings", GetAllMappings)
 		var mapping *gin.RouterGroup
 		mapping = v1.Group("/mapping")
 		{
 			mapping.POST("", CreateMapping)
 			mapping.GET("/:id", GetMapping)
+			mapping.GET("/:id/own", GetMappingOwn)
 			mapping.PUT("/:id", UpdateMapping)
 			mapping.DELETE("/:id", DeleteMapping)
 		}
@@ -93,6 +93,7 @@ func NewServer() *Server {
 		{
 			deviceComponent.POST("", CreateDeviceComponent)
 			deviceComponent.GET("/:id", GetDeviceComponent)
+			deviceComponent.GET("/:id/own", GetDeviceComponentOwn)
 			deviceComponent.PUT("/:id", UpdateDeviceComponent)
 			deviceComponent.DELETE("/:id", DeleteDeviceComponent)
 		}
