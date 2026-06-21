@@ -1,143 +1,179 @@
 package dao
 
-/*func scanOidRows(pgxRows pgx.Rows) ([]model.Oid, error) {
-	var oids []model.Oid
-	for pgxRows.Next() {
-		var o model.Oid
-		var mib sql.NullInt64
-		var num sql.NullInt32
-		var syn, units, desc, cat sql.NullString
-		var stRaw, acRaw sql.NullInt16
-		var tRaw int16
-		var enumBytes []byte
-		err := pgxRows.Scan(
-			&o.ID, &mib, &tRaw, &o.Name, &num, &o.DotterNotation, &o.ObjectDescriptor,
-			&syn, &enumBytes, &stRaw, &acRaw, &units, &desc, &cat,
-		)
+import (
+	"configurator/internal/database"
+	"configurator/internal/logger"
+	"context"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+func GetOidsByExactDotter(ctx context.Context, notation string) ([]Oid, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	var list []Oid
+	var o Oid
+	conn = database.Get()
+	query = `SELECT o."id", o."mib", m."path", m."name", m."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category"
+			 FROM public.oid o
+			     LEFT JOIN public.mib m ON o."mib" = m."id" WHERE o."dotter_notation" = $1
+			 ORDER BY string_to_array(trim(leading '.' from o."dotter_notation"), '.')::int[]`
+	rows, err = conn.Query(ctx, query, notation)
+	if err != nil {
+		logger.Error("Failed to query exact OIDs: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	list = []Oid{}
+	for rows.Next() {
+		err = rows.Scan(&o.ID, &o.MibID, &o.MibPath, &o.MibName, &o.MibVendor, &o.Type, &o.Name, &o.Number, &o.DotterNotation, &o.ObjectDescriptor, &o.Syntax, &o.Enum, &o.Status, &o.Access, &o.Units, &o.Description, &o.Category)
 		if err != nil {
 			return nil, err
 		}
-		o.Type = model.Asn1Type(tRaw)
-		if mib.Valid {
-			o.MibID = &mib.Int64
-		}
-		if num.Valid {
-			o.Number = &num.Int32
-		}
-		o.Syntax = syn.String
-		if len(enumBytes) > 0 {
-			o.Enum = json.RawMessage(enumBytes)
-		}
-		o.Units = units.String
-		o.Description = desc.String
-		o.Category = cat.String
-
-		if stRaw.Valid {
-			st := model.OidStatus(stRaw.Int16)
-			o.Status = &st
-		}
-		if acRaw.Valid {
-			ac := model.OidAccess(acRaw.Int16)
-			o.Access = &ac
-		}
-		oids = append(oids, o)
+		list = append(list, o)
 	}
-	return oids, nil
+	return list, rows.Err()
 }
 
-func GetOidsByExactDotter(ctx context.Context, dotter string) ([]model.Oid, error) {
-	conn := database.Get()
-	query := `SELECT id, mib, type, name, number, dotter_notation, object_descriptor, syntax, enum, status, access, units, description, category FROM public.oid WHERE dotter_notation = $1`
-	rows, err := conn.Query(ctx, query, dotter)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return scanOidRows(rows)
-}
-
-func GetOidsByDotterPrefix(ctx context.Context, prefix string) ([]model.Oid, error) {
-	conn := database.Get()
-	query := `SELECT id, mib, type, name, number, dotter_notation, object_descriptor, syntax, enum, status, access, units, description, category FROM public.oid WHERE dotter_notation LIKE $1`
-	rows, err := conn.Query(ctx, query, prefix+"%")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return scanOidRows(rows)
-}
-
-func GetOidsByMibName(ctx context.Context, mibName string) ([]model.Oid, error) {
-	conn := database.Get()
-	query := `
-		SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
-		FROM public.oid o
-		JOIN public.mib m ON o.mib = m.id
-		WHERE m.name = $1`
-	rows, err := conn.Query(ctx, query, mibName)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return scanOidRows(rows)
-}
-
-func GetOidsByVendorID(ctx context.Context, vID model.VendorID) ([]model.Oid, error) {
-	conn := database.Get()
-	query := `
-		SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
-		FROM public.oid o
-		JOIN public.mib m ON o.mib = m.id
-		WHERE m.vendor = $1`
-	rows, err := conn.Query(ctx, query, int64(vID))
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return scanOidRows(rows)
-}
-
-// GetOidsByDotterAndMibName возвращает OID по точному совпадению dotter_notation и имени MIB
-func GetOidsByDotterAndMibName(ctx context.Context, dotter string, mibName string) ([]model.Oid, error) {
-	conn := database.Get()
-	query := `
-		SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
-		FROM public.oid o
-		JOIN public.mib m ON o.mib = m.id
-		WHERE o.dotter_notation = $1 AND m.name = $2`
-	rows, err := conn.Query(ctx, query, dotter, mibName)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return scanOidRows(rows)
-}
-
-// GetOidsByDotterMibAndVendor возвращает OID по точному совпадению dotter_notation, имени MIB и имени/директории вендора (поддерживает указатель на string для NULL)
-func GetOidsByDotterMibAndVendor(ctx context.Context, dotter string, mibName string, vendorIdentity *string) ([]model.Oid, error) {
-	conn := database.Get()
+func GetOidsByDotterPrefixPaged(ctx context.Context, prefix string, page int) ([]Oid, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var pattern string
 	var rows pgx.Rows
 	var err error
-	if vendorIdentity == nil {
-		query := `
-			SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
-			FROM public.oid o
-			JOIN public.mib m ON o.mib = m.id
-			WHERE o.dotter_notation = $1 AND m.name = $2 AND m.vendor IS NULL`
-		rows, err = conn.Query(ctx, query, dotter, mibName)
-	} else {
-		query := `
-			SELECT o.id, o.mib, o.type, o.name, o.number, o.dotter_notation, o.object_descriptor, o.syntax, o.enum, o.status, o.access, o.units, o.description, o.category
-			FROM public.oid o
-			JOIN public.mib m ON o.mib = m.id
-			JOIN public.vendor v ON m.vendor = v.id
-			WHERE o.dotter_notation = $1 AND m.name = $2 AND (v.name = $3 OR v.directory = $3)`
-		rows, err = conn.Query(ctx, query, dotter, mibName, *vendorIdentity)
-	}
+	var list []Oid
+	var o Oid
+	conn = database.Get()
+	pattern = prefix + "%"
+	query = `SELECT o."id", o."mib", m."path", m."name", m."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category"
+			 FROM public.oid o
+			     LEFT JOIN public.mib m ON o."mib" = m."id"
+			 WHERE o."dotter_notation" LIKE $1
+			 ORDER BY string_to_array(trim(leading '.' from o."dotter_notation"), '.')::int[] LIMIT 100 OFFSET (($2 - 1) * 100)`
+	rows, err = conn.Query(ctx, query, pattern, page)
 	if err != nil {
+		logger.Error("Failed to query paged OIDs by prefix: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
-	return scanOidRows(rows)
+	list = []Oid{}
+	for rows.Next() {
+		err = rows.Scan(&o.ID, &o.MibID, &o.MibPath, &o.MibName, &o.MibVendor, &o.Type, &o.Name, &o.Number, &o.DotterNotation, &o.ObjectDescriptor, &o.Syntax, &o.Enum, &o.Status, &o.Access, &o.Units, &o.Description, &o.Category)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, o)
+	}
+	return list, rows.Err()
 }
-*/
+
+func GetOidsByMibName(ctx context.Context, name string) ([]Oid, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	var list []Oid
+	var o Oid
+	conn = database.Get()
+	query = `SELECT o."id", o."mib", m."path", m."name", m."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category"
+			 FROM public.oid o
+			     JOIN public.mib m ON o."mib" = m."id"
+			 WHERE m."name" = $1
+			 ORDER BY string_to_array(trim(leading '.' from o."dotter_notation"), '.')::int[]`
+	rows, err = conn.Query(ctx, query, name)
+	if err != nil {
+		logger.Error("Failed to query OIDs by MIB name: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	list = []Oid{}
+	for rows.Next() {
+		err = rows.Scan(&o.ID, &o.MibID, &o.MibPath, &o.MibName, &o.MibVendor, &o.Type, &o.Name, &o.Number, &o.DotterNotation, &o.ObjectDescriptor, &o.Syntax, &o.Enum, &o.Status, &o.Access, &o.Units, &o.Description, &o.Category)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, o)
+	}
+	return list, rows.Err()
+}
+
+func GetOidsByVendorIDPaged(ctx context.Context, vendorID int64, filterByVendor bool, page int) ([]Oid, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	var list []Oid
+	var o Oid
+	conn = database.Get()
+	if filterByVendor {
+		query = `SELECT o."id", o."mib", m."path", m."name", m."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category"
+				 FROM public.oid o
+				     JOIN public.mib m ON o."mib" = m."id"
+				 WHERE m."vendor" = $1
+				 ORDER BY string_to_array(trim(leading '.' from o."dotter_notation"), '.')::int[] LIMIT 100 OFFSET (($2 - 1) * 100)`
+		rows, err = conn.Query(ctx, query, vendorID, page)
+	} else {
+		query = `SELECT o."id", o."mib", m."path", m."name", m."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category"
+				 FROM public.oid o
+				     LEFT JOIN public.mib m ON o."mib" = m."id"
+				 ORDER BY string_to_array(trim(leading '.' from o."dotter_notation"), '.')::int[] LIMIT 100 OFFSET (($1 - 1) * 100)`
+		rows, err = conn.Query(ctx, query, page)
+	}
+	if err != nil {
+		logger.Error("Failed to query paged OIDs by vendor: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	list = []Oid{}
+	for rows.Next() {
+		err = rows.Scan(&o.ID, &o.MibID, &o.MibPath, &o.MibName, &o.MibVendor, &o.Type, &o.Name, &o.Number, &o.DotterNotation, &o.ObjectDescriptor, &o.Syntax, &o.Enum, &o.Status, &o.Access, &o.Units, &o.Description, &o.Category)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, o)
+	}
+	return list, rows.Err()
+}
+
+func GetOidsByDotterMibAndVendor(ctx context.Context, notation string, mibName string, vendorPtr *string) ([]Oid, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	var list []Oid
+	var o Oid
+	conn = database.Get()
+	if vendorPtr != nil {
+		query = `SELECT o."id", o."mib", m."path", m."name", m."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category"
+				 FROM public.oid o
+				     JOIN public.mib m ON o."mib" = m."id"
+				     JOIN public.vendor v ON m."vendor" = v."id"
+				 WHERE o."dotter_notation" = $1 AND m."name" = $2 AND (v."name" = $3 OR v."directory" = $3)
+				 ORDER BY string_to_array(trim(leading '.' from o."dotter_notation"), '.')::int[]`
+		rows, err = conn.Query(ctx, query, notation, mibName, *vendorPtr)
+	} else {
+		query = `SELECT o."id", o."mib", m."path", m."name", m."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category"
+				 FROM public.oid o
+				     JOIN public.mib m ON o."mib" = m."id"
+				 WHERE o."dotter_notation" = $1 AND m."name" = $2 AND m."vendor" IS NULL
+				 ORDER BY string_to_array(trim(leading '.' from o."dotter_notation"), '.')::int[]`
+		rows, err = conn.Query(ctx, query, notation, mibName)
+	}
+	if err != nil {
+		logger.Error("Failed to query OIDs by dotter, MIB and vendor: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	list = []Oid{}
+	for rows.Next() {
+		err = rows.Scan(&o.ID, &o.MibID, &o.MibPath, &o.MibName, &o.MibVendor, &o.Type, &o.Name, &o.Number, &o.DotterNotation, &o.ObjectDescriptor, &o.Syntax, &o.Enum, &o.Status, &o.Access, &o.Units, &o.Description, &o.Category)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, o)
+	}
+	return list, rows.Err()
+}

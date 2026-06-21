@@ -51,6 +51,15 @@ func NewServer() *Server {
 			relation.POST("", BindParam)
 			relation.DELETE("/:componentId/:paramId", UnbindParam)
 		}
+		var oid *gin.RouterGroup
+		oid = v1.Group("/oid")
+		{
+			oid.GET("", GetOidsByExactNotation)
+			oid.GET("/prefix", GetOidsByPrefixNotation)
+			oid.GET("/mib", GetOidsByMib)
+			oid.GET("/vendor", GetOidsByVendor)
+			oid.GET("/exact", GetOidsByDotterMibAndVendor)
+		}
 	}
 	return &Server{router: r}
 }

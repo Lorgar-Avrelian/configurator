@@ -1,78 +1,74 @@
 package server
 
-/*// GetOidsByExactNotation возвращает OID по точному совпадению dotter notation
-// @Summary         Поиск OID по dotter notation
+import (
+	"configurator/internal/dto"
+	"configurator/internal/logger"
+	"configurator/internal/service"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+)
+
+// GetOidsByExactNotation возвращает OID по точному совпадению dotter notation
+// @Summary         Поиск OID по точной dotter notation
 // @Tags            4. Парсер: OID
 // @Produce         json
-// @Param           notation query    string  true  "Точная dotter_notation"
-// @Success         200      {array}  model.Oid
+// @Param           notation query    string  true  "Точная dotter notation"
+// @Success         200      {array}  dto.OidDto
 // @Failure         400      {object} map[string]string
 // @Failure         500      {object} map[string]string
-// @Router          /api/v1/oids/exact [get]
+// @Router          /api/v1/oid [get]
 func GetOidsByExactNotation(c *gin.Context) {
-	notation := c.Query("notation")
+	var notation string
+	var res []dto.OidDto
+	var err error
+	notation = c.Query("notation")
 	if notation == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Параметр 'notation' не может быть пустым"})
 		return
 	}
-	res, err := dao.GetOidsByExactDotter(c.Request.Context(), notation)
+	res, err = service.GetOidsByExactNotation(c.Request.Context(), notation)
 	if err != nil {
-		logger.Error("Ошибка DAO при выборке точного OID: %v", err)
+		logger.Error("Service error occurred while fetching exact OID: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// GetOidsByPrefixNotation возвращает OID по префиксу с пагинацией и сортировкой в Go
+// GetOidsByPrefixNotation возвращает OID по префиксу с пагинацией и сортировкой в БД
 // @Summary         Поиск OID по префиксу с пагинацией
-// @Description     Возвращает отсортированный по dotter notation список OID (по 100 на страницу)
+// @Description     Возвращает отсортированный список OID (по 100 на страницу)
 // @Tags            4. Парсер: OID
 // @Produce         json
 // @Param           prefix   query    string  true  "Префикс dotter_notation"
-// @Param           page     query    int     false "Номер страницы (дефолт: 1)"
-// @Success         200      {object} dto.OidPageResponse
+// @Param           page     query    int     false "Номер страницы (по умолчанию: 1)"
+// @Success         200      {array}  dto.OidDto
 // @Failure         400      {object} map[string]string
 // @Failure         500      {object} map[string]string
-// @Router          /api/v1/oids/prefix [get]
+// @Router          /api/v1/oid/prefix [get]
 func GetOidsByPrefixNotation(c *gin.Context) {
-	prefix := c.Query("prefix")
+	var prefix string
+	var page int
+	var res []dto.OidDto
+	var err error
+	prefix = c.Query("prefix")
 	if prefix == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Параметр 'prefix' не может быть пустым"})
 		return
 	}
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	if page == 0 || page < 0 {
+	page, _ = strconv.Atoi(c.DefaultQuery("page", "1"))
+	if 1 > page {
 		page = 1
 	}
-	res, err := dao.GetOidsByDotterPrefix(c.Request.Context(), prefix)
+	res, err = service.GetOidsByPrefixNotation(c.Request.Context(), prefix, page)
 	if err != nil {
-		logger.Error("Ошибка DAO при выборке OID по префиксу: %v", err)
+		logger.Error("Service error occurred while fetching OIDs by prefix: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	sort.Slice(res, func(i, j int) bool {
-		return model.CompareOids(res[i].DotterNotation, res[j].DotterNotation)
-	})
-	perPage := 100
-	totalItems := len(res)
-	start := (page - 1) * perPage
-	end := start + perPage
-	var pagedItems []model.Oid
-	if start < totalItems {
-		if end > totalItems {
-			end = totalItems
-		}
-		pagedItems = res[start:end]
-	} else {
-		pagedItems = []model.Oid{}
-	}
-	c.JSON(http.StatusOK, dto.OidPageResponse{
-		Page:       page,
-		PerPage:    perPage,
-		TotalItems: totalItems,
-		Items:      pagedItems,
-	})
+	c.JSON(http.StatusOK, res)
 }
 
 // GetOidsByMib возвращает OID по названию MIB
@@ -80,140 +76,91 @@ func GetOidsByPrefixNotation(c *gin.Context) {
 // @Tags            4. Парсер: OID
 // @Produce         json
 // @Param           name     query    string  true  "Название MIB"
-// @Success         200      {array}  model.Oid
+// @Success         200      {array}  dto.OidDto
 // @Failure         400      {object} map[string]string
 // @Failure         500      {object} map[string]string
-// @Router          /api/v1/oids/mib [get]
+// @Router          /api/v1/oid/mib [get]
 func GetOidsByMib(c *gin.Context) {
-	name := c.Query("name")
+	var name string
+	var res []dto.OidDto
+	var err error
+	name = c.Query("name")
 	if name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Параметр 'name' не может быть пустым"})
 		return
 	}
-	res, err := dao.GetOidsByMibName(c.Request.Context(), name)
+	res, err = service.GetOidsByMib(c.Request.Context(), name)
 	if err != nil {
-		logger.Error("Ошибка DAO при выборке OID по MIB: %v", err)
+		logger.Error("Service error occurred while fetching OIDs by MIB: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// GetOidsByVendor возвращает OID производителя с пагинацией и сортировкой
+// GetOidsByVendor возвращает OID производителя с пагинацией и сортировкой в БД
 // @Summary         Получить OID по производителю с пагинацией
-// @Description     Находит производителя в кэше памяти, выгружает OID, сортирует и отдаёт по 100 штук на страницу
 // @Tags            4. Парсер: OID
 // @Produce         json
-// @Param           identity query    string  true  "Имя вендора или его директория"
+// @Param           vendor   query    string  false "Имя вендора или его директория"
 // @Param           page     query    int     false "Номер страницы (дефолт: 1)"
-// @Success         200      {object} dto.OidPageResponse
-// @Failure         400      {object} map[string]string
-// @Failure         404      {object} map[string]string
+// @Success         200      {array}  dto.OidDto
 // @Failure         500      {object} map[string]string
-// @Router          /api/v1/oids/vendor [get]
+// @Router          /api/v1/oid/vendor [get]
 func GetOidsByVendor(c *gin.Context) {
-	identity := c.Query("identity")
-	if identity == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Параметр 'identity' не может быть пустым"})
-		return
-	}
-	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	var vendor string
+	var page int
+	var res []dto.OidDto
+	var err error
+	vendor = c.Query("vendor")
+	page, _ = strconv.Atoi(c.DefaultQuery("page", "1"))
 	if 1 > page {
 		page = 1
 	}
-	vID, found := model.LookupVendorID(identity)
-	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Вендор не найден в памяти приложения"})
-		return
-	}
-	res, err := dao.GetOidsByVendorID(c.Request.Context(), vID)
+	res, err = service.GetOidsByVendor(c.Request.Context(), vendor, page)
 	if err != nil {
-		logger.Error("Ошибка DAO при выборке OID по вендору: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	sort.Slice(res, func(i, j int) bool {
-		return model.CompareOids(res[i].DotterNotation, res[j].DotterNotation)
-	})
-	perPage := 100
-	totalItems := len(res)
-	start := (page - 1) * perPage
-	end := start + perPage
-	var pagedItems []model.Oid
-	if totalItems > start {
-		if end > totalItems {
-			end = totalItems
-		}
-		pagedItems = res[start:end]
-	} else {
-		pagedItems = []model.Oid{}
-	}
-	c.JSON(http.StatusOK, dto.OidPageResponse{
-		Page:       page,
-		PerPage:    perPage,
-		TotalItems: totalItems,
-		Items:      pagedItems,
-	})
-}
-
-// GetOidsByDotterAndMib возвращает OID по точному совпадению dotter notation и названию MIB
-// @Summary         Поиск OID по dotter notation и названию MIB
-// @Tags            4. Парсер: OID
-// @Produce         json
-// @Param           notation query    string  true  "Точная dotter_notation"
-// @Param           mib      query    string  true  "Точное название MIB"
-// @Success         200      {array}  model.Oid
-// @Failure         400      {object} map[string]string
-// @Failure         500      {object} map[string]string
-// @Router          /api/v1/oids/exact-with-mib [get]
-func GetOidsByDotterAndMib(c *gin.Context) {
-	notation := c.Query("notation")
-	mibName := c.Query("mib")
-	if notation == "" || mibName == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Параметры 'notation' и 'mib' не могут быть пустыми"})
-		return
-	}
-	res, err := dao.GetOidsByDotterAndMibName(c.Request.Context(), notation, mibName)
-	if err != nil {
-		logger.Error("Ошибка DAO при выборке OID по dotter и MIB: %v", err)
+		logger.Error("Service error occurred while fetching OIDs by vendor: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// GetOidsByDotterMibAndVendor возвращает OID по dotter notation, MIB и производителю со специфичной числовой сортировкой результатов
+// GetOidsByDotterMibAndVendor возвращает OID по нотации, MIB и производителю
 // @Summary         Поиск OID по dotter notation, названию MIB и производителю
 // @Tags            4. Парсер: OID
 // @Produce         json
-// @Param           notation query    string  true  "Точная dotter_notation"
+// @Param           notation query    string  true  "Точная dotter notation"
 // @Param           mib      query    string  true  "Точное название MIB"
-// @Param           vendor   query    string  false "Имя или директория вендора (передайте null или оставьте пустым для фильтрации по NULL вендорам)"
-// @Success         200      {array}  model.Oid
+// @Param           vendor   query    string  false "Имя или директория вендора"
+// @Success         200      {array}  dto.OidDto
 // @Failure         400      {object} map[string]string
 // @Failure         500      {object} map[string]string
-// @Router          /api/v1/oids/exact-with-mib-and-vendor [get]
+// @Router          /api/v1/oid/exact [get]
 func GetOidsByDotterMibAndVendor(c *gin.Context) {
-	notation := c.Query("notation")
-	mibName := c.Query("mib")
-	vendorIdent, hasVendor := c.GetQuery("vendor")
+	var notation string
+	var mibName string
+	var vendorIdent string
+	var hasVendor bool
+	var vendorPtr *string
+	var res []dto.OidDto
+	var err error
+	notation = c.Query("notation")
+	mibName = c.Query("mib")
+	vendorIdent, hasVendor = c.GetQuery("vendor")
 	if notation == "" || mibName == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Параметры 'notation' и 'mib' не могут быть пустыми"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Parameters 'notation' и 'mib' couldn't be empty"})
 		return
 	}
-	var vendorPtr *string
-	if hasVendor && vendorIdent != "" && vendorIdent != "null" && vendorIdent != "NULL" {
+	vendorPtr = nil
+	if hasVendor && vendorIdent != "" {
 		vendorPtr = &vendorIdent
 	}
-	res, err := dao.GetOidsByDotterMibAndVendor(c.Request.Context(), notation, mibName, vendorPtr)
+	res, err = service.GetOidsByDotterMibAndVendor(c.Request.Context(), notation, mibName, vendorPtr)
 	if err != nil {
-		logger.Error("Ошибка DAO при выборке OID по нотации, MIB и вендору: %v", err)
+		logger.Error("Service error occurred while fetching OIDs by dotter, MIB and vendor: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	sort.Slice(res, func(i, j int) bool {
-		return model.CompareOids(res[i].DotterNotation, res[j].DotterNotation)
-	})
 	c.JSON(http.StatusOK, res)
 }
-*/

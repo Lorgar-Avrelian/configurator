@@ -95,6 +95,26 @@ type OidDao struct {
 	Category         sql.NullString  `db:"category" json:"category"`
 }
 
+type Oid struct {
+	ID               uuid.UUID       `db:"id"`
+	MibID            sql.NullInt64   `db:"mib_id"`
+	MibPath          sql.NullString  `db:"mib_path"`
+	MibName          sql.NullString  `db:"mib_name"`
+	MibVendor        sql.NullInt64   `db:"mib_vendor"`
+	Type             int16           `db:"type"`
+	Name             string          `db:"name"`
+	Number           sql.NullInt32   `db:"number"`
+	DotterNotation   string          `db:"dotter_notation"`
+	ObjectDescriptor string          `db:"object_descriptor"`
+	Syntax           sql.NullString  `db:"syntax"`
+	Enum             json.RawMessage `db:"enum"`
+	Status           sql.NullInt16   `db:"status"`
+	Access           sql.NullInt16   `db:"access"`
+	Units            sql.NullString  `db:"units"`
+	Description      sql.NullString  `db:"description"`
+	Category         sql.NullString  `db:"category"`
+}
+
 type DeviceIndicatorDao struct {
 	ID          int64          `db:"id" json:"id"`
 	Description sql.NullString `db:"description" json:"description"`

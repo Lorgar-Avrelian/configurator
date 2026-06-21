@@ -121,6 +121,76 @@ definitions:
         example: Component
         type: string
     type: object
+  configurator_internal_dto.MibDto:
+    properties:
+      id:
+        example: 4912
+        type: integer
+      name:
+        example: SNMPv2-MIB
+        type: string
+        x-nullable: true
+      path:
+        example: SNMPv2-MIB.mib
+        type: string
+      vendor:
+        example: BASE
+        type: string
+        x-nullable: true
+    type: object
+  configurator_internal_dto.OidDto:
+    properties:
+      access:
+        example: read-only
+        type: string
+        x-nullable: true
+      category:
+        example: system
+        type: string
+        x-nullable: true
+      description:
+        example: The vendor's authoritative identification of the network management
+          subsystem contained in the entity.
+        type: string
+        x-nullable: true
+      dotter_notation:
+        example: .1.3.6.1.2.1.1.2
+        type: string
+      enum:
+        type: object
+        x-nullable: true
+      id:
+        example: 14e8713a-2f3c-3af1-8e6f-449d7a612227
+        type: string
+      mib:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.MibDto'
+        x-nullable: true
+      name:
+        example: sysObjectID
+        type: string
+      number:
+        example: 2
+        type: integer
+        x-nullable: true
+      object_descriptor:
+        example: .iso.org.dod.internet.mgmt.mib-2.system.sysObjectID
+        type: string
+      status:
+        example: current
+        type: string
+        x-nullable: true
+      syntax:
+        example: OBJECT IDENTIFIER
+        type: string
+        x-nullable: true
+      type:
+        example: OBJECT IDENTIFIER
+        type: string
+      units:
+        type: string
+        x-nullable: true
+    type: object
   configurator_internal_dto.ParamCreateDto:
     properties:
       access:
@@ -424,6 +494,177 @@ paths:
       summary: Получить всю структуру подчиненности устройств
       tags:
       - '1. Модельный каталог: Компоненты'
+  /api/v1/oid:
+    get:
+      parameters:
+      - description: Точная dotter notation
+        in: query
+        name: notation
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.OidDto'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Поиск OID по точной dotter notation
+      tags:
+      - '4. Парсер: OID'
+  /api/v1/oid/exact:
+    get:
+      parameters:
+      - description: Точная dotter notation
+        in: query
+        name: notation
+        required: true
+        type: string
+      - description: Точное название MIB
+        in: query
+        name: mib
+        required: true
+        type: string
+      - description: Имя или директория вендора
+        in: query
+        name: vendor
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.OidDto'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Поиск OID по dotter notation, названию MIB и производителю
+      tags:
+      - '4. Парсер: OID'
+  /api/v1/oid/mib:
+    get:
+      parameters:
+      - description: Название MIB
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.OidDto'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить OID по названию MIB
+      tags:
+      - '4. Парсер: OID'
+  /api/v1/oid/prefix:
+    get:
+      description: Возвращает отсортированный список OID (по 100 на страницу)
+      parameters:
+      - description: Префикс dotter_notation
+        in: query
+        name: prefix
+        required: true
+        type: string
+      - description: 'Номер страницы (по умолчанию: 1)'
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.OidDto'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Поиск OID по префиксу с пагинацией
+      tags:
+      - '4. Парсер: OID'
+  /api/v1/oid/vendor:
+    get:
+      parameters:
+      - description: Имя вендора или его директория
+        in: query
+        name: vendor
+        type: string
+      - description: 'Номер страницы (дефолт: 1)'
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.OidDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить OID по производителю с пагинацией
+      tags:
+      - '4. Парсер: OID'
   /api/v1/param:
     post:
       consumes:

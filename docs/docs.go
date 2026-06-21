@@ -269,6 +269,267 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/oid": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "4. Парсер: OID"
+                ],
+                "summary": "Поиск OID по точной dotter notation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Точная dotter notation",
+                        "name": "notation",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.OidDto"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/oid/exact": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "4. Парсер: OID"
+                ],
+                "summary": "Поиск OID по dotter notation, названию MIB и производителю",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Точная dotter notation",
+                        "name": "notation",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Точное название MIB",
+                        "name": "mib",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Имя или директория вендора",
+                        "name": "vendor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.OidDto"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/oid/mib": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "4. Парсер: OID"
+                ],
+                "summary": "Получить OID по названию MIB",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Название MIB",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.OidDto"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/oid/prefix": {
+            "get": {
+                "description": "Возвращает отсортированный список OID (по 100 на страницу)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "4. Парсер: OID"
+                ],
+                "summary": "Поиск OID по префиксу с пагинацией",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Префикс dotter_notation",
+                        "name": "prefix",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Номер страницы (по умолчанию: 1)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.OidDto"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/oid/vendor": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "4. Парсер: OID"
+                ],
+                "summary": "Получить OID по производителю с пагинацией",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Имя вендора или его директория",
+                        "name": "vendor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Номер страницы (дефолт: 1)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.OidDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/param": {
             "post": {
                 "description": "Создает новый системный параметр в таблице public.param",
@@ -929,6 +1190,100 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "Component"
+                }
+            }
+        },
+        "configurator_internal_dto.MibDto": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 4912
+                },
+                "name": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "SNMPv2-MIB"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "SNMPv2-MIB.mib"
+                },
+                "vendor": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "BASE"
+                }
+            }
+        },
+        "configurator_internal_dto.OidDto": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "read-only"
+                },
+                "category": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "system"
+                },
+                "description": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "The vendor's authoritative identification of the network management subsystem contained in the entity."
+                },
+                "dotter_notation": {
+                    "type": "string",
+                    "example": ".1.3.6.1.2.1.1.2"
+                },
+                "enum": {
+                    "type": "object",
+                    "x-nullable": true
+                },
+                "id": {
+                    "type": "string",
+                    "example": "14e8713a-2f3c-3af1-8e6f-449d7a612227"
+                },
+                "mib": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.MibDto"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string",
+                    "example": "sysObjectID"
+                },
+                "number": {
+                    "type": "integer",
+                    "x-nullable": true,
+                    "example": 2
+                },
+                "object_descriptor": {
+                    "type": "string",
+                    "example": ".iso.org.dod.internet.mgmt.mib-2.system.sysObjectID"
+                },
+                "status": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "current"
+                },
+                "syntax": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "OBJECT IDENTIFIER"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "OBJECT IDENTIFIER"
+                },
+                "units": {
+                    "type": "string",
+                    "x-nullable": true
                 }
             }
         },

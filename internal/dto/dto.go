@@ -91,3 +91,27 @@ type ComponentParamLinkDto struct {
 	ComponentID int64 `json:"component_id" binding:"required" example:"1"`
 	ParamID     int64 `json:"param_id" binding:"required" example:"2"`
 }
+
+type MibDto struct {
+	ID     int64   `json:"id" example:"4912"`
+	Path   string  `json:"path" example:"SNMPv2-MIB.mib"`
+	Name   *string `json:"name" swaggertype:"string" extensions:"x-nullable" example:"SNMPv2-MIB"`
+	Vendor *string `json:"vendor" swaggertype:"string" extensions:"x-nullable" example:"BASE"`
+}
+
+type OidDto struct {
+	ID               string            `json:"id" example:"14e8713a-2f3c-3af1-8e6f-449d7a612227"`
+	Mib              *MibDto           `json:"mib" extensions:"x-nullable"`
+	Type             string            `json:"type" example:"OBJECT IDENTIFIER"`
+	Name             string            `json:"name" example:"sysObjectID"`
+	Number           *int32            `json:"number" swaggertype:"integer" extensions:"x-nullable" example:"2"`
+	DotterNotation   string            `json:"dotter_notation" example:".1.3.6.1.2.1.1.2"`
+	ObjectDescriptor string            `json:"object_descriptor" example:".iso.org.dod.internet.mgmt.mib-2.system.sysObjectID"`
+	Syntax           *string           `json:"syntax,omitempty" swaggertype:"string" extensions:"x-nullable" example:"OBJECT IDENTIFIER"`
+	Enum             map[string]string `json:"enum,omitempty" swaggertype:"object" extensions:"x-nullable"`
+	Status           *string           `json:"status" extensions:"x-nullable" example:"current"`
+	Access           *string           `json:"access" extensions:"x-nullable" example:"read-only"`
+	Units            *string           `json:"units,omitempty" swaggertype:"string" extensions:"x-nullable"`
+	Description      *string           `json:"description,omitempty" swaggertype:"string" extensions:"x-nullable" example:"The vendor's authoritative identification of the network management subsystem contained in the entity."`
+	Category         *string           `json:"category,omitempty" swaggertype:"string" extensions:"x-nullable" example:"system"`
+}

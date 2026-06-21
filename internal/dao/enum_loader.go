@@ -6,7 +6,6 @@ import (
 	"configurator/internal/model"
 	"context"
 	"database/sql"
-	"encoding/json"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -135,28 +134,4 @@ func fetchVendorsList(ctx context.Context, conn *pgxpool.Pool) ([]map[string]int
 		return nil, err
 	}
 	return list, nil
-}
-
-func stringToNull(s string) sql.NullString {
-	var ns sql.NullString
-	ns = sql.NullString{
-		String: s,
-		Valid:  s != "",
-	}
-	return ns
-}
-
-func mapToJSONB(m *map[string]string) ([]byte, error) {
-	var hasData bool
-	hasData = m != nil && len(*m) > 0
-	if !hasData {
-		return nil, nil
-	}
-	var bytes []byte
-	var err error
-	bytes, err = json.Marshal(m)
-	if err != nil {
-		return nil, err
-	}
-	return bytes, nil
 }
