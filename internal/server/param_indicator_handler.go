@@ -77,7 +77,7 @@ func GetParamIndicator(c *gin.Context) {
 // @Produce         json
 // @Success         200  {array}   dto.ParamIndicatorDto
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/indicator/param [get]
+// @Router          /api/v1/indicator/params [get]
 func GetAllParamIndicators(c *gin.Context) {
 	var res []dto.ParamIndicatorDto
 	var err error

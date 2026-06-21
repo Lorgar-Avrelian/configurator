@@ -60,20 +60,20 @@ func NewServer() *Server {
 			oid.GET("/vendor", GetOidsByVendor)
 			oid.GET("/exact", GetOidsByDotterMibAndVendor)
 		}
+		v1.GET("/indicator/devices", GetAllIndicators)
 		var indicatorDevice *gin.RouterGroup
 		indicatorDevice = v1.Group("/indicator/device")
 		{
 			indicatorDevice.POST("", CreateIndicator)
-			indicatorDevice.GET("", GetAllIndicators)
 			indicatorDevice.GET("/:id", GetIndicator)
 			indicatorDevice.PUT("/:id", UpdateIndicator)
 			indicatorDevice.DELETE("/:id", DeleteIndicator)
 		}
+		v1.GET("/indicator/params", GetAllParamIndicators)
 		var indicatorParam *gin.RouterGroup
 		indicatorParam = v1.Group("/indicator/param")
 		{
 			indicatorParam.POST("", CreateParamIndicator)
-			indicatorParam.GET("", GetAllParamIndicators)
 			indicatorParam.GET("/:id", GetParamIndicator)
 			indicatorParam.PUT("/:id", UpdateParamIndicator)
 			indicatorParam.DELETE("/:id", DeleteParamIndicator)

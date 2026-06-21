@@ -77,7 +77,7 @@ func GetIndicator(c *gin.Context) {
 // @Produce         json
 // @Success         200  {array}   dto.DeviceIndicatorDto
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/indicator/device [get]
+// @Router          /api/v1/indicator/devices [get]
 func GetAllIndicators(c *gin.Context) {
 	var res []dto.DeviceIndicatorDto
 	var err error

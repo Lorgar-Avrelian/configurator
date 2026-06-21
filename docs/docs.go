@@ -270,35 +270,6 @@ const docTemplate = `{
             }
         },
         "/api/v1/indicator/device": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "5. Конфигурация: Индикаторы устройств"
-                ],
-                "summary": "Получить все индикаторы устройств",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/configurator_internal_dto.DeviceIndicatorDto"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
             "post": {
                 "consumes": [
                     "application/json"
@@ -516,22 +487,22 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/indicator/param": {
+        "/api/v1/indicator/devices": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "6. Конфигурация: Индикаторы параметров"
+                    "5. Конфигурация: Индикаторы устройств"
                 ],
-                "summary": "Получить все индикаторы параметров",
+                "summary": "Получить все индикаторы устройств",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorDto"
+                                "$ref": "#/definitions/configurator_internal_dto.DeviceIndicatorDto"
                             }
                         }
                     },
@@ -545,7 +516,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/indicator/param": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -748,6 +721,37 @@ const docTemplate = `{
                             "type": "object",
                             "additionalProperties": {
                                 "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/indicator/params": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "6. Конфигурация: Индикаторы параметров"
+                ],
+                "summary": "Получить все индикаторы параметров",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.ParamIndicatorDto"
                             }
                         }
                     },
