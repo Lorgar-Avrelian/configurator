@@ -205,3 +205,19 @@ type ConfigurationDto struct {
 	Indicator       *DeviceIndicatorDto `json:"indicator,omitempty" extensions:"x-nullable"`
 	DeviceComponent *DeviceComponentDto `json:"device_component,omitempty" extensions:"x-nullable"`
 }
+
+type ThresholdCreateDto struct {
+	Name        string  `json:"name" binding:"required" example:"Высокая загрузка CPU"`
+	Description *string `json:"description,omitempty" extensions:"x-nullable"`
+	Author      *string `json:"author,omitempty" extensions:"x-nullable"`
+	Query       string  `json:"query" binding:"required" example:"cpu_util > 90"`
+}
+
+type ThresholdDto struct {
+	ID          int64   `json:"id" example:"1"`
+	Name        string  `json:"name" example:"Высокая загрузка CPU"`
+	Description *string `json:"description,omitempty" extensions:"x-nullable"`
+	Author      *string `json:"author,omitempty" extensions:"x-nullable"`
+	Created     *string `json:"created,omitempty" extensions:"x-nullable"`
+	Query       string  `json:"query" example:"cpu_util > 90"`
+}

@@ -1,196 +1,123 @@
 package dao
 
-/*type thresholdFlatRow struct {
-	ID                  int64
-	SourceModel         int64
-	SourceInternalOrder int64
-	SourceParam         string
-	Value               string
-	Type                int16
-	Operator            int16
-	Enabled             bool
-	TargetParam         sql.NullString
-	TargetDevice        sql.NullInt64
-	Level               int16
-	PrevOperator        int16
-	PreviousID          sql.NullInt64
-}
+import (
+	"configurator/internal/database"
+	"configurator/internal/logger"
+	"context"
 
-func scanThresholdRows(rows pgx.Rows) ([]thresholdFlatRow, error) {
-	var list []thresholdFlatRow
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+func scanThresholdRows(rows pgx.Rows) ([]ThresholdDao, error) {
+	var list []ThresholdDao
+	list = []ThresholdDao{}
+	var cfg ThresholdDao
+	var err error
 	for rows.Next() {
-		var r thresholdFlatRow
-		err := rows.Scan(
-			&r.ID, &r.SourceModel, &r.SourceInternalOrder, &r.SourceParam, &r.Value,
-			&r.Type, &r.Operator, &r.Enabled, &r.TargetParam, &r.TargetDevice,
-			&r.Level, &r.PrevOperator, &r.PreviousID,
-		)
+		err = rows.Scan(&cfg.ID, &cfg.Name, &cfg.Description, &cfg.Author, &cfg.Created, &cfg.Query)
 		if err != nil {
 			return nil, err
 		}
-		list = append(list, r)
+		list = append(list, cfg)
 	}
-	return list, nil
+	return list, rows.Err()
 }
 
-func assembleThresholdChain(flatRows []thresholdFlatRow, startID int64) *model.Threshold {
-	nodes := make(map[int64]*model.Threshold)
-	for _, r := range flatRows {
-		t := &model.Threshold{
-			ID:                  r.ID,
-			SourceModel:         r.SourceModel,
-			SourceInternalOrder: r.SourceInternalOrder,
-			SourceParam:         r.SourceParam,
-			Value:               r.Value,
-			Type:                model.VarType(r.Type),
-			Operator:            model.LogicOperator(r.Operator),
-			Enabled:             r.Enabled,
-			Level:               model.AlarmLevel(r.Level),
-			PrevOperator:        model.LogicOperator(r.PrevOperator),
-		}
-		if r.TargetParam.Valid {
-			t.TargetParam = &r.TargetParam.String
-		}
-		if r.TargetDevice.Valid {
-			t.TargetDevice = &r.TargetDevice.Int64
-		}
-		if r.PreviousID.Valid {
-			t.PreviousID = &r.PreviousID.Int64
-		}
-		nodes[r.ID] = t
-	}
-	for _, node := range nodes {
-		if node.PreviousID != nil {
-			if prevNode, ok := nodes[*node.PreviousID]; ok {
-				node.PreviousThreshold = prevNode
-			}
-		}
-	}
-	return nodes[startID]
-}
-
-func CreateThreshold(ctx context.Context, d dto.ThresholdCreate) (int64, error) {
-	conn := database.Get()
-	query := `INSERT INTO public.threshold (source_model, source_internal_order, source_param, value, type, operator, enabled, target_param, target_device, level, prev_operator, previous) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id`
-	typeIdx := model.ParseVarType(d.Type)
-	opIdx := model.ParseLogicOperator(d.Operator)
-	lvlIdx := model.ParseAlarmLevel(d.Level)
-	prevOpIdx := model.ParseLogicOperator(d.PrevOperator)
-	enabled := true
-	if d.Enabled != nil {
-		enabled = *d.Enabled
-	}
-	var prevID sql.NullInt64
-	if d.PreviousID != nil {
-		prevID.Int64 = *d.PreviousID
-		prevID.Valid = true
-	}
-	var id int64
-	err := conn.QueryRow(ctx, query, d.SourceModel, d.SourceInternalOrder, d.SourceParam, d.Value, int16(typeIdx), int16(opIdx), enabled, toNullString(d.TargetParam), toNullInt64(d.TargetDevice), int16(lvlIdx), int16(prevOpIdx), prevID).Scan(&id)
-	return id, err
-}
-
-func GetDetailedThresholdByID(ctx context.Context, id int64) (*model.Threshold, error) {
-	conn := database.Get()
-	query := `
-		WITH RECURSIVE threshold_chain AS (
-			SELECT id, source_model, source_internal_order, source_param, value, type, operator, enabled, target_param, target_device, level, prev_operator, previous
-			FROM public.threshold WHERE id = $1
-			UNION ALL
-			SELECT t.id, t.source_model, t.source_internal_order, t.source_param, t.value, t.type, t.operator, t.enabled, t.target_param, t.target_device, t.level, t.prev_operator, t.previous
-			FROM public.threshold t
-			JOIN threshold_chain tc ON t.id = tc.previous
-		)
-		SELECT id, source_model, source_internal_order, source_param, value, type, operator, enabled, target_param, target_device, level, prev_operator, previous FROM threshold_chain`
-	rows, err := conn.Query(ctx, query, id)
+func CreateThreshold(ctx context.Context, t ThresholdDao) (int64, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var insertedID int64
+	var err error
+	conn = database.Get()
+	query = `INSERT INTO public.threshold ("name", "description", "author", "created", "query") VALUES ($1, $2, $3, NOW(), $4) RETURNING "id"`
+	err = conn.QueryRow(ctx, query, t.Name, t.Description, t.Author, t.Query).Scan(&insertedID)
 	if err != nil {
+		logger.Error("Failed to insert threshold into DB: %v", err)
+		return 0, err
+	}
+	return insertedID, nil
+}
+
+func GetThresholdByID(ctx context.Context, id int64) (*ThresholdDao, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	conn = database.Get()
+	query = `SELECT "id", "name", "description", "author", "created", "query" FROM public.threshold WHERE "id" = $1`
+	rows, err = conn.Query(ctx, query, id)
+	if err != nil {
+		logger.Error("Failed to query threshold ID %d: %v", id, err)
 		return nil, err
 	}
 	defer rows.Close()
-	flatRows, err := scanThresholdRows(rows)
-	if err != nil || len(flatRows) == 0 {
+	var res []ThresholdDao
+	res, err = scanThresholdRows(rows)
+	if err != nil {
 		return nil, err
 	}
-	return assembleThresholdChain(flatRows, id), nil
+	if 0 >= len(res) {
+		return nil, nil
+	}
+	return &res[0], nil
 }
 
-func UpdateThreshold(ctx context.Context, id int64, d dto.ThresholdUpdate) (int64, error) {
-	conn := database.Get()
-	query := `UPDATE public.threshold SET source_model = $1, source_internal_order = $2, source_param = $3, value = $4, type = $5, operator = $6, enabled = $7, target_param = $8, target_device = $9, level = $10, prev_operator = $11, previous = $12 WHERE id = $13 RETURNING id`
-	typeIdx := model.ParseVarType(d.Type)
-	opIdx := model.ParseLogicOperator(d.Operator)
-	lvlIdx := model.ParseAlarmLevel(d.Level)
-	prevOpIdx := model.ParseLogicOperator(d.PrevOperator)
-	enabled := true
-	if d.Enabled != nil {
-		enabled = *d.Enabled
-	}
-	var prevID sql.NullInt64
-	if d.PreviousID != nil {
-		prevID.Int64 = *d.PreviousID
-		prevID.Valid = true
-	}
-	var updatedID int64
-	err := conn.QueryRow(ctx, query, d.SourceModel, d.SourceInternalOrder, d.SourceParam, d.Value, int16(typeIdx), int16(opIdx), enabled, toNullString(d.TargetParam), toNullInt64(d.TargetDevice), int16(lvlIdx), int16(prevOpIdx), prevID, id).Scan(&updatedID)
+func GetAllThresholds(ctx context.Context) ([]ThresholdDao, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	conn = database.Get()
+	query = `SELECT "id", "name", "description", "author", "created", "query" FROM public.threshold ORDER BY "id" ASC`
+	rows, err = conn.Query(ctx, query)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return 0, nil
-		}
-		return 0, err
+		logger.Error("Failed to fetch all thresholds from DB: %v", err)
+		return nil, err
 	}
-	return updatedID, nil
+	defer rows.Close()
+	var res []ThresholdDao
+	res, err = scanThresholdRows(rows)
+	return res, err
+}
+
+func UpdateThreshold(ctx context.Context, id int64, t ThresholdDao) (bool, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var commandTag interface{ RowsAffected() int64 }
+	var err error
+	conn = database.Get()
+	query = `UPDATE public.threshold SET "name" = $1, "description" = $2, "author" = $3, "query" = $4 WHERE "id" = $5`
+	commandTag, err = conn.Exec(ctx, query, t.Name, t.Description, t.Author, t.Query, id)
+	if err != nil {
+		logger.Error("Failed to update threshold ID %d: %v", id, err)
+		return false, err
+	}
+	var affected int64
+	affected = commandTag.RowsAffected()
+	return affected > 0, nil
 }
 
 func DeleteThreshold(ctx context.Context, id int64) (bool, error) {
-	conn := database.Get()
-	query := `
-		WITH RECURSIVE target_thresholds AS (
-			SELECT id FROM public.threshold WHERE id = $1
-			UNION ALL
-			SELECT t.id FROM public.threshold t
-			JOIN target_thresholds tt ON t.previous = tt.id
-		),
-		pre_update_refs AS (
-			UPDATE public.threshold
-			SET previous = NULL
-			WHERE previous IN (SELECT id FROM target_thresholds)
-			RETURNING id
-		)
-		DELETE FROM public.threshold
-		WHERE id IN (SELECT id FROM target_thresholds)`
-	commandTag, err := conn.Exec(ctx, query, id)
+	var conn *pgxpool.Pool
+	var query string
+	var seqQuery string
+	var commandTag interface{ RowsAffected() int64 }
+	var err error
+	conn = database.Get()
+	query = `DELETE FROM public.threshold WHERE "id" = $1`
+	commandTag, err = conn.Exec(ctx, query, id)
 	if err != nil {
+		logger.Error("Failed to delete threshold ID %d: %v", id, err)
 		return false, err
 	}
-	return commandTag.RowsAffected() > 0, nil
-}
-
-func GetAllThresholdsExpanded(ctx context.Context) ([]model.Threshold, error) {
-	conn := database.Get()
-	query := `SELECT id, source_model, source_internal_order, source_param, value, type, operator, enabled, target_param, target_device, level, prev_operator, previous FROM public.threshold`
-	rows, err := conn.Query(ctx, query)
+	var affected int64
+	affected = commandTag.RowsAffected()
+	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.threshold', 'id'), COALESCE(MAX("id"), 1)) FROM public.threshold`
+	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
-		return nil, err
+		logger.Error("Failed to reset threshold sequence: %v", err)
+		return true, err
 	}
-	defer rows.Close()
-	flatRows, err := scanThresholdRows(rows)
-	if err != nil {
-		return nil, err
-	}
-	var list []model.Threshold
-	for _, r := range flatRows {
-		chain := assembleThresholdChain(flatRows, r.ID)
-		if chain != nil {
-			list = append(list, *chain)
-		}
-	}
-	return list, nil
+	return affected > 0, nil
 }
-
-func toNullInt64(i *int64) sql.NullInt64 {
-	if i == nil {
-		return sql.NullInt64{}
-	}
-	return sql.NullInt64{Int64: *i, Valid: true}
-}
-*/

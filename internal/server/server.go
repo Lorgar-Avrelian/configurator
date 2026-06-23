@@ -121,6 +121,15 @@ func NewServer() *Server {
 			configGroup.PUT("/:id", UpdateConfiguration)
 			configGroup.DELETE("/:id", DeleteConfiguration)
 		}
+		v1.GET("/thresholds", GetAllThresholds)
+		var thresholdGroup *gin.RouterGroup
+		thresholdGroup = v1.Group("/threshold")
+		{
+			thresholdGroup.POST("", CreateThreshold)
+			thresholdGroup.GET("/:id", GetThreshold)
+			thresholdGroup.PUT("/:id", UpdateThreshold)
+			thresholdGroup.DELETE("/:id", DeleteThreshold)
+		}
 	}
 	return &Server{router: r}
 }

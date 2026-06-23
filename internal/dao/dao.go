@@ -362,6 +362,8 @@ type ThresholdDao struct {
 	ID          int64          `db:"id" json:"id"`
 	Name        string         `db:"name" json:"name"`
 	Description sql.NullString `db:"description" json:"description"`
+	Author      sql.NullString `db:"author" json:"author"`
+	Created     sql.NullTime   `db:"created" json:"created"`
 	Query       string         `db:"query" json:"query"`
 }
 

@@ -548,6 +548,45 @@ definitions:
         example: true
         type: boolean
     type: object
+  configurator_internal_dto.ThresholdCreateDto:
+    properties:
+      author:
+        type: string
+        x-nullable: true
+      description:
+        type: string
+        x-nullable: true
+      name:
+        example: Высокая загрузка CPU
+        type: string
+      query:
+        example: cpu_util > 90
+        type: string
+    required:
+    - name
+    - query
+    type: object
+  configurator_internal_dto.ThresholdDto:
+    properties:
+      author:
+        type: string
+        x-nullable: true
+      created:
+        type: string
+        x-nullable: true
+      description:
+        type: string
+        x-nullable: true
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Высокая загрузка CPU
+        type: string
+      query:
+        example: cpu_util > 90
+        type: string
+    type: object
 host: localhost:8082
 info:
   contact:
@@ -2367,6 +2406,169 @@ paths:
       summary: Получить все параметры
       tags:
       - '2. Модельный каталог: Параметры'
+  /api/v1/threshold:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные порога
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.ThresholdCreateDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ThresholdDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать порог
+      tags:
+      - '12. Конфигурация: Пороги'
+  /api/v1/threshold/{id}:
+    delete:
+      parameters:
+      - description: ID порога
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить порог по ID
+      tags:
+      - '12. Конфигурация: Пороги'
+    get:
+      parameters:
+      - description: ID порога
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ThresholdDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить порог по ID
+      tags:
+      - '12. Конфигурация: Пороги'
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID порога
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новые данные
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.ThresholdCreateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ThresholdDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить порог по ID
+      tags:
+      - '12. Конфигурация: Пороги'
+  /api/v1/thresholds:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.ThresholdDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все пороги
+      tags:
+      - '12. Конфигурация: Пороги'
 swagger: "2.0"
 tags:
 - name: '1. Модельный каталог: Компоненты'

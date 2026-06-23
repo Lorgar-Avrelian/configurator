@@ -1,72 +1,92 @@
 package server
 
 import (
+	"configurator/internal/dto"
+	"configurator/internal/logger"
 	_ "configurator/internal/model"
+	"configurator/internal/service"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-/*// CreateThreshold создает порог
+// CreateThreshold создаёт порог
 // @Summary         Создать порог
 // @Tags            12. Конфигурация: Пороги
 // @Accept          json
 // @Produce         json
-// @Param           request body dto.ThresholdCreate true "Данные порога"
-// @Success         201  {object}  model.Threshold "Возвращает раскрытую цепочку условий"
+// @Param           request body dto.ThresholdCreateDto true "Данные порога"
+// @Success         201  {object}  dto.ThresholdDto
 // @Failure         400  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/thresholds [post]
+// @Router          /api/v1/threshold [post]
 func CreateThreshold(c *gin.Context) {
-	var input dto.ThresholdCreate
-	if err := c.ShouldBindJSON(&input); err != nil {
+	var input dto.ThresholdCreateDto
+	var err error
+	if err = c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	id, err := dao.CreateThreshold(c.Request.Context(), input)
+	var res *dto.ThresholdDto
+	res, err = service.CreateThreshold(c.Request.Context(), input)
 	if err != nil {
+		logger.Error("Service error occurred while creating threshold: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	res, _ := dao.GetDetailedThresholdByID(c.Request.Context(), id)
 	c.JSON(http.StatusCreated, res)
 }
 
-// GetThreshold возвращает порог и всю цепочку связей
-// @Summary         Получить порог по ID вместе со всей цепочкой родителей
+// GetThreshold возвращает порог по ID
+// @Summary         Получить порог по ID
 // @Tags            12. Конфигурация: Пороги
 // @Produce         json
-// @Param           id   path      int  true  "ID Порога"
-// @Success         200  {object}  model.Threshold
+// @Param           id   path      int  true  "ID порога"
+// @Success         200  {object}  dto.ThresholdDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/thresholds/{id} [get]
+// @Router          /api/v1/threshold/{id} [get]
 func GetThreshold(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID порога"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
 		return
 	}
-	res, err := dao.GetDetailedThresholdByID(c.Request.Context(), id)
+	if 1 > id {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
+		return
+	}
+	var res *dto.ThresholdDto
+	res, err = service.GetThresholdByID(c.Request.Context(), id)
 	if err != nil {
+		logger.Error("Service error occurred while retrieving threshold %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if res == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Порог не найден"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Threshold not found"})
 		return
 	}
 	c.JSON(http.StatusOK, res)
 }
 
-// GetAllThresholds возвращает все пороги с их цепочками
+// GetAllThresholds возвращает все пороги
 // @Summary         Получить все пороги
 // @Tags            12. Конфигурация: Пороги
 // @Produce         json
-// @Success         200  {array}   model.Threshold
+// @Success         200  {array}   dto.ThresholdDto
 // @Failure         500  {object}  map[string]string
 // @Router          /api/v1/thresholds [get]
 func GetAllThresholds(c *gin.Context) {
-	res, err := dao.GetAllThresholdsExpanded(c.Request.Context())
+	var res []dto.ThresholdDto
+	var err error
+	res, err = service.GetAllThresholds(c.Request.Context())
 	if err != nil {
+		logger.Error("Service error occurred while retrieving all thresholds: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -78,56 +98,75 @@ func GetAllThresholds(c *gin.Context) {
 // @Tags            12. Конфигурация: Пороги
 // @Accept          json
 // @Produce         json
-// @Param           id      path      int  true  "ID Порога"
-// @Param           request body dto.ThresholdUpdate true "Новые данные"
-// @Success         200  {object}  model.Threshold
+// @Param           id      path      int  true  "ID порога"
+// @Param           request body dto.ThresholdCreateDto true "Новые данные"
+// @Success         200  {object}  dto.ThresholdDto
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/thresholds/{id} [put]
+// @Router          /api/v1/threshold/{id} [put]
 func UpdateThreshold(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный ID порога"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
 		return
 	}
-	var input dto.ThresholdUpdate
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if 1 > id {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
+		return
+	}
+	var input dto.ThresholdCreateDto
+	if err = c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	updatedID, err := dao.UpdateThreshold(c.Request.Context(), id, input)
+	var res *dto.ThresholdDto
+	res, err = service.UpdateThreshold(c.Request.Context(), id, input)
 	if err != nil {
+		logger.Error("Service error occurred while updating threshold %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if updatedID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Порог не найден для обновления"})
+	if res == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Threshold not found for update"})
 		return
 	}
-	res, _ := dao.GetDetailedThresholdByID(c.Request.Context(), updatedID)
 	c.JSON(http.StatusOK, res)
 }
 
 // DeleteThreshold удаляет порог по ID
 // @Summary         Удалить порог по ID
 // @Tags            12. Конфигурация: Пороги
-// @Param           id   path      int  true  "ID Порога"
+// @Param           id   path      int  true  "ID порога"
 // @Success         204  "No Content"
+// @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/thresholds/{id} [delete]
+// @Router          /api/v1/threshold/{id} [delete]
 func DeleteThreshold(c *gin.Context) {
-	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	found, err := dao.DeleteThreshold(c.Request.Context(), id)
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
+		return
+	}
+	if 1 > id {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
+		return
+	}
+	var found bool
+	found, err = service.DeleteThreshold(c.Request.Context(), id)
+	if err != nil {
+		logger.Error("Service error occurred while deleting threshold %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Порог не найден"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Threshold not found"})
 		return
 	}
 	c.Status(http.StatusNoContent)
 }
-*/
