@@ -1,84 +1,208 @@
 package dao
 
-/*func CreateDefaultConfiguration(ctx context.Context, d dto.ConfigurationCreate) (int64, error) {
-	conn := database.Get()
-	query := `INSERT INTO public.default_configuration (indicator, device_component_id) VALUES ($1, $2) RETURNING id`
-	var dcID sql.NullInt64
-	if d.DeviceComponentID != nil {
-		dcID.Int64 = *d.DeviceComponentID
-		dcID.Valid = true
-	}
-	var id int64
-	err := conn.QueryRow(ctx, query, d.IndicatorID, dcID).Scan(&id)
-	return id, err
-}
+import (
+	"configurator/internal/database"
+	"configurator/internal/logger"
+	"configurator/internal/util"
+	"context"
 
-func GetDetailedDefaultConfigByID(ctx context.Context, id int64) (*model.DeviceIndicator, *model.DeviceComponent, []model.Threshold, error) {
-	flatRows, err := executeGenericConfigSelect(ctx, "default_configuration", id)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	if len(flatRows) == 0 {
-		return nil, nil, nil, nil
-	}
-	_, indMap, dcMap, thMap := AssembleConfigurations(flatRows)
-	return indMap[id], dcMap[id], thMap[id], nil
-}
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
 
-func UpdateDefaultConfiguration(ctx context.Context, id int64, d dto.ConfigurationUpdate) (int64, error) {
-	conn := database.Get()
-	query := `UPDATE public.default_configuration SET indicator = $1, device_component_id = $2 WHERE id = $3 RETURNING id`
-	var dcID sql.NullInt64
-	if d.DeviceComponentID != nil {
-		dcID.Int64 = *d.DeviceComponentID
-		dcID.Valid = true
-	}
-	var updatedID int64
-	err := conn.QueryRow(ctx, query, d.IndicatorID, dcID, id).Scan(&updatedID)
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return 0, nil
+func scanDefaultConfigurationRows(rows pgx.Rows) ([]DefaultConfiguration, error) {
+	var list []DefaultConfiguration
+	list = []DefaultConfiguration{}
+	var cfg DefaultConfiguration
+	var uPtr *uuid.UUID
+	var err error
+	for rows.Next() {
+		uPtr = nil
+		err = rows.Scan(&cfg.ID, &cfg.IndicatorID, &cfg.IndDescription, &cfg.IndObjectID, &cfg.IndContact, &cfg.IndName, &cfg.IndLocation, &cfg.IndServices, &cfg.DeviceComponentID, &cfg.CompModel, &cfg.CompInternalOrder, &cfg.CompParent, &cfg.CompTitle, &cfg.CompNameEn, &cfg.CompNameRu, &cfg.MapID, &cfg.MapIndicatorID, &cfg.MapParamID, &cfg.MapFrequency, &cfg.MapValue, &cfg.MapCoefficient, &cfg.MapEnum, &cfg.MapPosition, &cfg.MapFrom, &cfg.MapPositionType, &uPtr, &cfg.MapIndDotter, &cfg.MapOidMibID, &cfg.MapOidMibPath, &cfg.MapOidMibName, &cfg.MapOidMibVendor, &cfg.MapOidType, &cfg.MapOidName, &cfg.MapOidNumber, &cfg.MapOidDotter, &cfg.MapOidDescriptor, &cfg.MapOidSyntax, &cfg.MapOidEnum, &cfg.MapOidStatus, &cfg.MapOidAccess, &cfg.MapOidUnits, &cfg.MapOidDescription, &cfg.MapOidCategory, &cfg.MapParamTitle, &cfg.MapParamNameEn, &cfg.MapParamNameRu, &cfg.MapParamType, &cfg.MapParamValue, &cfg.MapParamDescEn, &cfg.MapParamDescRu, &cfg.MapParamUnitsEn, &cfg.MapParamUnitsRu, &cfg.MapParamAccess, &cfg.MapParamSaved, &cfg.MapParamVisible)
+		if err != nil {
+			return nil, err
 		}
-		return 0, err
+		cfg.MapIndOidID = uPtr
+		list = append(list, cfg)
 	}
-	return updatedID, nil
+	return list, rows.Err()
+}
+
+func CreateDefaultConfiguration(ctx context.Context, indicatorID int64, devCompID *int64) ([]DefaultConfiguration, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	conn = database.Get()
+	query = `WITH RECURSIVE ins AS (
+		INSERT INTO public.default_configuration ("indicator","device_component_id") VALUES ($1,$2) RETURNING "id","indicator","device_component_id"
+	), dt AS (
+		SELECT ins."id" AS "config_id", dc."id" AS "dc_id", dc."model", dc."internal_order", dc."parent" FROM ins JOIN public.device_component dc ON ins."device_component_id" = dc."id"
+		UNION ALL
+		SELECT dt."config_id", dc."id", dc."model", dc."internal_order", dc."parent" FROM public.device_component dc JOIN dt ON dc."parent" = dt."dc_id"
+	), mb AS (
+		SELECT dt."config_id", dt."dc_id", m."id" AS "m_id", m."indicator" AS "m_ind", m."param" AS "m_par", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type" FROM dt JOIN public.device_component_mapping dcm ON dt."dc_id" = dcm."device_component_id" JOIN public.mapping m ON dcm."mapping_id" = m."id"
+		UNION ALL
+		SELECT mb."config_id", mb."dc_id", m."id", m."indicator", m."param", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type" FROM public.mapping m JOIN mb ON m."from" = mb."m_id"
+	)
+	SELECT dc."id", dc."indicator", di."description", di."object_id", di."contact", di."name", di."location", di."services", dt."dc_id", dt."model", dt."internal_order", dt."parent", c."title", c."name_en", c."name_ru", mb."m_id", mb."m_ind", mb."m_par", mb."frequency", mb."value", mb."coefficient", mb."enum", mb."position", mb."from", mb."position_type", pi."oid_id", pi."dotter_notation", o."mib", mib."path", mib."name", mib."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category", p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+	FROM ins dc
+	LEFT JOIN public.device_indicator di ON dc."indicator" = di."id"
+	LEFT JOIN dt ON dc."id" = dt."config_id"
+	LEFT JOIN public.component c ON dt."model" = c."id"
+	LEFT JOIN mb ON dt."dc_id" = mb."dc_id" AND dt."config_id" = mb."config_id"
+	LEFT JOIN public.param_indicator pi ON mb."m_ind" = pi."id"
+	LEFT JOIN public.oid o ON pi."oid_id" = o."id"
+	LEFT JOIN public.mib mib ON o."mib" = mib."id"
+	LEFT JOIN public.param p ON mb."m_par" = p."id"`
+	var sqlDc interface{}
+	sqlDc = util.Int64PtrToSqlNullInt64(devCompID)
+	rows, err = conn.Query(ctx, query, indicatorID, sqlDc)
+	if err != nil {
+		logger.Error("Failed to execute data-modifying create configuration query: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	var res []DefaultConfiguration
+	res, err = scanDefaultConfigurationRows(rows)
+	return res, err
+}
+
+func GetDefaultConfigurationByID(ctx context.Context, id int64) ([]DefaultConfiguration, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	conn = database.Get()
+	query = `WITH RECURSIVE dt AS (
+		SELECT dc."id" AS "config_id", dc."indicator" AS "ind_id", dcom."id" AS "dc_id", dcom."model", dcom."internal_order", dcom."parent" FROM public.default_configuration dc JOIN public.device_component dcom ON dc."device_component_id" = dcom."id" WHERE dc."id" = $1
+		UNION ALL
+		SELECT dt."config_id", dt."ind_id", dc."id", dc."model", dc."internal_order", dc."parent" FROM public.device_component dc JOIN dt ON dc."parent" = dt."dc_id"
+	), mb AS (
+		SELECT dt."config_id", dt."dc_id", m."id" AS "m_id", m."indicator" AS "m_ind", m."param" AS "m_par", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type" FROM dt JOIN public.device_component_mapping dcm ON dt."dc_id" = dcm."device_component_id" JOIN public.mapping m ON dcm."mapping_id" = m."id"
+		UNION ALL
+		SELECT mb."config_id", mb."dc_id", m."id", m."indicator", m."param", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type" FROM public.mapping m JOIN mb ON m."from" = mb."m_id"
+	)
+	SELECT dc."id", dc."indicator", di."description", di."object_id", di."contact", di."name", di."location", di."services", dt."dc_id", dt."model", dt."internal_order", dt."parent", c."title", c."name_en", c."name_ru", mb."m_id", mb."m_ind", mb."m_par", mb."frequency", mb."value", mb."coefficient", mb."enum", mb."position", mb."from", mb."position_type", pi."oid_id", pi."dotter_notation", o."mib", mib."path", mib."name", mib."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category", p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+	FROM public.default_configuration dc
+	LEFT JOIN public.device_indicator di ON dc."indicator" = di."id"
+	LEFT JOIN dt ON dc."id" = dt."config_id"
+	LEFT JOIN public.component c ON dt."model" = c."id"
+	LEFT JOIN mb ON dt."dc_id" = mb."dc_id" AND dt."config_id" = mb."config_id"
+	LEFT JOIN public.param_indicator pi ON mb."m_ind" = pi."id"
+	LEFT JOIN public.oid o ON pi."oid_id" = o."id"
+	LEFT JOIN public.mib mib ON o."mib" = mib."id"
+	LEFT JOIN public.param p ON mb."m_par" = p."id"
+	WHERE dc."id" = $1`
+	rows, err = conn.Query(ctx, query, id)
+	if err != nil {
+		logger.Error("Failed to execute hierarchical select configuration query: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	var res []DefaultConfiguration
+	res, err = scanDefaultConfigurationRows(rows)
+	return res, err
+}
+
+func GetAllDefaultConfigurations(ctx context.Context) ([]DefaultConfiguration, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	conn = database.Get()
+	query = `WITH RECURSIVE dt AS (
+		SELECT dc."id" AS "config_id", dc."indicator" AS "ind_id", dcom."id" AS "dc_id", dcom."model", dcom."internal_order", dcom."parent" FROM public.default_configuration dc JOIN public.device_component dcom ON dc."device_component_id" = dcom."id"
+		UNION ALL
+		SELECT dt."config_id", dt."ind_id", dc."id", dc."model", dc."internal_order", dc."parent" FROM public.device_component dc JOIN dt ON dc."parent" = dt."dc_id"
+	), mb AS (
+		SELECT dt."config_id", dt."dc_id", m."id" AS "m_id", m."indicator" AS "m_ind", m."param" AS "m_par", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type" FROM dt JOIN public.device_component_mapping dcm ON dt."dc_id" = dcm."device_component_id" JOIN public.mapping m ON dcm."mapping_id" = m."id"
+		UNION ALL
+		SELECT mb."config_id", mb."dc_id", m."id", m."indicator", m."param", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type" FROM public.mapping m JOIN mb ON m."from" = mb."m_id"
+	)
+	SELECT dc."id", dc."indicator", di."description", di."object_id", di."contact", di."name", di."location", di."services", dt."dc_id", dt."model", dt."internal_order", dt."parent", c."title", c."name_en", c."name_ru", mb."m_id", mb."m_ind", mb."m_par", mb."frequency", mb."value", mb."coefficient", mb."enum", mb."position", mb."from", mb."position_type", pi."oid_id", pi."dotter_notation", o."mib", mib."path", mib."name", mib."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category", p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+	FROM public.default_configuration dc
+	LEFT JOIN public.device_indicator di ON dc."indicator" = di."id"
+	LEFT JOIN dt ON dc."id" = dt."config_id"
+	LEFT JOIN public.component c ON dt."model" = c."id"
+	LEFT JOIN mb ON dt."dc_id" = mb."dc_id" AND dt."config_id" = mb."config_id"
+	LEFT JOIN public.param_indicator pi ON mb."m_ind" = pi."id"
+	LEFT JOIN public.oid o ON pi."oid_id" = o."id"
+	LEFT JOIN public.mib mib ON o."mib" = mib."id"
+	LEFT JOIN public.param p ON mb."m_par" = p."id"
+	ORDER BY dc."id" ASC`
+	rows, err = conn.Query(ctx, query)
+	if err != nil {
+		logger.Error("Failed to fetch all configurations hierarchically: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	var res []DefaultConfiguration
+	res, err = scanDefaultConfigurationRows(rows)
+	return res, err
+}
+
+func UpdateDefaultConfiguration(ctx context.Context, id int64, indicatorID int64, devCompID *int64) ([]DefaultConfiguration, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var rows pgx.Rows
+	var err error
+	conn = database.Get()
+	query = `WITH RECURSIVE upd AS (
+		UPDATE public.default_configuration SET "indicator" = $1, "device_component_id" = $2 WHERE "id" = $3 RETURNING "id", "indicator", "device_component_id"
+	), dt AS (
+		SELECT upd."id" AS "config_id", dc."id" AS "dc_id", dc."model", dc."internal_order", dc."parent" FROM upd JOIN public.device_component dc ON upd."device_component_id" = dc."id"
+		UNION ALL
+		SELECT dt."config_id", dc."id", dc."model", dc."internal_order", dc."parent" FROM public.device_component dc JOIN dt ON dc."parent" = dt."dc_id"
+	), mb AS (
+		SELECT dt."config_id", dt."dc_id", m."id" AS "m_id", m."indicator" AS "m_ind", m."param" AS "m_par", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type" FROM dt JOIN public.device_component_mapping dcm ON dt."dc_id" = dcm."device_component_id" JOIN public.mapping m ON dcm."mapping_id" = m."id"
+		UNION ALL
+		SELECT mb."config_id", mb."dc_id", m."id", m."indicator", m."param", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type" FROM public.mapping m JOIN mb ON m."from" = mb."m_id"
+	)
+	SELECT dc."id", dc."indicator", di."description", di."object_id", di."contact", di."name", di."location", di."services", dt."dc_id", dt."model", dt."internal_order", dt."parent", c."title", c."name_en", c."name_ru", mb."m_id", mb."m_ind", mb."m_par", mb."frequency", mb."value", mb."coefficient", mb."enum", mb."position", mb."from", mb."position_type", pi."oid_id", pi."dotter_notation", o."mib", mib."path", mib."name", mib."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category", p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+	FROM upd dc
+	LEFT JOIN public.device_indicator di ON dc."indicator" = di."id"
+	LEFT JOIN dt ON dc."id" = dt."config_id"
+	LEFT JOIN public.component c ON dt."model" = c."id"
+	LEFT JOIN mb ON dt."dc_id" = mb."dc_id" AND dt."config_id" = mb."config_id"
+	LEFT JOIN public.param_indicator pi ON mb."m_ind" = pi."id"
+	LEFT JOIN public.oid o ON pi."oid_id" = o."id"
+	LEFT JOIN public.mib mib ON o."mib" = mib."id"
+	LEFT JOIN public.param p ON mb."m_par" = p."id"`
+	var sqlDc interface{}
+	sqlDc = util.Int64PtrToSqlNullInt64(devCompID)
+	rows, err = conn.Query(ctx, query, indicatorID, sqlDc, id)
+	if err != nil {
+		logger.Error("Failed to execute data-modifying update configuration query: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	var res []DefaultConfiguration
+	res, err = scanDefaultConfigurationRows(rows)
+	return res, err
 }
 
 func DeleteDefaultConfiguration(ctx context.Context, id int64) (bool, error) {
-	conn := database.Get()
-	query := `DELETE FROM public.default_configuration WHERE id = $1`
-	commandTag, err := conn.Exec(ctx, query, id)
+	var conn *pgxpool.Pool
+	var query string
+	var seqQuery string
+	var commandTag interface{ RowsAffected() int64 }
+	var err error
+	conn = database.Get()
+	query = `DELETE FROM public.default_configuration WHERE "id" = $1`
+	commandTag, err = conn.Exec(ctx, query, id)
 	if err != nil {
+		logger.Error("Failed to delete default configuration ID %d: %v", id, err)
 		return false, err
 	}
-	return commandTag.RowsAffected() > 0, nil
-}
-
-func GetExpandedDefaultConfigurations(ctx context.Context) ([]model.DefaultConfiguration, error) {
-	flatRows, err := executeGenericConfigSelect(ctx, "default_configuration", 0)
+	var affected int64
+	affected = commandTag.RowsAffected()
+	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.default_configuration', 'id'), COALESCE(MAX("id"), 1)) FROM public.default_configuration`
+	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
-		return nil, err
+		logger.Error("Failed to reset default_configuration sequence: %v", err)
+		return true, err
 	}
-	ids, indMap, dcMap, thMap := AssembleConfigurations(flatRows)
-	var list []model.DefaultConfiguration
-	for _, id := range ids {
-		list = append(list, model.DefaultConfiguration{ID: id, Indicator: indMap[id], DeviceComponent: dcMap[id], Thresholds: thMap[id]})
-	}
-	return list, nil
+	return affected > 0, nil
 }
-
-func BindDefaultConfigThreshold(ctx context.Context, defCfgID, tID int64) error {
-	conn := database.Get()
-	_, err := conn.Exec(ctx, `INSERT INTO public.default_configuration_threshold (default_configuration_id, threshold_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, defCfgID, tID)
-	return err
-}
-
-func UnbindDefaultConfigThreshold(ctx context.Context, defCfgID, tID int64) (bool, error) {
-	conn := database.Get()
-	tag, err := conn.Exec(ctx, `DELETE FROM public.default_configuration_threshold WHERE default_configuration_id = $1 AND threshold_id = $2`, defCfgID, tID)
-	if err != nil {
-		return false, err
-	}
-	return tag.RowsAffected() > 0, nil
-}
-*/

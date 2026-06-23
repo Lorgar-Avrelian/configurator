@@ -103,6 +103,15 @@ func NewServer() *Server {
 			linkDeviceComponentMapping.POST("/:deviceComponentId/:mappingId", BindDeviceMapping)
 			linkDeviceComponentMapping.DELETE("/:deviceComponentId/:mappingId", UnbindDeviceMapping)
 		}
+		v1.GET("/default-configurations", GetAllDefaultConfigurations)
+		var defaultConfig *gin.RouterGroup
+		defaultConfig = v1.Group("/default-configuration")
+		{
+			defaultConfig.POST("", CreateDefaultConfiguration)
+			defaultConfig.GET("/:id", GetDefaultConfiguration)
+			defaultConfig.PUT("/:id", UpdateDefaultConfiguration)
+			defaultConfig.DELETE("/:id", DeleteDefaultConfiguration)
+		}
 	}
 	return &Server{router: r}
 }

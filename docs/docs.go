@@ -269,6 +269,257 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/default-configuration": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Создать конфигурацию по умолчанию",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID индикатора устройства",
+                        "name": "indicator",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID компонента устройства",
+                        "name": "device_component",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DefaultConfigurationDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/default-configuration/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Получить конфигурацию по умолчанию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DefaultConfigurationDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Обновить конфигурацию по умолчанию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID индикатора устройства",
+                        "name": "indicator",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID компонента устройства",
+                        "name": "device_component",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DefaultConfigurationDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "10. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Удалить конфигурацию по умолчанию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/default-configurations": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Получить все конфигурации по умолчанию",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.DefaultConfigurationDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/device-component": {
             "post": {
                 "consumes": [
@@ -2434,6 +2685,31 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "Component"
+                }
+            }
+        },
+        "configurator_internal_dto.DefaultConfigurationDto": {
+            "type": "object",
+            "properties": {
+                "device_component": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "indicator": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceIndicatorDto"
+                        }
+                    ],
+                    "x-nullable": true
                 }
             }
         },

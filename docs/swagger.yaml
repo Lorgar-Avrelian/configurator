@@ -124,6 +124,20 @@ definitions:
         example: Component
         type: string
     type: object
+  configurator_internal_dto.DefaultConfigurationDto:
+    properties:
+      device_component:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        x-nullable: true
+      id:
+        example: 1
+        type: integer
+      indicator:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorDto'
+        x-nullable: true
+    type: object
   configurator_internal_dto.DeviceComponentCreateDto:
     properties:
       internal_order:
@@ -694,6 +708,171 @@ paths:
       summary: Получить всю структуру подчиненности устройств
       tags:
       - '1. Модельный каталог: Компоненты'
+  /api/v1/default-configuration:
+    post:
+      parameters:
+      - description: ID индикатора устройства
+        in: query
+        name: indicator
+        required: true
+        type: integer
+      - description: ID компонента устройства
+        in: query
+        name: device_component
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DefaultConfigurationDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать конфигурацию по умолчанию
+      tags:
+      - '10. Конфигурация: Конфигурации по-умолчанию'
+  /api/v1/default-configuration/{id}:
+    delete:
+      parameters:
+      - description: ID конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить конфигурацию по умолчанию по ID
+      tags:
+      - '10. Конфигурация: Конфигурации по-умолчанию'
+    get:
+      parameters:
+      - description: ID конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DefaultConfigurationDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить конфигурацию по умолчанию по ID
+      tags:
+      - '10. Конфигурация: Конфигурации по-умолчанию'
+    put:
+      parameters:
+      - description: ID конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новый ID индикатора устройства
+        in: query
+        name: indicator
+        required: true
+        type: integer
+      - description: Новый ID компонента устройства
+        in: query
+        name: device_component
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DefaultConfigurationDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить конфигурацию по умолчанию по ID
+      tags:
+      - '10. Конфигурация: Конфигурации по-умолчанию'
+  /api/v1/default-configurations:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.DefaultConfigurationDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все конфигурации по умолчанию
+      tags:
+      - '10. Конфигурация: Конфигурации по-умолчанию'
   /api/v1/device-component:
     post:
       consumes:
