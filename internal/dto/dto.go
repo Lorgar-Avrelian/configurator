@@ -199,3 +199,9 @@ type DefaultConfigurationDto struct {
 	Indicator       *DeviceIndicatorDto `json:"indicator,omitempty" extensions:"x-nullable"`
 	DeviceComponent *DeviceComponentDto `json:"device_component,omitempty" extensions:"x-nullable"`
 }
+
+type ConfigurationDto struct {
+	ID              int64               `json:"id" example:"1"`
+	Indicator       *DeviceIndicatorDto `json:"indicator,omitempty" extensions:"x-nullable"`
+	DeviceComponent *DeviceComponentDto `json:"device_component,omitempty" extensions:"x-nullable"`
+}

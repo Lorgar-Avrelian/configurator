@@ -269,6 +269,257 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/configuration": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "11. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Создать рабочую конфигурацию",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID индикатора устройства",
+                        "name": "indicator",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID компонента устройства",
+                        "name": "device_component",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/configuration/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "11. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Получить рабочую конфигурацию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "11. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Обновить рабочую конфигурацию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID индикатора устройства",
+                        "name": "indicator",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID компонента устройства",
+                        "name": "device_component",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "11. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Удалить рабочую конфигурацию по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID конфигурации",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/configurations": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "11. Конфигурация: Конфигурации устройств"
+                ],
+                "summary": "Получить все рабочие конфигурации",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.ConfigurationDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/default-configuration": {
             "post": {
                 "produces": [
@@ -2685,6 +2936,31 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "Component"
+                }
+            }
+        },
+        "configurator_internal_dto.ConfigurationDto": {
+            "type": "object",
+            "properties": {
+                "device_component": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "indicator": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceIndicatorDto"
+                        }
+                    ],
+                    "x-nullable": true
                 }
             }
         },

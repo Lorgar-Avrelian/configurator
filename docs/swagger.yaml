@@ -124,6 +124,20 @@ definitions:
         example: Component
         type: string
     type: object
+  configurator_internal_dto.ConfigurationDto:
+    properties:
+      device_component:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.DeviceComponentDto'
+        x-nullable: true
+      id:
+        example: 1
+        type: integer
+      indicator:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.DeviceIndicatorDto'
+        x-nullable: true
+    type: object
   configurator_internal_dto.DefaultConfigurationDto:
     properties:
       device_component:
@@ -708,6 +722,171 @@ paths:
       summary: Получить всю структуру подчиненности устройств
       tags:
       - '1. Модельный каталог: Компоненты'
+  /api/v1/configuration:
+    post:
+      parameters:
+      - description: ID индикатора устройства
+        in: query
+        name: indicator
+        required: true
+        type: integer
+      - description: ID компонента устройства
+        in: query
+        name: device_component
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ConfigurationDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать рабочую конфигурацию
+      tags:
+      - '11. Конфигурация: Конфигурации устройств'
+  /api/v1/configuration/{id}:
+    delete:
+      parameters:
+      - description: ID конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить рабочую конфигурацию по ID
+      tags:
+      - '11. Конфигурация: Конфигурации устройств'
+    get:
+      parameters:
+      - description: ID конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ConfigurationDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить рабочую конфигурацию по ID
+      tags:
+      - '11. Конфигурация: Конфигурации устройств'
+    put:
+      parameters:
+      - description: ID конфигурации
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Новый ID индикатора устройства
+        in: query
+        name: indicator
+        required: true
+        type: integer
+      - description: Новый ID компонента устройства
+        in: query
+        name: device_component
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ConfigurationDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить рабочую конфигурацию по ID
+      tags:
+      - '11. Конфигурация: Конфигурации устройств'
+  /api/v1/configurations:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.ConfigurationDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все рабочие конфигурации
+      tags:
+      - '11. Конфигурация: Конфигурации устройств'
   /api/v1/default-configuration:
     post:
       parameters:

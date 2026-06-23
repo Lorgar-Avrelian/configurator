@@ -112,6 +112,15 @@ func NewServer() *Server {
 			defaultConfig.PUT("/:id", UpdateDefaultConfiguration)
 			defaultConfig.DELETE("/:id", DeleteDefaultConfiguration)
 		}
+		v1.GET("/configurations", GetAllConfigurations)
+		var configGroup *gin.RouterGroup
+		configGroup = v1.Group("/configuration")
+		{
+			configGroup.POST("", CreateConfiguration)
+			configGroup.GET("/:id", GetConfiguration)
+			configGroup.PUT("/:id", UpdateConfiguration)
+			configGroup.DELETE("/:id", DeleteConfiguration)
+		}
 	}
 	return &Server{router: r}
 }
