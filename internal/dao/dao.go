@@ -244,29 +244,36 @@ type DefaultConfigurationDao struct {
 }
 
 type ThresholdDao struct {
-	ID                  int64          `db:"id" json:"id"`
-	SourceModel         int64          `db:"source_model" json:"source_model"`
-	SourceInternalOrder int64          `db:"source_internal_order" json:"source_internal_order"`
-	SourceParam         string         `db:"source_param" json:"source_param"`
-	Value               string         `db:"value" json:"value"`
-	Type                int16          `db:"type" json:"type"`
-	Operator            int16          `db:"operator" json:"operator"`
-	Enabled             sql.NullBool   `db:"enabled" json:"enabled"`
-	TargetParam         sql.NullString `db:"target_param" json:"target_param"`
-	TargetDevice        sql.NullInt64  `db:"target_device" json:"target_device"`
-	Level               int16          `db:"level" json:"level"`
-	PrevOperator        int16          `db:"prev_operator" json:"prev_operator"`
-	Previous            sql.NullInt64  `db:"previous" json:"previous"`
+	ID          int64          `db:"id" json:"id"`
+	Name        string         `db:"name" json:"name"`
+	Description sql.NullString `db:"description" json:"description"`
+	Query       string         `db:"query" json:"query"`
 }
 
-type ConfigurationThresholdDao struct {
-	ConfigurationID int64 `db:"configuration_id" json:"configuration_id"`
-	ThresholdID     int64 `db:"threshold_id" json:"threshold_id"`
+type ResultDao struct {
+	Host          string         `db:"host" json:"host"`
+	Port          int32          `db:"port" json:"port"`
+	Component     int64          `db:"component" json:"component"`
+	InternalOrder sql.NullInt32  `db:"internal_order" json:"internal_order"`
+	Param         int64          `db:"param" json:"param"`
+	Value         sql.NullString `db:"value" json:"value"`
 }
 
-type DefaultConfigurationThresholdDao struct {
-	DefaultConfigurationID int64 `db:"default_configuration_id" json:"default_configuration_id"`
-	ThresholdID            int64 `db:"threshold_id" json:"threshold_id"`
+type AffectedThresholdDao struct {
+	ID        int64        `db:"id" json:"id"`
+	Host      string       `db:"host" json:"host"`
+	Port      int32        `db:"port" json:"port"`
+	Threshold int64        `db:"threshold" json:"threshold"`
+	Enabled   sql.NullBool `db:"enabled" json:"enabled"`
+}
+
+type AffectedParamDao struct {
+	ID            int64         `db:"id" json:"id"`
+	Host          string        `db:"host" json:"host"`
+	Port          int32         `db:"port" json:"port"`
+	Component     int64         `db:"component" json:"component"`
+	InternalOrder sql.NullInt32 `db:"internal_order" json:"internal_order"`
+	Param         int64         `db:"param" json:"param"`
 }
 
 type DeviceSnmpDao struct {

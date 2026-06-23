@@ -19,12 +19,20 @@ type OidType int16
 type Vendor int64
 
 type VendorData struct {
-	ID        int64
-	Name      string
-	Number    int32
-	Contact   sql.NullString
-	Email     sql.NullString
-	Directory sql.NullString
+	ID        int64          `db:"id" json:"id"`
+	Name      string         `db:"name" json:"name"`
+	Number    int32          `db:"number" json:"number"`
+	Contact   sql.NullString `db:"contact" json:"contact"`
+	Email     sql.NullString `db:"email" json:"email"`
+	Directory sql.NullString `db:"directory" json:"directory"`
+}
+
+type LogicOperatorData struct {
+	ID         int16  `db:"id" json:"id"`
+	Value      string `db:"value" json:"value"`
+	Type       string `db:"type" json:"type"`
+	Precedence int16  `db:"precedence" json:"precedence"`
+	Arity      int16  `db:"arity" json:"arity"`
 }
 
 var (
@@ -35,7 +43,7 @@ var (
 	alarmLevelIds           = make(map[string]AlarmLevel)
 	asn1TypeStrings         = make(map[Asn1Type]string)
 	asn1TypeIds             = make(map[string]Asn1Type)
-	logicOperatorStrings    = make(map[LogicOperator]string)
+	logicOperatorMap        = make(map[LogicOperator]*LogicOperatorData)
 	logicOperatorIds        = make(map[string]LogicOperator)
 	oidAccessStrings        = make(map[OidAccess]string)
 	oidAccessIds            = make(map[string]OidAccess)
@@ -59,50 +67,62 @@ func LoadRegistries(
 	asn1Map map[int16]string,
 	statusMap map[int16]string,
 	oidAccessMap map[int16]string,
-	logicMap map[int16]string,
+	logicOperators []map[string]interface{},
 	alarmMap map[int16]string,
 	vendors []map[string]interface{},
 	oidTypeMap map[int16]string,
 ) {
 	mu.Lock()
 	defer mu.Unlock()
-	for id, val := range accessMap {
+	var id int16
+	var val string
+	for id, val = range accessMap {
 		accessStrings[Access(id)] = val
 		accessIds[strings.ToUpper(val)] = Access(id)
 	}
-	for id, val := range alarmMap {
+	for id, val = range alarmMap {
 		alarmLevelStrings[AlarmLevel(id)] = val
 		alarmLevelIds[strings.ToUpper(val)] = AlarmLevel(id)
 	}
-	for id, val := range asn1Map {
+	for id, val = range asn1Map {
 		asn1TypeStrings[Asn1Type(id)] = val
 		asn1TypeIds[strings.ToUpper(val)] = Asn1Type(id)
 	}
-	for id, val := range logicMap {
-		logicOperatorStrings[LogicOperator(id)] = val
-		logicOperatorIds[strings.ToUpper(val)] = LogicOperator(id)
+	var lo map[string]interface{}
+	for _, lo = range logicOperators {
+		var lObj LogicOperatorData
+		lObj.ID = lo["id"].(int16)
+		lObj.Value = lo["value"].(string)
+		lObj.Type = lo["type"].(string)
+		lObj.Precedence = lo["precedence"].(int16)
+		lObj.Arity = lo["arity"].(int16)
+		var lKey LogicOperator
+		lKey = LogicOperator(lObj.ID)
+		logicOperatorMap[lKey] = &lObj
+		logicOperatorIds[strings.ToUpper(lObj.Value)] = lKey
 	}
-	for id, val := range oidAccessMap {
+	for id, val = range oidAccessMap {
 		oidAccessStrings[OidAccess(id)] = val
 		oidAccessIds[strings.ToUpper(val)] = OidAccess(id)
 	}
-	for id, val := range statusMap {
+	for id, val = range statusMap {
 		oidStatusStrings[OidStatus(id)] = val
 		oidStatusIds[strings.ToUpper(val)] = OidStatus(id)
 	}
-	for id, val := range pollMap {
+	for id, val = range pollMap {
 		pollingFrequencyStrings[PollingFrequency(id)] = val
 		pollingFrequencyIds[strings.ToUpper(val)] = PollingFrequency(id)
 	}
-	for id, val := range varTypeMap {
+	for id, val = range varTypeMap {
 		varTypeStrings[VarType(id)] = val
 		varTypeIds[strings.ToUpper(val)] = VarType(id)
 	}
-	for id, val := range oidTypeMap {
+	for id, val = range oidTypeMap {
 		oidTypeStrings[OidType(id)] = val
 		oidTypeIds[strings.ToUpper(val)] = OidType(id)
 	}
-	for _, v := range vendors {
+	var v map[string]interface{}
+	for _, v = range vendors {
 		var vObj VendorData
 		vObj.ID = v["id"].(int64)
 		vObj.Name = v["name"].(string)
@@ -152,7 +172,14 @@ func (l LogicOperator) String() string {
 	mu.RLock()
 	defer mu.RUnlock()
 	var res string
-	res = logicOperatorStrings[l]
+	var ok bool
+	if logicOperatorMap[l] != nil {
+		res = logicOperatorMap[l].Value
+		ok = true
+	}
+	if !ok {
+		res = ""
+	}
 	return res
 }
 
@@ -201,6 +228,14 @@ func (v Vendor) Data() *VendorData {
 	defer mu.RUnlock()
 	var res *VendorData
 	res = vendorsMap[v]
+	return res
+}
+
+func (l LogicOperator) Data() *LogicOperatorData {
+	mu.RLock()
+	defer mu.RUnlock()
+	var res *LogicOperatorData
+	res = logicOperatorMap[l]
 	return res
 }
 

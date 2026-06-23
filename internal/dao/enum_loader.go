@@ -17,7 +17,7 @@ func LoadEnumsFromDB(ctx context.Context) error {
 	var accessMap map[int16]string
 	var alarmMap map[int16]string
 	var asn1Map map[int16]string
-	var logicMap map[int16]string
+	var logicOperators []map[string]interface{}
 	var oidAccessMap map[int16]string
 	var statusMap map[int16]string
 	var pollMap map[int16]string
@@ -38,7 +38,7 @@ func LoadEnumsFromDB(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	logicMap, err = fetchSimpleEnum(ctx, conn, "public.logic_operator")
+	logicOperators, err = fetchLogicOperators(ctx, conn)
 	if err != nil {
 		return err
 	}
@@ -66,14 +66,14 @@ func LoadEnumsFromDB(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicMap, alarmMap, vendors, oidTypeMap)
+	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicOperators, alarmMap, vendors, oidTypeMap)
 	var logMsg string
 	logMsg = fmt.Sprintf("\n%-17s | %s\n------------------+-------\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d",
 		"Registry Name", "Count",
 		"Access", len(accessMap),
 		"Alarm Level", len(alarmMap),
 		"ASN.1 Type", len(asn1Map),
-		"Logic Operator", len(logicMap),
+		"Logic Operator", len(logicOperators),
 		"OID Access", len(oidAccessMap),
 		"OID Status", len(statusMap),
 		"OID Type", len(oidTypeMap),
@@ -146,6 +146,46 @@ func fetchVendorsList(ctx context.Context, conn *pgxpool.Pool) ([]map[string]int
 			"contact":   contact,
 			"email":     email,
 			"directory": dir,
+		}
+		list = append(list, item)
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+func fetchLogicOperators(ctx context.Context, conn *pgxpool.Pool) ([]map[string]interface{}, error) {
+	var query string
+	query = `SELECT "id", "value", "type", "precedence", "arity" FROM public.logic_operator`
+	var rows pgx.Rows
+	var err error
+	rows, err = conn.Query(ctx, query)
+	if err != nil {
+		logger.Error("Failed to fetch logic operators from DB: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	var list []map[string]interface{}
+	list = []map[string]interface{}{}
+	var id int16
+	var value string
+	var opType string
+	var precedence int16
+	var arity int16
+	for rows.Next() {
+		err = rows.Scan(&id, &value, &opType, &precedence, &arity)
+		if err != nil {
+			return nil, err
+		}
+		var item map[string]interface{}
+		item = map[string]interface{}{
+			"id":         id,
+			"value":      value,
+			"type":       opType,
+			"precedence": precedence,
+			"arity":      arity,
 		}
 		list = append(list, item)
 	}
