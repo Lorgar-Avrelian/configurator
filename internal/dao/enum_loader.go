@@ -23,6 +23,7 @@ func LoadEnumsFromDB(ctx context.Context) error {
 	var pollMap map[int16]string
 	var varTypeMap map[int16]string
 	var oidTypeMap map[int16]string
+	var pollingProtocolMap map[int16]string
 	var vendors []map[string]interface{}
 	var err error
 	conn = database.Get()
@@ -66,9 +67,13 @@ func LoadEnumsFromDB(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicOperators, alarmMap, vendors, oidTypeMap)
+	pollingProtocolMap, err = fetchSimpleEnum(ctx, conn, "public.polling_protocol")
+	if err != nil {
+		return err
+	}
+	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicOperators, alarmMap, vendors, oidTypeMap, pollingProtocolMap)
 	var logMsg string
-	logMsg = fmt.Sprintf("\n%-17s | %s\n------------------+-------\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d",
+	logMsg = fmt.Sprintf("\n%-17s | %s\n------------------+-------\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d",
 		"Registry Name", "Count",
 		"Access", len(accessMap),
 		"Alarm Level", len(alarmMap),
@@ -78,6 +83,7 @@ func LoadEnumsFromDB(ctx context.Context) error {
 		"OID Status", len(statusMap),
 		"OID Type", len(oidTypeMap),
 		"Polling Frequency", len(pollMap),
+		"Polling Protocol", len(pollingProtocolMap),
 		"Variable Type", len(varTypeMap),
 		"Vendor", len(vendors),
 	)

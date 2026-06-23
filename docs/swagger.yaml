@@ -124,6 +124,18 @@ definitions:
         example: Component
         type: string
     type: object
+  configurator_internal_dto.ConfigInProcessDto:
+    properties:
+      host:
+        example: 127.0.0.1
+        type: string
+      port:
+        example: 161
+        type: integer
+      protocol:
+        example: SNMP
+        type: string
+    type: object
   configurator_internal_dto.ConfigurationDto:
     properties:
       device_component:
@@ -761,6 +773,73 @@ paths:
       summary: Получить всю структуру подчиненности устройств
       tags:
       - '1. Модельный каталог: Компоненты'
+  /api/v1/config/in-progress:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.ConfigInProcessDto'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все данные устройств, находящихся в процессе конфигурирования
+      tags:
+      - '13. Просмотр: В процессе конфигурирования'
+  /api/v1/config/in-progress/search:
+    get:
+      parameters:
+      - description: Host устройства
+        in: query
+        name: host
+        type: string
+      - description: Порт устройства
+        in: query
+        name: port
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.ConfigInProcessDto'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Поиск данных устройств, находящихся в процессе конфигурирования
+      tags:
+      - '13. Просмотр: В процессе конфигурирования'
   /api/v1/configuration:
     post:
       parameters:
@@ -2583,6 +2662,7 @@ tags:
 - name: '10. Конфигурация: Конфигурации по-умолчанию'
 - name: '11. Конфигурация: Конфигурации устройств'
 - name: '12. Конфигурация: Пороги'
-- name: '13. Конфигурация: Привязка порога к конфигурации по умолчанию'
-- name: '14. Конфигурация: Привязка порога к рабочей конфигурации'
-- name: '15. Результат: Экспортировать БД в SQL скрипт'
+- name: '13. Просмотр: В процессе конфигурирования'
+- name: '14. Просмотр: Рабочая конфигурация'
+- name: '15. Просмотр: Значения параметров'
+- name: '16. Результат: Экспортировать БД в SQL скрипт'

@@ -17,6 +17,7 @@ type PollingFrequency int16
 type VarType int16
 type OidType int16
 type Vendor int64
+type PollingProtocol int16
 
 type VendorData struct {
 	ID        int64          `db:"id" json:"id"`
@@ -58,6 +59,8 @@ var (
 	vendorsMap              = make(map[Vendor]*VendorData)
 	vendorNames             = make(map[string]Vendor)
 	vendorDirectories       = make(map[string]Vendor)
+	pollingProtocolStrings  = make(map[PollingProtocol]string)
+	pollingProtocolIds      = make(map[string]PollingProtocol)
 )
 
 func LoadRegistries(
@@ -71,6 +74,7 @@ func LoadRegistries(
 	alarmMap map[int16]string,
 	vendors []map[string]interface{},
 	oidTypeMap map[int16]string,
+	pollingProtocolMap map[int16]string,
 ) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -120,6 +124,10 @@ func LoadRegistries(
 	for id, val = range oidTypeMap {
 		oidTypeStrings[OidType(id)] = val
 		oidTypeIds[strings.ToUpper(val)] = OidType(id)
+	}
+	for id, val = range pollingProtocolMap {
+		pollingProtocolStrings[PollingProtocol(id)] = val
+		pollingProtocolIds[strings.ToUpper(val)] = PollingProtocol(id)
 	}
 	var v map[string]interface{}
 	for _, v = range vendors {
@@ -223,6 +231,14 @@ func (t OidType) String() string {
 	return res
 }
 
+func (p PollingProtocol) String() string {
+	mu.RLock()
+	defer mu.RUnlock()
+	var res string
+	res = pollingProtocolStrings[p]
+	return res
+}
+
 func (v Vendor) Data() *VendorData {
 	mu.RLock()
 	defer mu.RUnlock()
@@ -293,6 +309,11 @@ func (t OidType) MarshalJSON() ([]byte, error) {
 	return res, nil
 }
 
+func (p PollingProtocol) MarshalJSON() ([]byte, error) {
+	var res []byte
+	res = []byte(fmt.Sprintf("%q", p.String()))
+	return res, nil
+}
 func (a *Access) UnmarshalJSON(b []byte) error {
 	var str string
 	str = strings.Trim(string(b), `"`)
@@ -353,6 +374,13 @@ func (t *OidType) UnmarshalJSON(b []byte) error {
 	var str string
 	str = strings.Trim(string(b), `"`)
 	*t = ParseOidType(str)
+	return nil
+}
+
+func (p *PollingProtocol) UnmarshalJSON(b []byte) error {
+	var str string
+	str = strings.Trim(string(b), `"`)
+	*p = ParsePollingProtocol(str)
 	return nil
 }
 
@@ -476,6 +504,20 @@ func ParseOidType(s string) OidType {
 	var id OidType
 	var ok bool
 	id, ok = oidTypeIds[clean]
+	if ok {
+		return id
+	}
+	return 1
+}
+
+func ParsePollingProtocol(s string) PollingProtocol {
+	mu.RLock()
+	defer mu.RUnlock()
+	var clean string
+	clean = strings.ToUpper(strings.TrimSpace(s))
+	var id PollingProtocol
+	var ok bool
+	id, ok = pollingProtocolIds[clean]
 	if ok {
 		return id
 	}

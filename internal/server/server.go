@@ -130,6 +130,12 @@ func NewServer() *Server {
 			thresholdGroup.PUT("/:id", UpdateThreshold)
 			thresholdGroup.DELETE("/:id", DeleteThreshold)
 		}
+		var configInProgressGroup *gin.RouterGroup
+		configInProgressGroup = v1.Group("/config/in-progress")
+		{
+			configInProgressGroup.GET("", GetAllConfigInProcess)
+			configInProgressGroup.GET("/search", SearchConfigInProcess)
+		}
 	}
 	return &Server{router: r}
 }

@@ -221,3 +221,9 @@ type ThresholdDto struct {
 	Created     *string `json:"created,omitempty" extensions:"x-nullable"`
 	Query       string  `json:"query" example:"cpu_util > 90"`
 }
+
+type ConfigInProcessDto struct {
+	Host     string `json:"host" example:"127.0.0.1"`
+	Port     int32  `json:"port" example:"161"`
+	Protocol string `json:"protocol" example:"SNMP"`
+}
