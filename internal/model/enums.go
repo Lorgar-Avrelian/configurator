@@ -18,6 +18,9 @@ type VarType int16
 type OidType int16
 type Vendor int64
 type PollingProtocol int16
+type VersionSnmp int16
+type AuthProtocolSnmp int16
+type PrivacyProtocolSnmp int16
 
 type VendorData struct {
 	ID        int64          `db:"id" json:"id"`
@@ -37,30 +40,36 @@ type LogicOperatorData struct {
 }
 
 var (
-	mu                      sync.RWMutex
-	accessStrings           = make(map[Access]string)
-	accessIds               = make(map[string]Access)
-	alarmLevelStrings       = make(map[AlarmLevel]string)
-	alarmLevelIds           = make(map[string]AlarmLevel)
-	asn1TypeStrings         = make(map[Asn1Type]string)
-	asn1TypeIds             = make(map[string]Asn1Type)
-	logicOperatorMap        = make(map[LogicOperator]*LogicOperatorData)
-	logicOperatorIds        = make(map[string]LogicOperator)
-	oidAccessStrings        = make(map[OidAccess]string)
-	oidAccessIds            = make(map[string]OidAccess)
-	oidStatusStrings        = make(map[OidStatus]string)
-	oidStatusIds            = make(map[string]OidStatus)
-	pollingFrequencyStrings = make(map[PollingFrequency]string)
-	pollingFrequencyIds     = make(map[string]PollingFrequency)
-	varTypeStrings          = make(map[VarType]string)
-	varTypeIds              = make(map[string]VarType)
-	oidTypeStrings          = make(map[OidType]string)
-	oidTypeIds              = make(map[string]OidType)
-	vendorsMap              = make(map[Vendor]*VendorData)
-	vendorNames             = make(map[string]Vendor)
-	vendorDirectories       = make(map[string]Vendor)
-	pollingProtocolStrings  = make(map[PollingProtocol]string)
-	pollingProtocolIds      = make(map[string]PollingProtocol)
+	mu                         sync.RWMutex
+	accessStrings              = make(map[Access]string)
+	accessIds                  = make(map[string]Access)
+	alarmLevelStrings          = make(map[AlarmLevel]string)
+	alarmLevelIds              = make(map[string]AlarmLevel)
+	asn1TypeStrings            = make(map[Asn1Type]string)
+	asn1TypeIds                = make(map[string]Asn1Type)
+	logicOperatorMap           = make(map[LogicOperator]*LogicOperatorData)
+	logicOperatorIds           = make(map[string]LogicOperator)
+	oidAccessStrings           = make(map[OidAccess]string)
+	oidAccessIds               = make(map[string]OidAccess)
+	oidStatusStrings           = make(map[OidStatus]string)
+	oidStatusIds               = make(map[string]OidStatus)
+	pollingFrequencyStrings    = make(map[PollingFrequency]string)
+	pollingFrequencyIds        = make(map[string]PollingFrequency)
+	varTypeStrings             = make(map[VarType]string)
+	varTypeIds                 = make(map[string]VarType)
+	oidTypeStrings             = make(map[OidType]string)
+	oidTypeIds                 = make(map[string]OidType)
+	vendorsMap                 = make(map[Vendor]*VendorData)
+	vendorNames                = make(map[string]Vendor)
+	vendorDirectories          = make(map[string]Vendor)
+	pollingProtocolStrings     = make(map[PollingProtocol]string)
+	pollingProtocolIds         = make(map[string]PollingProtocol)
+	versionSnmpStrings         = make(map[VersionSnmp]string)
+	versionSnmpIds             = make(map[string]VersionSnmp)
+	authProtocolSnmpStrings    = make(map[AuthProtocolSnmp]string)
+	authProtocolSnmpIds        = make(map[string]AuthProtocolSnmp)
+	privacyProtocolSnmpStrings = make(map[PrivacyProtocolSnmp]string)
+	privacyProtocolSnmpIds     = make(map[string]PrivacyProtocolSnmp)
 )
 
 func LoadRegistries(
@@ -75,6 +84,9 @@ func LoadRegistries(
 	vendors []map[string]interface{},
 	oidTypeMap map[int16]string,
 	pollingProtocolMap map[int16]string,
+	versionSnmpMap map[int16]string,
+	authProtocolSnmpMap map[int16]string,
+	privacyProtocolSnmpMap map[int16]string,
 ) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -128,6 +140,18 @@ func LoadRegistries(
 	for id, val = range pollingProtocolMap {
 		pollingProtocolStrings[PollingProtocol(id)] = val
 		pollingProtocolIds[strings.ToUpper(val)] = PollingProtocol(id)
+	}
+	for id, val = range versionSnmpMap {
+		versionSnmpStrings[VersionSnmp(id)] = val
+		versionSnmpIds[strings.ToUpper(val)] = VersionSnmp(id)
+	}
+	for id, val = range authProtocolSnmpMap {
+		authProtocolSnmpStrings[AuthProtocolSnmp(id)] = val
+		authProtocolSnmpIds[strings.ToUpper(val)] = AuthProtocolSnmp(id)
+	}
+	for id, val = range privacyProtocolSnmpMap {
+		privacyProtocolSnmpStrings[PrivacyProtocolSnmp(id)] = val
+		privacyProtocolSnmpIds[strings.ToUpper(val)] = PrivacyProtocolSnmp(id)
 	}
 	var v map[string]interface{}
 	for _, v = range vendors {
@@ -239,6 +263,30 @@ func (p PollingProtocol) String() string {
 	return res
 }
 
+func (v VersionSnmp) String() string {
+	mu.RLock()
+	defer mu.RUnlock()
+	var res string
+	res = versionSnmpStrings[v]
+	return res
+}
+
+func (a AuthProtocolSnmp) String() string {
+	mu.RLock()
+	defer mu.RUnlock()
+	var res string
+	res = authProtocolSnmpStrings[a]
+	return res
+}
+
+func (p PrivacyProtocolSnmp) String() string {
+	mu.RLock()
+	defer mu.RUnlock()
+	var res string
+	res = privacyProtocolSnmpStrings[p]
+	return res
+}
+
 func (v Vendor) Data() *VendorData {
 	mu.RLock()
 	defer mu.RUnlock()
@@ -314,6 +362,25 @@ func (p PollingProtocol) MarshalJSON() ([]byte, error) {
 	res = []byte(fmt.Sprintf("%q", p.String()))
 	return res, nil
 }
+
+func (v VersionSnmp) MarshalJSON() ([]byte, error) {
+	var res []byte
+	res = []byte(fmt.Sprintf("%q", v.String()))
+	return res, nil
+}
+
+func (a AuthProtocolSnmp) MarshalJSON() ([]byte, error) {
+	var res []byte
+	res = []byte(fmt.Sprintf("%q", a.String()))
+	return res, nil
+}
+
+func (p PrivacyProtocolSnmp) MarshalJSON() ([]byte, error) {
+	var res []byte
+	res = []byte(fmt.Sprintf("%q", p.String()))
+	return res, nil
+}
+
 func (a *Access) UnmarshalJSON(b []byte) error {
 	var str string
 	str = strings.Trim(string(b), `"`)
@@ -381,6 +448,27 @@ func (p *PollingProtocol) UnmarshalJSON(b []byte) error {
 	var str string
 	str = strings.Trim(string(b), `"`)
 	*p = ParsePollingProtocol(str)
+	return nil
+}
+
+func (v *VersionSnmp) UnmarshalJSON(b []byte) error {
+	var str string
+	str = strings.Trim(string(b), `"`)
+	*v = ParseVersionSnmp(str)
+	return nil
+}
+
+func (a *AuthProtocolSnmp) UnmarshalJSON(b []byte) error {
+	var str string
+	str = strings.Trim(string(b), `"`)
+	*a = ParseAuthProtocolSnmp(str)
+	return nil
+}
+
+func (p *PrivacyProtocolSnmp) UnmarshalJSON(b []byte) error {
+	var str string
+	str = strings.Trim(string(b), `"`)
+	*p = ParsePrivacyProtocolSnmp(str)
 	return nil
 }
 
@@ -518,6 +606,48 @@ func ParsePollingProtocol(s string) PollingProtocol {
 	var id PollingProtocol
 	var ok bool
 	id, ok = pollingProtocolIds[clean]
+	if ok {
+		return id
+	}
+	return 1
+}
+
+func ParseVersionSnmp(s string) VersionSnmp {
+	mu.RLock()
+	defer mu.RUnlock()
+	var clean string
+	clean = strings.ToUpper(strings.TrimSpace(s))
+	var id VersionSnmp
+	var ok bool
+	id, ok = versionSnmpIds[clean]
+	if ok {
+		return id
+	}
+	return 1
+}
+
+func ParseAuthProtocolSnmp(s string) AuthProtocolSnmp {
+	mu.RLock()
+	defer mu.RUnlock()
+	var clean string
+	clean = strings.ToUpper(strings.TrimSpace(s))
+	var id AuthProtocolSnmp
+	var ok bool
+	id, ok = authProtocolSnmpIds[clean]
+	if ok {
+		return id
+	}
+	return 1
+}
+
+func ParsePrivacyProtocolSnmp(s string) PrivacyProtocolSnmp {
+	mu.RLock()
+	defer mu.RUnlock()
+	var clean string
+	clean = strings.ToUpper(strings.TrimSpace(s))
+	var id PrivacyProtocolSnmp
+	var ok bool
+	id, ok = privacyProtocolSnmpIds[clean]
 	if ok {
 		return id
 	}

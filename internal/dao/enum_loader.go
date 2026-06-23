@@ -24,6 +24,9 @@ func LoadEnumsFromDB(ctx context.Context) error {
 	var varTypeMap map[int16]string
 	var oidTypeMap map[int16]string
 	var pollingProtocolMap map[int16]string
+	var versionSnmpMap map[int16]string
+	var authProtocolSnmpMap map[int16]string
+	var privacyProtocolSnmpMap map[int16]string
 	var vendors []map[string]interface{}
 	var err error
 	conn = database.Get()
@@ -71,9 +74,21 @@ func LoadEnumsFromDB(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicOperators, alarmMap, vendors, oidTypeMap, pollingProtocolMap)
+	versionSnmpMap, err = fetchSimpleEnum(ctx, conn, "public.version_snmp")
+	if err != nil {
+		return err
+	}
+	authProtocolSnmpMap, err = fetchSimpleEnum(ctx, conn, "public.auth_protocol_snmp")
+	if err != nil {
+		return err
+	}
+	privacyProtocolSnmpMap, err = fetchSimpleEnum(ctx, conn, "public.privacy_protocol_snmp")
+	if err != nil {
+		return err
+	}
+	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicOperators, alarmMap, vendors, oidTypeMap, pollingProtocolMap, versionSnmpMap, authProtocolSnmpMap, privacyProtocolSnmpMap)
 	var logMsg string
-	logMsg = fmt.Sprintf("\n%-17s | %s\n------------------+-------\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d\n%-17s | %d",
+	logMsg = fmt.Sprintf("\n%-30s | %s\n-------------------------------+-------\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d",
 		"Registry Name", "Count",
 		"Access", len(accessMap),
 		"Alarm Level", len(alarmMap),
@@ -84,6 +99,9 @@ func LoadEnumsFromDB(ctx context.Context) error {
 		"OID Type", len(oidTypeMap),
 		"Polling Frequency", len(pollMap),
 		"Polling Protocol", len(pollingProtocolMap),
+		"SNMP Authentication Protocol", len(authProtocolSnmpMap),
+		"SNMP Privacy Protocol", len(privacyProtocolSnmpMap),
+		"SNMP Version", len(versionSnmpMap),
 		"Variable Type", len(varTypeMap),
 		"Vendor", len(vendors),
 	)
