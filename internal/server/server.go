@@ -141,6 +141,8 @@ func NewServer() *Server {
 		{
 			configWorkingGroup.GET("", GetWorkingConfiguration)
 		}
+		v1.GET("/param-results", GetAllParamResults)
+		v1.GET("/param-result", GetParamResultsByFilter)
 	}
 	return &Server{router: r}
 }

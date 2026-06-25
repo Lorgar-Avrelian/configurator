@@ -376,6 +376,15 @@ type ResultDao struct {
 	Value         sql.NullString `db:"value" json:"value"`
 }
 
+type Result struct {
+	Host           string         `db:"host" json:"host"`
+	Port           int32          `db:"port" json:"port"`
+	ComponentTitle string         `db:"component_title" json:"component_title"`
+	InternalOrder  sql.NullInt32  `db:"internal_order" json:"internal_order"`
+	ParamTitle     string         `db:"param_title" json:"param_title"`
+	Value          sql.NullString `db:"value" json:"value"`
+}
+
 type AffectedThresholdDao struct {
 	ID        int64        `db:"id" json:"id"`
 	Host      string       `db:"host" json:"host"`

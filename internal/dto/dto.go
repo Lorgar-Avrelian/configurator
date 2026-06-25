@@ -229,7 +229,7 @@ type ConfigInProcessDto struct {
 }
 
 type DeviceSnmpDto struct {
-	Host           string            `json:"host" example:"192.168.1.1"`
+	Host           string            `json:"host" example:"127.0.0.1"`
 	Port           int32             `json:"port" example:"161"`
 	Community      string            `json:"community" example:"public"`
 	Version        string            `json:"version" example:"v2c"`
@@ -241,4 +241,21 @@ type DeviceSnmpDto struct {
 	Configuration  *ConfigurationDto `json:"configuration,omitempty" extensions:"x-nullable"`
 	Thresholds     []ThresholdDto    `json:"thresholds"`
 	Components     []ComponentDto    `json:"components"`
+}
+
+type ParamResultDto struct {
+	Host           string  `json:"host" example:"127.0.0.1"`
+	Port           int32   `json:"port" example:"161"`
+	ComponentTitle string  `json:"component_title" example:"component"`
+	InternalOrder  *int32  `json:"internal_order" swaggertype:"integer" extensions:"x-nullable" example:"1"`
+	ParamTitle     string  `json:"param_title" example:"name"`
+	Value          *string `json:"value" swaggertype:"string" extensions:"x-nullable" example:"Main Node"`
+}
+
+type ParamResultGetDto struct {
+	Host           *string `json:"host" form:"host" example:"127.0.0.1"`
+	Port           *int32  `json:"port" form:"port" example:"161"`
+	ComponentTitle *string `json:"component_title" form:"component_title" example:"component"`
+	InternalOrder  *int32  `json:"internal_order" form:"internal_order" example:"1"`
+	ParamTitle     *string `json:"param_title" form:"param_title" example:"name"`
 }

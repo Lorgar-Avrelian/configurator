@@ -2593,6 +2593,88 @@
                 }
             }
         },
+        "/api/v1/param-result": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "15. Просмотр: Значения параметров"
+                ],
+                "summary": "Получить отфильтрованные сохранённые значения параметров",
+                "parameters": [
+                    {
+                        "description": "Фильтры параметров",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.ParamResultGetDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.ParamResultDto"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/param-results": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "15. Просмотр: Значения параметров"
+                ],
+                "summary": "Получить все сохранённые значения параметров",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/configurator_internal_dto.ParamResultDto"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/param/search": {
             "get": {
                 "description": "Ищет параметры, у которых title, name_en, name_ru, description_en или description_ru частично совпадают с переданной строкой query",
@@ -3568,7 +3650,7 @@
                 },
                 "host": {
                     "type": "string",
-                    "example": "192.168.1.1"
+                    "example": "127.0.0.1"
                 },
                 "id": {
                     "type": "string",
@@ -3956,6 +4038,62 @@
                         }
                     ],
                     "x-nullable": true
+                }
+            }
+        },
+        "configurator_internal_dto.ParamResultDto": {
+            "type": "object",
+            "properties": {
+                "component_title": {
+                    "type": "string",
+                    "example": "component"
+                },
+                "host": {
+                    "type": "string",
+                    "example": "127.0.0.1"
+                },
+                "internal_order": {
+                    "type": "integer",
+                    "x-nullable": true,
+                    "example": 1
+                },
+                "param_title": {
+                    "type": "string",
+                    "example": "name"
+                },
+                "port": {
+                    "type": "integer",
+                    "example": 161
+                },
+                "value": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "Main Node"
+                }
+            }
+        },
+        "configurator_internal_dto.ParamResultGetDto": {
+            "type": "object",
+            "properties": {
+                "component_title": {
+                    "type": "string",
+                    "example": "component"
+                },
+                "host": {
+                    "type": "string",
+                    "example": "127.0.0.1"
+                },
+                "internal_order": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "param_title": {
+                    "type": "string",
+                    "example": "name"
+                },
+                "port": {
+                    "type": "integer",
+                    "example": 161
                 }
             }
         },

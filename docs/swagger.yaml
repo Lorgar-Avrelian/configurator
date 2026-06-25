@@ -276,7 +276,7 @@ definitions:
         - $ref: '#/definitions/configurator_internal_dto.ConfigurationDto'
         x-nullable: true
       host:
-        example: 192.168.1.1
+        example: 127.0.0.1
         type: string
       id:
         example: 14e8713a-2f3c-3af1-8e6f-449d7a612227
@@ -559,6 +559,47 @@ definitions:
         allOf:
         - $ref: '#/definitions/configurator_internal_dto.OidDto'
         x-nullable: true
+    type: object
+  configurator_internal_dto.ParamResultDto:
+    properties:
+      component_title:
+        example: component
+        type: string
+      host:
+        example: 127.0.0.1
+        type: string
+      internal_order:
+        example: 1
+        type: integer
+        x-nullable: true
+      param_title:
+        example: name
+        type: string
+      port:
+        example: 161
+        type: integer
+      value:
+        example: Main Node
+        type: string
+        x-nullable: true
+    type: object
+  configurator_internal_dto.ParamResultGetDto:
+    properties:
+      component_title:
+        example: component
+        type: string
+      host:
+        example: 127.0.0.1
+        type: string
+      internal_order:
+        example: 1
+        type: integer
+      param_title:
+        example: name
+        type: string
+      port:
+        example: 161
+        type: integer
     type: object
   configurator_internal_dto.ParamUpdateDto:
     properties:
@@ -2348,6 +2389,59 @@ paths:
       summary: Создать параметр
       tags:
       - '2. Модельный каталог: Параметры'
+  /api/v1/param-result:
+    get:
+      parameters:
+      - description: Фильтры параметров
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.ParamResultGetDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.ParamResultDto'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить отфильтрованные сохранённые значения параметров
+      tags:
+      - '15. Просмотр: Значения параметров'
+  /api/v1/param-results:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/configurator_internal_dto.ParamResultDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все сохранённые значения параметров
+      tags:
+      - '15. Просмотр: Значения параметров'
   /api/v1/param/{id}:
     delete:
       parameters:
