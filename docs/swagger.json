@@ -364,6 +364,68 @@
                 }
             }
         },
+        "/api/v1/config/working": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "14. Просмотр: Рабочая конфигурация"
+                ],
+                "summary": "Получить рабочую конфигурацию устройства",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "IP-адрес или хост устройства",
+                        "name": "host",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Порт устройства",
+                        "name": "port",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/configurator_internal_dto.DeviceSnmpDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/configuration": {
             "post": {
                 "produces": [
@@ -3476,6 +3538,67 @@
                     "type": "integer",
                     "x-nullable": true,
                     "example": 72
+                }
+            }
+        },
+        "configurator_internal_dto.DeviceSnmpDto": {
+            "type": "object",
+            "properties": {
+                "authentication": {
+                    "type": "string",
+                    "example": "MD5"
+                },
+                "community": {
+                    "type": "string",
+                    "example": "public"
+                },
+                "components": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/configurator_internal_dto.ComponentDto"
+                    }
+                },
+                "configuration": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.ConfigurationDto"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "host": {
+                    "type": "string",
+                    "example": "192.168.1.1"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "14e8713a-2f3c-3af1-8e6f-449d7a612227"
+                },
+                "login": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "password": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "port": {
+                    "type": "integer",
+                    "example": 161
+                },
+                "privacy": {
+                    "type": "string",
+                    "example": "AES"
+                },
+                "thresholds": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/configurator_internal_dto.ThresholdDto"
+                    }
+                },
+                "version": {
+                    "type": "string",
+                    "example": "v2c"
                 }
             }
         },

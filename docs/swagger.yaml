@@ -259,6 +259,48 @@ definitions:
         type: integer
         x-nullable: true
     type: object
+  configurator_internal_dto.DeviceSnmpDto:
+    properties:
+      authentication:
+        example: MD5
+        type: string
+      community:
+        example: public
+        type: string
+      components:
+        items:
+          $ref: '#/definitions/configurator_internal_dto.ComponentDto'
+        type: array
+      configuration:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.ConfigurationDto'
+        x-nullable: true
+      host:
+        example: 192.168.1.1
+        type: string
+      id:
+        example: 14e8713a-2f3c-3af1-8e6f-449d7a612227
+        type: string
+      login:
+        type: string
+        x-nullable: true
+      password:
+        type: string
+        x-nullable: true
+      port:
+        example: 161
+        type: integer
+      privacy:
+        example: AES
+        type: string
+      thresholds:
+        items:
+          $ref: '#/definitions/configurator_internal_dto.ThresholdDto'
+        type: array
+      version:
+        example: v2c
+        type: string
+    type: object
   configurator_internal_dto.MappingCreateDto:
     properties:
       coefficient:
@@ -840,6 +882,47 @@ paths:
       summary: Поиск данных устройств, находящихся в процессе конфигурирования
       tags:
       - '13. Просмотр: В процессе конфигурирования'
+  /api/v1/config/working:
+    get:
+      parameters:
+      - description: IP-адрес или хост устройства
+        in: query
+        name: host
+        required: true
+        type: string
+      - description: Порт устройства
+        in: query
+        name: port
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.DeviceSnmpDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить рабочую конфигурацию устройства
+      tags:
+      - '14. Просмотр: Рабочая конфигурация'
   /api/v1/configuration:
     post:
       parameters:

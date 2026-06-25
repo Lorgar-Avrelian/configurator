@@ -136,6 +136,11 @@ func NewServer() *Server {
 			configInProgressGroup.GET("", GetAllConfigInProcess)
 			configInProgressGroup.GET("/search", SearchConfigInProcess)
 		}
+		var configWorkingGroup *gin.RouterGroup
+		configWorkingGroup = v1.Group("/config/working")
+		{
+			configWorkingGroup.GET("", GetWorkingConfiguration)
+		}
 	}
 	return &Server{router: r}
 }

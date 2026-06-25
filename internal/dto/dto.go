@@ -227,3 +227,18 @@ type ConfigInProcessDto struct {
 	Port     int32  `json:"port" example:"161"`
 	Protocol string `json:"protocol" example:"SNMP"`
 }
+
+type DeviceSnmpDto struct {
+	Host           string            `json:"host" example:"192.168.1.1"`
+	Port           int32             `json:"port" example:"161"`
+	Community      string            `json:"community" example:"public"`
+	Version        string            `json:"version" example:"v2c"`
+	Login          *string           `json:"login" swaggertype:"string" extensions:"x-nullable"`
+	Password       *string           `json:"password" swaggertype:"string" extensions:"x-nullable"`
+	Authentication string            `json:"authentication" example:"MD5"`
+	Privacy        string            `json:"privacy" example:"AES"`
+	ID             string            `json:"id" example:"14e8713a-2f3c-3af1-8e6f-449d7a612227"`
+	Configuration  *ConfigurationDto `json:"configuration,omitempty" extensions:"x-nullable"`
+	Thresholds     []ThresholdDto    `json:"thresholds"`
+	Components     []ComponentDto    `json:"components"`
+}

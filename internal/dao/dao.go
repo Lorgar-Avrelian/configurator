@@ -662,3 +662,9 @@ type MibToObjectGroupDao struct {
 	MibID         int64 `db:"mib_id" json:"mib_id"`
 	ObjectGroupID int64 `db:"object_group_id" json:"object_group_id"`
 }
+
+type DeviceSnmp struct {
+	Device     DeviceSnmpDao
+	Thresholds []ThresholdDao
+	Components []Component
+}
