@@ -7,6 +7,83 @@ import (
 	"github.com/google/uuid"
 )
 
+type PollingProtocolDao struct {
+	ID    int16          `db:"id" json:"id"`
+	Value sql.NullString `db:"value" json:"value"`
+}
+
+type AccessDao struct {
+	ID    int16          `db:"id" json:"id"`
+	Value sql.NullString `db:"value" json:"value"`
+}
+
+type VersionSnmpDao struct {
+	ID    int16          `db:"id" json:"id"`
+	Value sql.NullString `db:"value" json:"value"`
+}
+
+type AuthProtocolSnmpDao struct {
+	ID    int16          `db:"id" json:"id"`
+	Value sql.NullString `db:"value" json:"value"`
+}
+
+type PrivacyProtocolSnmpDao struct {
+	ID    int16          `db:"id" json:"id"`
+	Value sql.NullString `db:"value" json:"value"`
+}
+
+type OidTypeDao struct {
+	ID    int16          `db:"id" json:"id"`
+	Value sql.NullString `db:"value" json:"value"`
+}
+
+type LogicOperatorDao struct {
+	ID         int16  `db:"id" json:"id"`
+	Value      string `db:"value" json:"value"`
+	Type       string `db:"type" json:"type"`
+	Precedence int16  `db:"precedence" json:"precedence"`
+	Arity      int16  `db:"arity" json:"arity"`
+}
+
+type AlarmLevelDao struct {
+	ID    int16          `db:"id" json:"id"`
+	Value sql.NullString `db:"value" json:"value"`
+}
+
+type VarTypeDao struct {
+	ID    int16          `db:"id" json:"id"`
+	Value sql.NullString `db:"value" json:"value"`
+}
+
+type PollingFrequencyDao struct {
+	ID    int16          `db:"id" json:"id"`
+	Value sql.NullString `db:"value" json:"value"`
+}
+
+type OidAccessDao struct {
+	ID    int16  `db:"id" json:"id"`
+	Value string `db:"value" json:"value"`
+}
+
+type OidStatusDao struct {
+	ID    int16  `db:"id" json:"id"`
+	Value string `db:"value" json:"value"`
+}
+
+type Asn1TypeDao struct {
+	ID    int16  `db:"id" json:"id"`
+	Value string `db:"value" json:"value"`
+}
+
+type VendorDao struct {
+	ID        int64          `db:"id" json:"id"`
+	Name      string         `db:"name" json:"name"`
+	Number    int32          `db:"number" json:"number"`
+	Contact   sql.NullString `db:"contact" json:"contact"`
+	Email     sql.NullString `db:"email" json:"email"`
+	Directory sql.NullString `db:"directory" json:"directory"`
+}
+
 type Param struct {
 	ID            int64          `db:"id" json:"id"`
 	Title         string         `db:"title" json:"title"`
@@ -670,6 +747,42 @@ type MibToObjectGroupDao struct {
 	ID            int64 `db:"id" json:"id"`
 	MibID         int64 `db:"mib_id" json:"mib_id"`
 	ObjectGroupID int64 `db:"object_group_id" json:"object_group_id"`
+}
+
+type MibToObjectIdentifierDao struct {
+	ID                 int64 `db:"id" json:"id"`
+	MibID              int64 `db:"mib_id" json:"mib_id"`
+	ObjectIdentifierID int64 `db:"object_identifier_id" json:"object_identifier_id"`
+}
+
+type MibToObjectIdentityDao struct {
+	ID               int64 `db:"id" json:"id"`
+	MibID            int64 `db:"mib_id" json:"mib_id"`
+	ObjectIdentityID int64 `db:"object_identity_id" json:"object_identity_id"`
+}
+
+type MibToObjectTypeDao struct {
+	ID           int64 `db:"id" json:"id"`
+	MibID        int64 `db:"mib_id" json:"mib_id"`
+	ObjectTypeID int64 `db:"object_type_id" json:"object_type_id"`
+}
+
+type MibToSequenceDao struct {
+	ID         int64 `db:"id" json:"id"`
+	MibID      int64 `db:"mib_id" json:"mib_id"`
+	SequenceID int64 `db:"sequence_id" json:"sequence_id"`
+}
+
+type MibToTextualConventionDao struct {
+	ID                  int64 `db:"id" json:"id"`
+	MibID               int64 `db:"mib_id" json:"mib_id"`
+	TextualConventionID int64 `db:"textual_convention_id" json:"textual_convention_id"`
+}
+
+type MibToTrapTypeDao struct {
+	ID         int64 `db:"id" json:"id"`
+	MibID      int64 `db:"mib_id" json:"mib_id"`
+	TrapTypeID int64 `db:"trap_type_id" json:"trap_type_id"`
 }
 
 type DeviceSnmp struct {
