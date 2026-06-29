@@ -570,6 +570,236 @@ var tableSchemas = map[string]string{
 );`,
 }
 
+var constraintsSQL = `ALTER TABLE public.logic_operator ADD CONSTRAINT "logic_operator_value_key" UNIQUE ("value");
+
+ALTER TABLE public.logic_operator ADD CONSTRAINT "logic_operator_type_check" CHECK ("type" IN ('LOGICAL', 'COMPARISON', 'BRACKET'));
+
+ALTER TABLE public.logic_operator ADD CONSTRAINT "logic_operator_arity_check" CHECK ("arity" IN (1, 2));
+
+ALTER TABLE public.oid_access ADD CONSTRAINT "oid_access_value_key" UNIQUE ("value");
+
+ALTER TABLE public.oid_status ADD CONSTRAINT "oid_status_value_key" UNIQUE ("value");
+
+ALTER TABLE public.asn1_type ADD CONSTRAINT "asn1_type_value_key" UNIQUE ("value");
+
+ALTER TABLE public.vendor ADD CONSTRAINT "vendor_number_key" UNIQUE ("number");
+
+ALTER TABLE public.mib ADD CONSTRAINT "mib_path_key" UNIQUE ("path");
+
+ALTER TABLE public.component ADD CONSTRAINT "component_base_component_fkey" FOREIGN KEY ("base_component") REFERENCES public.component ("id");
+
+ALTER TABLE public.component ADD CONSTRAINT "component_access_fkey" FOREIGN KEY ("access") REFERENCES public.access ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.param ADD CONSTRAINT "param_type_fkey" FOREIGN KEY ("type") REFERENCES public.var_type ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.param ADD CONSTRAINT "param_access_fkey" FOREIGN KEY ("access") REFERENCES public.access ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.component_param ADD CONSTRAINT "component_param_component_id_fkey" FOREIGN KEY ("component_id") REFERENCES public.component ("id");
+
+ALTER TABLE public.component_param ADD CONSTRAINT "component_param_param_id_fkey" FOREIGN KEY ("param_id") REFERENCES public.param ("id");
+
+ALTER TABLE public.agent_capabilities ADD CONSTRAINT "agent_capabilities_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+
+ALTER TABLE public.agent_capabilities_module_notification ADD CONSTRAINT "agent_capabilities_module_notification_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id");
+
+ALTER TABLE public.agent_capabilities_module_object ADD CONSTRAINT "agent_capabilities_module_object_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id");
+
+ALTER TABLE public.module_compliance ADD CONSTRAINT "module_compliance_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+
+ALTER TABLE public.module_compliance_module_object ADD CONSTRAINT "module_compliance_module_object_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id");
+
+ALTER TABLE public.notification_group ADD CONSTRAINT "notification_group_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+
+ALTER TABLE public.notification_type ADD CONSTRAINT "notification_type_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+
+ALTER TABLE public.object_group ADD CONSTRAINT "object_group_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+
+ALTER TABLE public.object_identifier ADD CONSTRAINT "object_identifier_type_fkey" FOREIGN KEY ("type") REFERENCES public.asn1_type ("id");
+
+ALTER TABLE public.object_identity ADD CONSTRAINT "object_identity_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+
+ALTER TABLE public.object_type ADD CONSTRAINT "object_type_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id");
+
+ALTER TABLE public.object_type ADD CONSTRAINT "object_type_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+
+ALTER TABLE public.oid ADD CONSTRAINT "oid_mib_fkey" FOREIGN KEY ("mib") REFERENCES public.mib ("id");
+
+ALTER TABLE public.oid ADD CONSTRAINT "oid_type_fkey" FOREIGN KEY ("type") REFERENCES public.asn1_type ("id");
+
+ALTER TABLE public.oid ADD CONSTRAINT "oid_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+
+ALTER TABLE public.oid ADD CONSTRAINT "oid_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id");
+
+ALTER TABLE public.textual_convention ADD CONSTRAINT "textual_convention_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+
+ALTER TABLE public.mib ADD CONSTRAINT "mib_vendor_fkey" FOREIGN KEY ("vendor") REFERENCES public.vendor ("id");
+
+ALTER TABLE public.mib_to_agent_capabilities ADD CONSTRAINT "mib_to_agent_capabilities_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_agent_capabilities ADD CONSTRAINT "mib_to_agent_capabilities_agent_capabilities_id_fkey" FOREIGN KEY ("agent_capabilities_id") REFERENCES public.agent_capabilities ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_agent_capabilities ADD CONSTRAINT "mib_to_agent_capabilities_agent_capabilities_module_id_fkey" FOREIGN KEY ("agent_capabilities_module_id") REFERENCES public.agent_capabilities_module ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_agent_capabilities ADD CONSTRAINT "mib_to_agent_capabilities_agent_capabilities_module_notification_id_fkey" FOREIGN KEY ("agent_capabilities_module_notification_id") REFERENCES public.agent_capabilities_module_notification ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_agent_capabilities ADD CONSTRAINT "mib_to_agent_capabilities_agent_capabilities_module_object_id_fkey" FOREIGN KEY ("agent_capabilities_module_object_id") REFERENCES public.agent_capabilities_module_object ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_agent_capabilities ADD CONSTRAINT "mib_ac" UNIQUE NULLS NOT DISTINCT ("mib_id", "agent_capabilities_id", "agent_capabilities_module_id", "agent_capabilities_module_notification_id", "agent_capabilities_module_object_id");
+
+ALTER TABLE public.mib_to_choice ADD CONSTRAINT "mib_to_choice_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_choice ADD CONSTRAINT "mib_to_choice_choice_id_fkey" FOREIGN KEY ("choice_id") REFERENCES public.choice ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_choice ADD CONSTRAINT "mib_c" UNIQUE NULLS NOT DISTINCT ("mib_id", "choice_id");
+
+ALTER TABLE public.mib_to_explicit ADD CONSTRAINT "mib_to_explicit_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_explicit ADD CONSTRAINT "mib_to_explicit_explicit_id_fkey" FOREIGN KEY ("explicit_id") REFERENCES public.explicit ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_explicit ADD CONSTRAINT "mib_et" UNIQUE NULLS NOT DISTINCT ("mib_id", "explicit_id");
+
+ALTER TABLE public.mib_to_implicit ADD CONSTRAINT "mib_to_implicit_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_implicit ADD CONSTRAINT "mib_to_implicit_implicit_id_fkey" FOREIGN KEY ("implicit_id") REFERENCES public.implicit ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_implicit ADD CONSTRAINT "mib_it" UNIQUE NULLS NOT DISTINCT ("mib_id", "implicit_id");
+
+ALTER TABLE public.mib_to_import ADD CONSTRAINT "mib_to_import_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_import ADD CONSTRAINT "mib_to_import_import_id_fkey" FOREIGN KEY ("import_id") REFERENCES public.import ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_import ADD CONSTRAINT "mib_imp" UNIQUE NULLS NOT DISTINCT ("mib_id", "import_id");
+
+ALTER TABLE public.mib_to_module_compliance ADD CONSTRAINT "mib_to_module_compliance_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_module_compliance ADD CONSTRAINT "mib_to_module_compliance_module_compliance_id_fkey" FOREIGN KEY ("module_compliance_id") REFERENCES public.module_compliance ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_module_compliance ADD CONSTRAINT "mib_to_module_compliance_module_compliance_module_id_fkey" FOREIGN KEY ("module_compliance_module_id") REFERENCES public.module_compliance_module ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_module_compliance ADD CONSTRAINT "mib_to_module_compliance_module_compliance_module_group_id_fkey" FOREIGN KEY ("module_compliance_module_group_id") REFERENCES public.module_compliance_module_group ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_module_compliance ADD CONSTRAINT "mib_to_module_compliance_module_compliance_module_object_id_fkey" FOREIGN KEY ("module_compliance_module_object_id") REFERENCES public.module_compliance_module_object ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_module_compliance ADD CONSTRAINT "mib_mc" UNIQUE NULLS NOT DISTINCT ("mib_id", "module_compliance_id", "module_compliance_module_id", "module_compliance_module_group_id", "module_compliance_module_object_id");
+
+ALTER TABLE public.mib_to_module_identity ADD CONSTRAINT "mib_to_module_identity_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_module_identity ADD CONSTRAINT "mib_to_module_identity_module_identity_id_fkey" FOREIGN KEY ("module_identity_id") REFERENCES public.module_identity ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_module_identity ADD CONSTRAINT "mib_to_module_identity_revision_id_fkey" FOREIGN KEY ("revision_id") REFERENCES public.revision ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_module_identity ADD CONSTRAINT "mib_mi_rev" UNIQUE NULLS NOT DISTINCT ("mib_id", "module_identity_id", "revision_id");
+
+ALTER TABLE public.mib_to_notification_group ADD CONSTRAINT "mib_to_notification_group_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_notification_group ADD CONSTRAINT "mib_to_notification_group_notification_group_id_fkey" FOREIGN KEY ("notification_group_id") REFERENCES public.notification_group ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_notification_group ADD CONSTRAINT "mib_ng" UNIQUE NULLS NOT DISTINCT ("mib_id", "notification_group_id");
+
+ALTER TABLE public.mib_to_notification_type ADD CONSTRAINT "mib_to_notification_type_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_notification_type ADD CONSTRAINT "mib_to_notification_type_notification_type_id_fkey" FOREIGN KEY ("notification_type_id") REFERENCES public.notification_type ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_notification_type ADD CONSTRAINT "mib_nt" UNIQUE NULLS NOT DISTINCT ("mib_id", "notification_type_id");
+
+ALTER TABLE public.mib_to_object_group ADD CONSTRAINT "mib_to_object_group_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_object_group ADD CONSTRAINT "mib_to_object_group_object_group_id_fkey" FOREIGN KEY ("object_group_id") REFERENCES public.object_group ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_object_group ADD CONSTRAINT "mib_og" UNIQUE NULLS NOT DISTINCT ("mib_id", "object_group_id");
+
+ALTER TABLE public.mib_to_object_identifier ADD CONSTRAINT "mib_to_object_identifier_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_object_identifier ADD CONSTRAINT "mib_to_object_identifier_object_identifier_id_fkey" FOREIGN KEY ("object_identifier_id") REFERENCES public.object_identifier ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_object_identifier ADD CONSTRAINT "mib_oif" UNIQUE NULLS NOT DISTINCT ("mib_id", "object_identifier_id");
+
+ALTER TABLE public.mib_to_object_identity ADD CONSTRAINT "mib_to_object_identity_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_object_identity ADD CONSTRAINT "mib_to_object_identity_object_identity_id_fkey" FOREIGN KEY ("object_identity_id") REFERENCES public.object_identity ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_object_identity ADD CONSTRAINT "mib_oit" UNIQUE NULLS NOT DISTINCT ("mib_id", "object_identity_id");
+
+ALTER TABLE public.mib_to_object_type ADD CONSTRAINT "mib_to_object_type_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_object_type ADD CONSTRAINT "mib_to_object_type_object_type_id_fkey" FOREIGN KEY ("object_type_id") REFERENCES public.object_type ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_object_type ADD CONSTRAINT "mib_ot" UNIQUE NULLS NOT DISTINCT ("mib_id", "object_type_id");
+
+ALTER TABLE public.mib_to_sequence ADD CONSTRAINT "mib_to_sequence_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_sequence ADD CONSTRAINT "mib_to_sequence_sequence_id_fkey" FOREIGN KEY ("sequence_id") REFERENCES public.sequence ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_sequence ADD CONSTRAINT "mib_sec" UNIQUE NULLS NOT DISTINCT ("mib_id", "sequence_id");
+
+ALTER TABLE public.mib_to_textual_convention ADD CONSTRAINT "mib_to_textual_convention_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_textual_convention ADD CONSTRAINT "mib_to_textual_convention_textual_convention_id_fkey" FOREIGN KEY ("textual_convention_id") REFERENCES public.textual_convention ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_textual_convention ADD CONSTRAINT "mib_tc" UNIQUE NULLS NOT DISTINCT ("mib_id", "textual_convention_id");
+
+ALTER TABLE public.mib_to_trap_type ADD CONSTRAINT "mib_to_trap_type_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_trap_type ADD CONSTRAINT "mib_to_trap_type_trap_type_id_fkey" FOREIGN KEY ("trap_type_id") REFERENCES public.trap_type ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mib_to_trap_type ADD CONSTRAINT "mib_tt" UNIQUE NULLS NOT DISTINCT ("mib_id", "trap_type_id");
+
+ALTER TABLE public.device_indicator ADD CONSTRAINT "device_indicator_tt" UNIQUE NULLS NOT DISTINCT ("description", "object_id", "contact", "name", "location", "services");
+
+ALTER TABLE public.param_indicator ADD CONSTRAINT "param_indicator_oid_id_fkey" FOREIGN KEY ("oid_id") REFERENCES public.oid ("id");
+
+ALTER TABLE public.mapping ADD CONSTRAINT "mapping_indicator_fkey" FOREIGN KEY ("indicator") REFERENCES public.param_indicator ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mapping ADD CONSTRAINT "mapping_param_fkey" FOREIGN KEY ("param") REFERENCES public.param ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mapping ADD CONSTRAINT "mapping_frequency_fkey" FOREIGN KEY ("frequency") REFERENCES public.polling_frequency ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mapping ADD CONSTRAINT "mapping_from_fkey" FOREIGN KEY ("from") REFERENCES public.mapping ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.mapping ADD CONSTRAINT "mapping_position_type_fkey" FOREIGN KEY ("position_type") REFERENCES public.oid_type ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.device_component ADD CONSTRAINT "device_component_model_fkey" FOREIGN KEY ("model") REFERENCES public.component ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.device_component ADD CONSTRAINT "device_component_parent_fkey" FOREIGN KEY ("parent") REFERENCES public.device_component ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.device_component_mapping ADD CONSTRAINT "device_component_mapping_device_component_id_fkey" FOREIGN KEY ("device_component_id") REFERENCES public.device_component ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.device_component_mapping ADD CONSTRAINT "device_component_mapping_mapping_id_fkey" FOREIGN KEY ("mapping_id") REFERENCES public.mapping ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.configuration ADD CONSTRAINT "configuration_indicator_fkey" FOREIGN KEY ("indicator") REFERENCES public.device_indicator ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.configuration ADD CONSTRAINT "configuration_device_component_id_fkey" FOREIGN KEY ("device_component_id") REFERENCES public.device_component ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.default_configuration ADD CONSTRAINT "default_configuration_indicator_fkey" FOREIGN KEY ("indicator") REFERENCES public.device_indicator ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.default_configuration ADD CONSTRAINT "default_configuration_device_component_id_fkey" FOREIGN KEY ("device_component_id") REFERENCES public.device_component ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.threshold ADD CONSTRAINT "threshold_query_key" UNIQUE ("query");
+
+ALTER TABLE public.device_snmp ADD CONSTRAINT "device_snmp_version_fkey" FOREIGN KEY ("version") REFERENCES public.version_snmp ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.device_snmp ADD CONSTRAINT "device_snmp_authentication_fkey" FOREIGN KEY ("authentication") REFERENCES public.auth_protocol_snmp ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.device_snmp ADD CONSTRAINT "device_snmp_privacy_fkey" FOREIGN KEY ("privacy") REFERENCES public.privacy_protocol_snmp ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.device_snmp ADD CONSTRAINT "device_snmp_config_fkey" FOREIGN KEY ("config") REFERENCES public.configuration ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.result ADD CONSTRAINT "result_component_fkey" FOREIGN KEY ("component") REFERENCES public.component ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.result ADD CONSTRAINT "result_param_fkey" FOREIGN KEY ("param") REFERENCES public.param ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.affected_threshold ADD CONSTRAINT "affected_threshold_threshold_fkey" FOREIGN KEY ("threshold") REFERENCES public.threshold ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.affected_threshold ADD CONSTRAINT "affected_threshold_host_port_fkey" FOREIGN KEY ("host", "port") REFERENCES public.device_snmp ("host", "port") ON DELETE CASCADE;
+
+ALTER TABLE public.affected_param ADD CONSTRAINT "affected_param_component_fkey" FOREIGN KEY ("component") REFERENCES public.component ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.affected_param ADD CONSTRAINT "affected_param_param_fkey" FOREIGN KEY ("param") REFERENCES public.param ("id") ON DELETE CASCADE;
+
+ALTER TABLE public.affected_param ADD CONSTRAINT "affected_param_host_port_fkey" FOREIGN KEY ("host", "port") REFERENCES public.device_snmp ("host", "port") ON DELETE CASCADE;
+
+ALTER TABLE public.config_in_process ADD CONSTRAINT "config_in_process_protocol_fkey" FOREIGN KEY ("protocol") REFERENCES public.polling_protocol ("id") ON DELETE CASCADE;`
+
 type rawQueryResult struct {
 	tableName string
 	data      any
@@ -580,7 +810,7 @@ type tablePrintResult struct {
 	rowCount  int
 }
 
-func ExportDatabase(ctx context.Context) error {
+func ExportDatabase(_ context.Context) error {
 	var wg sync.WaitGroup
 	var ch chan rawQueryResult
 	var results []tablePrintResult
@@ -598,8 +828,8 @@ func ExportDatabase(ctx context.Context) error {
 		logger.Error("Failed to create output directory: %v", err)
 		return err
 	}
-	ch = make(chan rawQueryResult, 71)
-	results = make([]tablePrintResult, 0, 71)
+	ch = make(chan rawQueryResult, 72)
+	results = make([]tablePrintResult, 0, 72)
 	callers = map[string]any{
 		"public.polling_protocol":                       dao.GetAllPollingProtocolDao,
 		"public.access":                                 dao.GetAllAccessDao,
@@ -673,6 +903,27 @@ func ExportDatabase(ctx context.Context) error {
 		"public.affected_param":                         dao.GetAllAffectedParamDao,
 		"public.config_in_process":                      dao.GetAllConfigInProcessDao,
 	}
+	wg.Add(1)
+	go func() {
+		var constraintsPath string
+		var constraintsFile *os.File
+		var errWrite error
+		var errClose error
+		constraintsPath = filepath.Join(outputDir, "constraints.sql")
+		constraintsFile, _ = os.Create(constraintsPath)
+		if constraintsFile != nil {
+			_, errWrite = constraintsFile.WriteString(constraintsSQL)
+			if errWrite != nil {
+				logger.Error("Failed to write to file constraints.sql: %v", errWrite)
+			}
+			errClose = constraintsFile.Close()
+			if errClose != nil {
+				logger.Error("Failed to close file constraints.sql: %v", errClose)
+			}
+		}
+		ch <- rawQueryResult{tableName: "public.constraints", data: []string{}}
+		wg.Done()
+	}()
 	for tName, fn = range callers {
 		wg.Add(1)
 		go func(tableName string, fetchFunc any) {
@@ -726,6 +977,8 @@ func executeTableExport(outputDir string, tableName string, dataSlice any) {
 	var f *os.File
 	var filePath string
 	var finalSQL string
+	var errWrite error
+	var errClose error
 	vVal = reflect.ValueOf(dataSlice)
 	total = vVal.Len()
 	schema = tableSchemas[tableName]
@@ -811,8 +1064,14 @@ func executeTableExport(outputDir string, tableName string, dataSlice any) {
 	filePath = filepath.Join(outputDir, fmt.Sprintf("%s.sql", tableName))
 	f, _ = os.Create(filePath)
 	if f != nil {
-		f.WriteString(finalSQL)
-		f.Close()
+		_, errWrite = f.WriteString(finalSQL)
+		if errWrite != nil {
+			logger.Error("Failed to write to file %s.sql: %v", tableName, errWrite)
+		}
+		errClose = f.Close()
+		if errClose != nil {
+			logger.Error("Failed to close file %s.sql: %v", tableName, errClose)
+		}
 	}
 }
 
