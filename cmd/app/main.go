@@ -54,19 +54,16 @@ func main() {
 
 func generateSwagger() {
 	logger.Info("Swagger files autogeneration")
-
 	cmd := exec.Command("swag", "init",
 		"-g", "cmd/app/main.go",
 		"-d", "./,internal/server,internal/dto,internal/model",
 		"--parseDependency",
 	)
-
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		logger.Warn("Couldn't update Swagger automatically via the code")
 		logger.Error("Generator error details:\n%s", string(output))
 		return
 	}
-
 	logger.Info("Swagger files updated successfully")
 }

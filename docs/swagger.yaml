@@ -2662,6 +2662,36 @@ paths:
       summary: Получить все параметры
       tags:
       - '2. Модельный каталог: Параметры'
+  /api/v1/save-result:
+    post:
+      consumes:
+      - application/json
+      description: Выгружает данные основных таблиц в структурированные .sql файлы
+        в директорию 'sql' в корне проекта
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сообщение об успешном создании файла
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Ошибка валидации данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка при записи файла или чтении БД
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Экспортировать результаты в SQL скрипт
+      tags:
+      - '16. Результат: Экспортировать БД в SQL скрипт'
   /api/v1/threshold:
     post:
       consumes:

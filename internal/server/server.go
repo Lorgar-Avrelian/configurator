@@ -143,6 +143,7 @@ func NewServer() *Server {
 		}
 		v1.GET("/param-results", GetAllParamResults)
 		v1.GET("/param-result", GetParamResultsByFilter)
+		v1.POST("/save-result", SaveResult)
 	}
 	return &Server{router: r}
 }

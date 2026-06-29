@@ -624,8 +624,8 @@ type ObjectGroupDao struct {
 type ObjectIdentifierDao struct {
 	ID     int64          `db:"id" json:"id"`
 	Name   string         `db:"name" json:"name"`
-	NumOid []string       `db:"num_oid" json:"num_oid"`
-	StrOid []string       `db:"str_oid" json:"str_oid"`
+	NumOid []*string      `db:"num_oid" json:"num_oid"`
+	StrOid []*string      `db:"str_oid" json:"str_oid"`
 	Parent sql.NullString `db:"parent" json:"parent"`
 	Type   int16          `db:"type" json:"type"`
 }

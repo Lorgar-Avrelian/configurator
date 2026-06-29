@@ -3013,6 +3013,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/save-result": {
+            "post": {
+                "description": "Выгружает данные основных таблиц в структурированные .sql файлы в директорию 'sql' в корне проекта",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "16. Результат: Экспортировать БД в SQL скрипт"
+                ],
+                "summary": "Экспортировать результаты в SQL скрипт",
+                "responses": {
+                    "200": {
+                        "description": "Сообщение об успешном создании файла",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации данных",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка при записи файла или чтении БД",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/threshold": {
             "post": {
                 "consumes": [
