@@ -941,10 +941,15 @@ func ExportDatabase(_ context.Context) error {
 		return !isGreater
 	})
 	idx = len(results)
+	logger.Info("Export of data from all DB tables to SQL scripts located in the /sql directory was completed successfully")
+	logger.Info("Export statistics:")
+	logger.Info("%-50s-+-%s\n", "--------------------------------------------------", "----")
+	logger.Info("%-50s | %s\n", "Table name", "Rows")
+	logger.Info("%-50s-+-%s\n", "--------------------------------------------------", "----")
 	for idx > 0 {
 		idx--
 		outputItem = results[len(results)-1-idx]
-		fmt.Printf("%-50s | Rows: %d\n", outputItem.tableName, outputItem.rowCount)
+		logger.Info("%-50s | %d\n", outputItem.tableName, outputItem.rowCount)
 	}
 	return nil
 }

@@ -6,7 +6,6 @@ import (
 	"configurator/internal/model"
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -87,25 +86,53 @@ func LoadEnumsFromDB(ctx context.Context) error {
 		return err
 	}
 	model.LoadRegistries(accessMap, varTypeMap, pollMap, asn1Map, statusMap, oidAccessMap, logicOperators, alarmMap, vendors, oidTypeMap, pollingProtocolMap, versionSnmpMap, authProtocolSnmpMap, privacyProtocolSnmpMap)
-	var logMsg string
-	logMsg = fmt.Sprintf("\n%-30s | %s\n-------------------------------+-------\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d\n%-30s | %d",
-		"Registry Name", "Count",
-		"Access", len(accessMap),
-		"Alarm Level", len(alarmMap),
-		"ASN.1 Type", len(asn1Map),
-		"Logic Operator", len(logicOperators),
-		"OID Access", len(oidAccessMap),
-		"OID Status", len(statusMap),
-		"OID Type", len(oidTypeMap),
-		"Polling Frequency", len(pollMap),
-		"Polling Protocol", len(pollingProtocolMap),
-		"SNMP Authentication Protocol", len(authProtocolSnmpMap),
-		"SNMP Privacy Protocol", len(privacyProtocolSnmpMap),
-		"SNMP Version", len(versionSnmpMap),
-		"Variable Type", len(varTypeMap),
-		"Vendor", len(vendors),
-	)
-	logger.Info("System registries successfully loaded from DB:%s", logMsg)
+	var countAccess int
+	var countAlarm int
+	var countAsn1 int
+	var countLogic int
+	var countOidAccess int
+	var countStatus int
+	var countOidType int
+	var countPoll int
+	var countPollProto int
+	var countAuthSnmp int
+	var countPrivSnmp int
+	var countVersionSnmp int
+	var countVarType int
+	var countVendors int
+	countAccess = len(accessMap)
+	countAlarm = len(alarmMap)
+	countAsn1 = len(asn1Map)
+	countLogic = len(logicOperators)
+	countOidAccess = len(oidAccessMap)
+	countStatus = len(statusMap)
+	countOidType = len(oidTypeMap)
+	countPoll = len(pollMap)
+	countPollProto = len(pollingProtocolMap)
+	countAuthSnmp = len(authProtocolSnmpMap)
+	countPrivSnmp = len(privacyProtocolSnmpMap)
+	countVersionSnmp = len(versionSnmpMap)
+	countVarType = len(varTypeMap)
+	countVendors = len(vendors)
+	logger.Info("System enums successfully loaded from DB")
+	logger.Info("Loading statistics:")
+	logger.Info("-------------------------------+-------")
+	logger.Info("%-30s | %s", "Registry Name", "Count")
+	logger.Info("-------------------------------+-------")
+	logger.Info("%-30s | %d", "Access", countAccess)
+	logger.Info("%-30s | %d", "Alarm Level", countAlarm)
+	logger.Info("%-30s | %d", "ASN.1 Type", countAsn1)
+	logger.Info("%-30s | %d", "Logic Operator", countLogic)
+	logger.Info("%-30s | %d", "OID Access", countOidAccess)
+	logger.Info("%-30s | %d", "OID Status", countStatus)
+	logger.Info("%-30s | %d", "OID Type", countOidType)
+	logger.Info("%-30s | %d", "Polling Frequency", countPoll)
+	logger.Info("%-30s | %d", "Polling Protocol", countPollProto)
+	logger.Info("%-30s | %d", "SNMP Authentication Protocol", countAuthSnmp)
+	logger.Info("%-30s | %d", "SNMP Privacy Protocol", countPrivSnmp)
+	logger.Info("%-30s | %d", "SNMP Version", countVersionSnmp)
+	logger.Info("%-30s | %d", "Variable Type", countVarType)
+	logger.Info("%-30s | %d", "Vendor", countVendors)
 	return nil
 }
 

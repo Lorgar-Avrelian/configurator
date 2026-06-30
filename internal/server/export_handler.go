@@ -26,8 +26,6 @@ func SaveResult(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	logger.Info("Export of all database tables to sql/ directory completed successfully")
 	c.JSON(http.StatusOK, gin.H{
 		"message":   "All database tables successfully dumped as clean SQL files",
 		"directory": "sql/",
