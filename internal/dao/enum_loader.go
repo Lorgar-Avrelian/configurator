@@ -133,6 +133,7 @@ func LoadEnumsFromDB(ctx context.Context) error {
 	logger.Info("%-30s | %d", "SNMP Version", countVersionSnmp)
 	logger.Info("%-30s | %d", "Variable Type", countVarType)
 	logger.Info("%-30s | %d", "Vendor", countVendors)
+	logger.Info("-------------------------------+-------")
 	return nil
 }
 

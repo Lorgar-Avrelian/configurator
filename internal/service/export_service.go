@@ -951,6 +951,7 @@ func ExportDatabase(_ context.Context) error {
 		outputItem = results[len(results)-1-idx]
 		logger.Info("%-50s | %d\n", outputItem.tableName, outputItem.rowCount)
 	}
+	logger.Info("%-50s-+-%s\n", "--------------------------------------------------", "----")
 	return nil
 }
 
