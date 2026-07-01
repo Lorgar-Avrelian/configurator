@@ -38,19 +38,19 @@ type LoggerConfig struct {
 func Init(path string) {
 	file, err := os.Open(path)
 	if err != nil {
-		log.Fatalf("Не удалось открыть файл %s: %v", path, err)
+		log.Fatalf("Couldn't open the file %s: %v", path, err)
 	}
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
-			log.Fatalf("Ошибка закрытия файла %s: %v", path, err)
+			log.Fatalf("File closing error %s: %v", path, err)
 		}
 	}(file)
 
 	var localCfg Config
 	decoder := yaml.NewDecoder(file)
 	if err := decoder.Decode(&localCfg); err != nil {
-		log.Fatalf("Ошибка чтения файла %s: %v", path, err)
+		log.Fatalf("File reading error %s: %v", path, err)
 	}
 	cfg = &localCfg
 }
