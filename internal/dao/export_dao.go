@@ -7,12 +7,10 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func GetAllPollingProtocolDao() ([]PollingProtocolDao, error) {
+func GetAllPollingProtocolDao(ctx context.Context) ([]PollingProtocolDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.polling_protocol`
 	rows, err = database.Get().Query(ctx, query)
@@ -36,12 +34,10 @@ func GetAllPollingProtocolDao() ([]PollingProtocolDao, error) {
 	return list, nil
 }
 
-func GetAllAccessDao() ([]AccessDao, error) {
+func GetAllAccessDao(ctx context.Context) ([]AccessDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.access`
 	rows, err = database.Get().Query(ctx, query)
@@ -65,12 +61,10 @@ func GetAllAccessDao() ([]AccessDao, error) {
 	return list, nil
 }
 
-func GetAllVersionSnmpDao() ([]VersionSnmpDao, error) {
+func GetAllVersionSnmpDao(ctx context.Context) ([]VersionSnmpDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.version_snmp`
 	rows, err = database.Get().Query(ctx, query)
@@ -94,12 +88,10 @@ func GetAllVersionSnmpDao() ([]VersionSnmpDao, error) {
 	return list, nil
 }
 
-func GetAllAuthProtocolSnmpDao() ([]AuthProtocolSnmpDao, error) {
+func GetAllAuthProtocolSnmpDao(ctx context.Context) ([]AuthProtocolSnmpDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.auth_protocol_snmp`
 	rows, err = database.Get().Query(ctx, query)
@@ -123,12 +115,10 @@ func GetAllAuthProtocolSnmpDao() ([]AuthProtocolSnmpDao, error) {
 	return list, nil
 }
 
-func GetAllPrivacyProtocolSnmpDao() ([]PrivacyProtocolSnmpDao, error) {
+func GetAllPrivacyProtocolSnmpDao(ctx context.Context) ([]PrivacyProtocolSnmpDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.privacy_protocol_snmp`
 	rows, err = database.Get().Query(ctx, query)
@@ -152,12 +142,10 @@ func GetAllPrivacyProtocolSnmpDao() ([]PrivacyProtocolSnmpDao, error) {
 	return list, nil
 }
 
-func GetAllOidTypeDao() ([]OidTypeDao, error) {
+func GetAllOidTypeDao(ctx context.Context) ([]OidTypeDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.oid_type`
 	rows, err = database.Get().Query(ctx, query)
@@ -181,12 +169,10 @@ func GetAllOidTypeDao() ([]OidTypeDao, error) {
 	return list, nil
 }
 
-func GetAllLogicOperatorDao() ([]LogicOperatorDao, error) {
+func GetAllLogicOperatorDao(ctx context.Context) ([]LogicOperatorDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value", "type", "precedence", "arity"
 			 FROM public.logic_operator`
 	rows, err = database.Get().Query(ctx, query)
@@ -213,12 +199,10 @@ func GetAllLogicOperatorDao() ([]LogicOperatorDao, error) {
 	return list, nil
 }
 
-func GetAllAlarmLevelDao() ([]AlarmLevelDao, error) {
+func GetAllAlarmLevelDao(ctx context.Context) ([]AlarmLevelDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.alarm_level`
 	rows, err = database.Get().Query(ctx, query)
@@ -242,12 +226,10 @@ func GetAllAlarmLevelDao() ([]AlarmLevelDao, error) {
 	return list, nil
 }
 
-func GetAllVarTypeDao() ([]VarTypeDao, error) {
+func GetAllVarTypeDao(ctx context.Context) ([]VarTypeDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.var_type`
 	rows, err = database.Get().Query(ctx, query)
@@ -271,12 +253,10 @@ func GetAllVarTypeDao() ([]VarTypeDao, error) {
 	return list, nil
 }
 
-func GetAllPollingFrequencyDao() ([]PollingFrequencyDao, error) {
+func GetAllPollingFrequencyDao(ctx context.Context) ([]PollingFrequencyDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.polling_frequency`
 	rows, err = database.Get().Query(ctx, query)
@@ -300,12 +280,10 @@ func GetAllPollingFrequencyDao() ([]PollingFrequencyDao, error) {
 	return list, nil
 }
 
-func GetAllOidAccessDao() ([]OidAccessDao, error) {
+func GetAllOidAccessDao(ctx context.Context) ([]OidAccessDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.oid_access`
 	rows, err = database.Get().Query(ctx, query)
@@ -329,12 +307,10 @@ func GetAllOidAccessDao() ([]OidAccessDao, error) {
 	return list, nil
 }
 
-func GetAllOidStatusDao() ([]OidStatusDao, error) {
+func GetAllOidStatusDao(ctx context.Context) ([]OidStatusDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.oid_status`
 	rows, err = database.Get().Query(ctx, query)
@@ -358,12 +334,10 @@ func GetAllOidStatusDao() ([]OidStatusDao, error) {
 	return list, nil
 }
 
-func GetAllAsn1TypeDao() ([]Asn1TypeDao, error) {
+func GetAllAsn1TypeDao(ctx context.Context) ([]Asn1TypeDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "value"
 			 FROM public.asn1_type`
 	rows, err = database.Get().Query(ctx, query)
@@ -387,12 +361,10 @@ func GetAllAsn1TypeDao() ([]Asn1TypeDao, error) {
 	return list, nil
 }
 
-func GetAllVendorDao() ([]VendorDao, error) {
+func GetAllVendorDao(ctx context.Context) ([]VendorDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "number", "contact", "email", "directory"
 			 FROM public.vendor`
 	rows, err = database.Get().Query(ctx, query)
@@ -420,12 +392,10 @@ func GetAllVendorDao() ([]VendorDao, error) {
 	return list, nil
 }
 
-func GetAllComponentDao() ([]ComponentDao, error) {
+func GetAllComponentDao(ctx context.Context) ([]ComponentDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "title", "name_en", "name_ru", "plural_name_en", "plural_name_ru", "base_component", "description_en", "description_ru", "access"
 			 FROM public.component`
 	rows, err = database.Get().Query(ctx, query)
@@ -457,12 +427,10 @@ func GetAllComponentDao() ([]ComponentDao, error) {
 	return list, nil
 }
 
-func GetAllParamDao() ([]ParamDao, error) {
+func GetAllParamDao(ctx context.Context) ([]ParamDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "title", "name_en", "name_ru", "type", "value", "description_en", "description_ru", "units_en", "units_ru", "access", "saved", "visible"
 			 FROM public.param`
 	rows, err = database.Get().Query(ctx, query)
@@ -497,12 +465,10 @@ func GetAllParamDao() ([]ParamDao, error) {
 	return list, nil
 }
 
-func GetAllComponentParamDao() ([]ComponentParamDao, error) {
+func GetAllComponentParamDao(ctx context.Context) ([]ComponentParamDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "component_id", "param_id"
 			 FROM public.component_param`
 	rows, err = database.Get().Query(ctx, query)
@@ -526,12 +492,10 @@ func GetAllComponentParamDao() ([]ComponentParamDao, error) {
 	return list, nil
 }
 
-func GetAllAgentCapabilitiesDao() ([]AgentCapabilitiesDao, error) {
+func GetAllAgentCapabilitiesDao(ctx context.Context) ([]AgentCapabilitiesDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "product_release", "status", "description", "reference"
 			 FROM public.agent_capabilities`
 	rows, err = database.Get().Query(ctx, query)
@@ -559,12 +523,10 @@ func GetAllAgentCapabilitiesDao() ([]AgentCapabilitiesDao, error) {
 	return list, nil
 }
 
-func GetAllAgentCapabilitiesModuleDao() ([]AgentCapabilitiesModuleDao, error) {
+func GetAllAgentCapabilitiesModuleDao(ctx context.Context) ([]AgentCapabilitiesModuleDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "supports", "includes"
 			 FROM public.agent_capabilities_module`
 	rows, err = database.Get().Query(ctx, query)
@@ -589,12 +551,10 @@ func GetAllAgentCapabilitiesModuleDao() ([]AgentCapabilitiesModuleDao, error) {
 	return list, nil
 }
 
-func GetAllAgentCapabilitiesModuleNotificationDao() ([]AgentCapabilitiesModuleNotificationDao, error) {
+func GetAllAgentCapabilitiesModuleNotificationDao(ctx context.Context) ([]AgentCapabilitiesModuleNotificationDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "variation", "access", "description"
 			 FROM public.agent_capabilities_module_notification`
 	rows, err = database.Get().Query(ctx, query)
@@ -620,12 +580,10 @@ func GetAllAgentCapabilitiesModuleNotificationDao() ([]AgentCapabilitiesModuleNo
 	return list, nil
 }
 
-func GetAllAgentCapabilitiesModuleObjectDao() ([]AgentCapabilitiesModuleObjectDao, error) {
+func GetAllAgentCapabilitiesModuleObjectDao(ctx context.Context) ([]AgentCapabilitiesModuleObjectDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "variation", "syntax", "write_syntax", "access", "creation_requires", "defval", "description"
 			 FROM public.agent_capabilities_module_object`
 	rows, err = database.Get().Query(ctx, query)
@@ -655,12 +613,10 @@ func GetAllAgentCapabilitiesModuleObjectDao() ([]AgentCapabilitiesModuleObjectDa
 	return list, nil
 }
 
-func GetAllChoiceDao() ([]ChoiceDao, error) {
+func GetAllChoiceDao(ctx context.Context) ([]ChoiceDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "choices"
 			 FROM public.choice`
 	rows, err = database.Get().Query(ctx, query)
@@ -685,12 +641,10 @@ func GetAllChoiceDao() ([]ChoiceDao, error) {
 	return list, nil
 }
 
-func GetAllExplicitDao() ([]ExplicitDao, error) {
+func GetAllExplicitDao(ctx context.Context) ([]ExplicitDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "value"
 			 FROM public.explicit`
 	rows, err = database.Get().Query(ctx, query)
@@ -715,12 +669,10 @@ func GetAllExplicitDao() ([]ExplicitDao, error) {
 	return list, nil
 }
 
-func GetAllImplicitDao() ([]ImplicitDao, error) {
+func GetAllImplicitDao(ctx context.Context) ([]ImplicitDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "application", "value"
 			 FROM public.implicit`
 	rows, err = database.Get().Query(ctx, query)
@@ -746,12 +698,10 @@ func GetAllImplicitDao() ([]ImplicitDao, error) {
 	return list, nil
 }
 
-func GetAllImportDao() ([]ImportDao, error) {
+func GetAllImportDao(ctx context.Context) ([]ImportDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "param", "from"
 			 FROM public.import`
 	rows, err = database.Get().Query(ctx, query)
@@ -776,12 +726,10 @@ func GetAllImportDao() ([]ImportDao, error) {
 	return list, nil
 }
 
-func GetAllMibDao() ([]MibDao, error) {
+func GetAllMibDao(ctx context.Context) ([]MibDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "path", "name", "vendor"
 			 FROM public.mib`
 	rows, err = database.Get().Query(ctx, query)
@@ -807,12 +755,10 @@ func GetAllMibDao() ([]MibDao, error) {
 	return list, nil
 }
 
-func GetAllModuleComplianceDao() ([]ModuleComplianceDao, error) {
+func GetAllModuleComplianceDao(ctx context.Context) ([]ModuleComplianceDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "status", "description", "reference"
 			 FROM public.module_compliance`
 	rows, err = database.Get().Query(ctx, query)
@@ -839,12 +785,10 @@ func GetAllModuleComplianceDao() ([]ModuleComplianceDao, error) {
 	return list, nil
 }
 
-func GetAllModuleComplianceModuleDao() ([]ModuleComplianceModuleDao, error) {
+func GetAllModuleComplianceModuleDao(ctx context.Context) ([]ModuleComplianceModuleDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "mandatory_groups"
 			 FROM public.module_compliance_module`
 	rows, err = database.Get().Query(ctx, query)
@@ -869,12 +813,10 @@ func GetAllModuleComplianceModuleDao() ([]ModuleComplianceModuleDao, error) {
 	return list, nil
 }
 
-func GetAllModuleComplianceModuleGroupDao() ([]ModuleComplianceModuleGroupDao, error) {
+func GetAllModuleComplianceModuleGroupDao(ctx context.Context) ([]ModuleComplianceModuleGroupDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "description"
 			 FROM public.module_compliance_module_group`
 	rows, err = database.Get().Query(ctx, query)
@@ -899,12 +841,10 @@ func GetAllModuleComplianceModuleGroupDao() ([]ModuleComplianceModuleGroupDao, e
 	return list, nil
 }
 
-func GetAllModuleComplianceModuleObjectDao() ([]ModuleComplianceModuleObjectDao, error) {
+func GetAllModuleComplianceModuleObjectDao(ctx context.Context) ([]ModuleComplianceModuleObjectDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "syntax", "write_syntax", "access", "description"
 			 FROM public.module_compliance_module_object`
 	rows, err = database.Get().Query(ctx, query)
@@ -932,12 +872,10 @@ func GetAllModuleComplianceModuleObjectDao() ([]ModuleComplianceModuleObjectDao,
 	return list, nil
 }
 
-func GetAllModuleIdentityDao() ([]ModuleIdentityDao, error) {
+func GetAllModuleIdentityDao(ctx context.Context) ([]ModuleIdentityDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "last_updated", "organization", "contact_info", "description"
 			 FROM public.module_identity`
 	rows, err = database.Get().Query(ctx, query)
@@ -965,12 +903,10 @@ func GetAllModuleIdentityDao() ([]ModuleIdentityDao, error) {
 	return list, nil
 }
 
-func GetAllNotificationGroupDao() ([]NotificationGroupDao, error) {
+func GetAllNotificationGroupDao(ctx context.Context) ([]NotificationGroupDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "notifications", "status", "description", "reference"
 			 FROM public.notification_group`
 	rows, err = database.Get().Query(ctx, query)
@@ -998,12 +934,10 @@ func GetAllNotificationGroupDao() ([]NotificationGroupDao, error) {
 	return list, nil
 }
 
-func GetAllNotificationTypeDao() ([]NotificationTypeDao, error) {
+func GetAllNotificationTypeDao(ctx context.Context) ([]NotificationTypeDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "objects", "status", "description", "reference"
 			 FROM public.notification_type`
 	rows, err = database.Get().Query(ctx, query)
@@ -1031,12 +965,10 @@ func GetAllNotificationTypeDao() ([]NotificationTypeDao, error) {
 	return list, nil
 }
 
-func GetAllObjectGroupDao() ([]ObjectGroupDao, error) {
+func GetAllObjectGroupDao(ctx context.Context) ([]ObjectGroupDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "objects", "status", "description", "reference"
 			 FROM public.object_group`
 	rows, err = database.Get().Query(ctx, query)
@@ -1064,12 +996,10 @@ func GetAllObjectGroupDao() ([]ObjectGroupDao, error) {
 	return list, nil
 }
 
-func GetAllObjectIdentifierDao() ([]ObjectIdentifierDao, error) {
+func GetAllObjectIdentifierDao(ctx context.Context) ([]ObjectIdentifierDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "num_oid", "str_oid", "parent", "type"
 			 FROM public.object_identifier`
 	rows, err = database.Get().Query(ctx, query)
@@ -1097,12 +1027,10 @@ func GetAllObjectIdentifierDao() ([]ObjectIdentifierDao, error) {
 	return list, nil
 }
 
-func GetAllObjectIdentityDao() ([]ObjectIdentityDao, error) {
+func GetAllObjectIdentityDao(ctx context.Context) ([]ObjectIdentityDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "status", "description", "reference"
 			 FROM public.object_identity`
 	rows, err = database.Get().Query(ctx, query)
@@ -1129,12 +1057,10 @@ func GetAllObjectIdentityDao() ([]ObjectIdentityDao, error) {
 	return list, nil
 }
 
-func GetAllObjectTypeDao() ([]ObjectTypeDao, error) {
+func GetAllObjectTypeDao(ctx context.Context) ([]ObjectTypeDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "syntax", "units", "access", "status", "description", "reference", "index", "augments", "default_value"
 			 FROM public.object_type`
 	rows, err = database.Get().Query(ctx, query)
@@ -1167,12 +1093,10 @@ func GetAllObjectTypeDao() ([]ObjectTypeDao, error) {
 	return list, nil
 }
 
-func GetAllOidDao() ([]OidDao, error) {
+func GetAllOidDao(ctx context.Context) ([]OidDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib", "type", "name", "number", "dotter_notation", "object_descriptor", "syntax", "enum", "status", "access", "units", "description", "category"
 			 FROM public.oid`
 	rows, err = database.Get().Query(ctx, query)
@@ -1208,12 +1132,10 @@ func GetAllOidDao() ([]OidDao, error) {
 	return list, nil
 }
 
-func GetAllRevisionDao() ([]RevisionDao, error) {
+func GetAllRevisionDao(ctx context.Context) ([]RevisionDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "revision", "description"
 			 FROM public.revision`
 	rows, err = database.Get().Query(ctx, query)
@@ -1238,12 +1160,10 @@ func GetAllRevisionDao() ([]RevisionDao, error) {
 	return list, nil
 }
 
-func GetAllSequenceDao() ([]SequenceDao, error) {
+func GetAllSequenceDao(ctx context.Context) ([]SequenceDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "pairs"
 			 FROM public.sequence`
 	rows, err = database.Get().Query(ctx, query)
@@ -1268,12 +1188,10 @@ func GetAllSequenceDao() ([]SequenceDao, error) {
 	return list, nil
 }
 
-func GetAllTextualConventionDao() ([]TextualConventionDao, error) {
+func GetAllTextualConventionDao(ctx context.Context) ([]TextualConventionDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "display_hint", "status", "description", "reference", "syntax"
 			 FROM public.textual_convention`
 	rows, err = database.Get().Query(ctx, query)
@@ -1302,12 +1220,10 @@ func GetAllTextualConventionDao() ([]TextualConventionDao, error) {
 	return list, nil
 }
 
-func GetAllTrapTypeDao() ([]TrapTypeDao, error) {
+func GetAllTrapTypeDao(ctx context.Context) ([]TrapTypeDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "variables", "description", "reference"
 			 FROM public.trap_type`
 	rows, err = database.Get().Query(ctx, query)
@@ -1334,12 +1250,10 @@ func GetAllTrapTypeDao() ([]TrapTypeDao, error) {
 	return list, nil
 }
 
-func GetAllMibToAgentCapabilitiesDao() ([]MibToAgentCapabilitiesDao, error) {
+func GetAllMibToAgentCapabilitiesDao(ctx context.Context) ([]MibToAgentCapabilitiesDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "agent_capabilities_id", "agent_capabilities_module_id", "agent_capabilities_module_notification_id", "agent_capabilities_module_object_id"
 			 FROM public.mib_to_agent_capabilities`
 	rows, err = database.Get().Query(ctx, query)
@@ -1367,12 +1281,10 @@ func GetAllMibToAgentCapabilitiesDao() ([]MibToAgentCapabilitiesDao, error) {
 	return list, nil
 }
 
-func GetAllMibToChoiceDao() ([]MibToChoiceDao, error) {
+func GetAllMibToChoiceDao(ctx context.Context) ([]MibToChoiceDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "choice_id"
 			 FROM public.mib_to_choice`
 	rows, err = database.Get().Query(ctx, query)
@@ -1397,12 +1309,10 @@ func GetAllMibToChoiceDao() ([]MibToChoiceDao, error) {
 	return list, nil
 }
 
-func GetAllMibToExplicitDao() ([]MibToExplicitDao, error) {
+func GetAllMibToExplicitDao(ctx context.Context) ([]MibToExplicitDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "explicit_id"
 			 FROM public.mib_to_explicit`
 	rows, err = database.Get().Query(ctx, query)
@@ -1427,12 +1337,10 @@ func GetAllMibToExplicitDao() ([]MibToExplicitDao, error) {
 	return list, nil
 }
 
-func GetAllMibToImplicitDao() ([]MibToImplicitDao, error) {
+func GetAllMibToImplicitDao(ctx context.Context) ([]MibToImplicitDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "implicit_id"
 			 FROM public.mib_to_implicit`
 	rows, err = database.Get().Query(ctx, query)
@@ -1457,12 +1365,10 @@ func GetAllMibToImplicitDao() ([]MibToImplicitDao, error) {
 	return list, nil
 }
 
-func GetAllMibToImportDao() ([]MibToImportDao, error) {
+func GetAllMibToImportDao(ctx context.Context) ([]MibToImportDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "import_id"
 			 FROM public.mib_to_import`
 	rows, err = database.Get().Query(ctx, query)
@@ -1487,12 +1393,10 @@ func GetAllMibToImportDao() ([]MibToImportDao, error) {
 	return list, nil
 }
 
-func GetAllMibToModuleComplianceDao() ([]MibToModuleComplianceDao, error) {
+func GetAllMibToModuleComplianceDao(ctx context.Context) ([]MibToModuleComplianceDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "module_compliance_id", "module_compliance_module_id", "module_compliance_module_group_id", "module_compliance_module_object_id"
 			 FROM public.mib_to_module_compliance`
 	rows, err = database.Get().Query(ctx, query)
@@ -1520,12 +1424,10 @@ func GetAllMibToModuleComplianceDao() ([]MibToModuleComplianceDao, error) {
 	return list, nil
 }
 
-func GetAllMibToModuleIdentityDao() ([]MibToModuleIdentityDao, error) {
+func GetAllMibToModuleIdentityDao(ctx context.Context) ([]MibToModuleIdentityDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "module_identity_id", "revision_id"
 			 FROM public.mib_to_module_identity`
 	rows, err = database.Get().Query(ctx, query)
@@ -1551,12 +1453,10 @@ func GetAllMibToModuleIdentityDao() ([]MibToModuleIdentityDao, error) {
 	return list, nil
 }
 
-func GetAllMibToNotificationGroupDao() ([]MibToNotificationGroupDao, error) {
+func GetAllMibToNotificationGroupDao(ctx context.Context) ([]MibToNotificationGroupDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "notification_group_id"
 			 FROM public.mib_to_notification_group`
 	rows, err = database.Get().Query(ctx, query)
@@ -1581,12 +1481,10 @@ func GetAllMibToNotificationGroupDao() ([]MibToNotificationGroupDao, error) {
 	return list, nil
 }
 
-func GetAllMibToNotificationTypeDao() ([]MibToNotificationTypeDao, error) {
+func GetAllMibToNotificationTypeDao(ctx context.Context) ([]MibToNotificationTypeDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "notification_type_id"
 			 FROM public.mib_to_notification_type`
 	rows, err = database.Get().Query(ctx, query)
@@ -1611,12 +1509,10 @@ func GetAllMibToNotificationTypeDao() ([]MibToNotificationTypeDao, error) {
 	return list, nil
 }
 
-func GetAllMibToObjectGroupDao() ([]MibToObjectGroupDao, error) {
+func GetAllMibToObjectGroupDao(ctx context.Context) ([]MibToObjectGroupDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "object_group_id"
 			 FROM public.mib_to_object_group`
 	rows, err = database.Get().Query(ctx, query)
@@ -1641,12 +1537,10 @@ func GetAllMibToObjectGroupDao() ([]MibToObjectGroupDao, error) {
 	return list, nil
 }
 
-func GetAllMibToObjectIdentifierDao() ([]MibToObjectIdentifierDao, error) {
+func GetAllMibToObjectIdentifierDao(ctx context.Context) ([]MibToObjectIdentifierDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "object_identifier_id"
 			 FROM public.mib_to_object_identifier`
 	rows, err = database.Get().Query(ctx, query)
@@ -1671,12 +1565,10 @@ func GetAllMibToObjectIdentifierDao() ([]MibToObjectIdentifierDao, error) {
 	return list, nil
 }
 
-func GetAllMibToObjectIdentityDao() ([]MibToObjectIdentityDao, error) {
+func GetAllMibToObjectIdentityDao(ctx context.Context) ([]MibToObjectIdentityDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "object_identity_id"
 			 FROM public.mib_to_object_identity`
 	rows, err = database.Get().Query(ctx, query)
@@ -1701,12 +1593,10 @@ func GetAllMibToObjectIdentityDao() ([]MibToObjectIdentityDao, error) {
 	return list, nil
 }
 
-func GetAllMibToObjectTypeDao() ([]MibToObjectTypeDao, error) {
+func GetAllMibToObjectTypeDao(ctx context.Context) ([]MibToObjectTypeDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "object_type_id"
 			 FROM public.mib_to_object_type`
 	rows, err = database.Get().Query(ctx, query)
@@ -1731,12 +1621,10 @@ func GetAllMibToObjectTypeDao() ([]MibToObjectTypeDao, error) {
 	return list, nil
 }
 
-func GetAllMibToSequenceDao() ([]MibToSequenceDao, error) {
+func GetAllMibToSequenceDao(ctx context.Context) ([]MibToSequenceDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "sequence_id"
 			 FROM public.mib_to_sequence`
 	rows, err = database.Get().Query(ctx, query)
@@ -1761,12 +1649,10 @@ func GetAllMibToSequenceDao() ([]MibToSequenceDao, error) {
 	return list, nil
 }
 
-func GetAllMibToTextualConventionDao() ([]MibToTextualConventionDao, error) {
+func GetAllMibToTextualConventionDao(ctx context.Context) ([]MibToTextualConventionDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "textual_convention_id"
 			 FROM public.mib_to_textual_convention`
 	rows, err = database.Get().Query(ctx, query)
@@ -1791,12 +1677,10 @@ func GetAllMibToTextualConventionDao() ([]MibToTextualConventionDao, error) {
 	return list, nil
 }
 
-func GetAllMibToTrapTypeDao() ([]MibToTrapTypeDao, error) {
+func GetAllMibToTrapTypeDao(ctx context.Context) ([]MibToTrapTypeDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "mib_id", "trap_type_id"
 			 FROM public.mib_to_trap_type`
 	rows, err = database.Get().Query(ctx, query)
@@ -1821,12 +1705,10 @@ func GetAllMibToTrapTypeDao() ([]MibToTrapTypeDao, error) {
 	return list, nil
 }
 
-func GetAllDeviceIndicatorDao() ([]DeviceIndicatorDao, error) {
+func GetAllDeviceIndicatorDao(ctx context.Context) ([]DeviceIndicatorDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "description", "object_id", "contact", "name", "location", "services"
 			 FROM public.device_indicator`
 	rows, err = database.Get().Query(ctx, query)
@@ -1855,12 +1737,10 @@ func GetAllDeviceIndicatorDao() ([]DeviceIndicatorDao, error) {
 	return list, nil
 }
 
-func GetAllParamIndicatorDao() ([]ParamIndicatorDao, error) {
+func GetAllParamIndicatorDao(ctx context.Context) ([]ParamIndicatorDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "oid_id", "dotter_notation"
 			 FROM public.param_indicator`
 	rows, err = database.Get().Query(ctx, query)
@@ -1885,12 +1765,10 @@ func GetAllParamIndicatorDao() ([]ParamIndicatorDao, error) {
 	return list, nil
 }
 
-func GetAllMappingDao() ([]MappingDao, error) {
+func GetAllMappingDao(ctx context.Context) ([]MappingDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "indicator", "param", "frequency", "value", "coefficient", "enum", "position", "from", "position_type"
 			 FROM public.mapping`
 	rows, err = database.Get().Query(ctx, query)
@@ -1922,12 +1800,10 @@ func GetAllMappingDao() ([]MappingDao, error) {
 	return list, nil
 }
 
-func GetAllDeviceComponentDao() ([]DeviceComponentDao, error) {
+func GetAllDeviceComponentDao(ctx context.Context) ([]DeviceComponentDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "model", "internal_order", "parent"
 			 FROM public.device_component`
 	rows, err = database.Get().Query(ctx, query)
@@ -1953,12 +1829,10 @@ func GetAllDeviceComponentDao() ([]DeviceComponentDao, error) {
 	return list, nil
 }
 
-func GetAllDeviceComponentMappingDao() ([]DeviceComponentMappingDao, error) {
+func GetAllDeviceComponentMappingDao(ctx context.Context) ([]DeviceComponentMappingDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "device_component_id", "mapping_id"
 			 FROM public.device_component_mapping`
 	rows, err = database.Get().Query(ctx, query)
@@ -1982,12 +1856,10 @@ func GetAllDeviceComponentMappingDao() ([]DeviceComponentMappingDao, error) {
 	return list, nil
 }
 
-func GetAllConfigurationDao() ([]ConfigurationDao, error) {
+func GetAllConfigurationDao(ctx context.Context) ([]ConfigurationDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "indicator", "device_component_id"
 			 FROM public.configuration`
 	rows, err = database.Get().Query(ctx, query)
@@ -2012,12 +1884,10 @@ func GetAllConfigurationDao() ([]ConfigurationDao, error) {
 	return list, nil
 }
 
-func GetAllDefaultConfigurationDao() ([]DefaultConfigurationDao, error) {
+func GetAllDefaultConfigurationDao(ctx context.Context) ([]DefaultConfigurationDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "indicator", "device_component_id"
 			 FROM public.default_configuration`
 	rows, err = database.Get().Query(ctx, query)
@@ -2042,12 +1912,10 @@ func GetAllDefaultConfigurationDao() ([]DefaultConfigurationDao, error) {
 	return list, nil
 }
 
-func GetAllThresholdDao() ([]ThresholdDao, error) {
+func GetAllThresholdDao(ctx context.Context) ([]ThresholdDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "name", "description", "author", "created", "query"
 			 FROM public.threshold`
 	rows, err = database.Get().Query(ctx, query)
@@ -2075,12 +1943,10 @@ func GetAllThresholdDao() ([]ThresholdDao, error) {
 	return list, nil
 }
 
-func GetAllDeviceSnmpDao() ([]DeviceSnmpDao, error) {
+func GetAllDeviceSnmpDao(ctx context.Context) ([]DeviceSnmpDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "host", "port", "community", "version", "login", "password", "authentication", "privacy", "id", "config"
 			 FROM public.device_snmp`
 	rows, err = database.Get().Query(ctx, query)
@@ -2112,12 +1978,10 @@ func GetAllDeviceSnmpDao() ([]DeviceSnmpDao, error) {
 	return list, nil
 }
 
-func GetAllResultDao() ([]ResultDao, error) {
+func GetAllResultDao(ctx context.Context) ([]ResultDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "host", "port", "component", "internal_order", "param", "value"
 			 FROM public.result`
 	rows, err = database.Get().Query(ctx, query)
@@ -2145,12 +2009,10 @@ func GetAllResultDao() ([]ResultDao, error) {
 	return list, nil
 }
 
-func GetAllAffectedThresholdDao() ([]AffectedThresholdDao, error) {
+func GetAllAffectedThresholdDao(ctx context.Context) ([]AffectedThresholdDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "host", "port", "threshold", "enabled"
 			 FROM public.affected_threshold`
 	rows, err = database.Get().Query(ctx, query)
@@ -2177,12 +2039,10 @@ func GetAllAffectedThresholdDao() ([]AffectedThresholdDao, error) {
 	return list, nil
 }
 
-func GetAllAffectedParamDao() ([]AffectedParamDao, error) {
+func GetAllAffectedParamDao(ctx context.Context) ([]AffectedParamDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "id", "host", "port", "component", "internal_order", "param"
 			 FROM public.affected_param`
 	rows, err = database.Get().Query(ctx, query)
@@ -2210,12 +2070,10 @@ func GetAllAffectedParamDao() ([]AffectedParamDao, error) {
 	return list, nil
 }
 
-func GetAllConfigInProcessDao() ([]ConfigInProcessDao, error) {
+func GetAllConfigInProcessDao(ctx context.Context) ([]ConfigInProcessDao, error) {
 	var rows pgx.Rows
 	var err error
-	var ctx context.Context
 	var query string
-	ctx = context.Background()
 	query = `SELECT "host", "port", "protocol"
 			 FROM public.config_in_process`
 	rows, err = database.Get().Query(ctx, query)

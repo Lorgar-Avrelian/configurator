@@ -793,7 +793,7 @@ type tablePrintResult struct {
 	rowCount  int
 }
 
-func ExportDatabase(_ context.Context) error {
+func ExportDatabase(ctx context.Context) error {
 	var wg sync.WaitGroup
 	var ch chan rawQueryResult
 	var results []tablePrintResult
@@ -805,6 +805,7 @@ func ExportDatabase(_ context.Context) error {
 	var callers map[string]any
 	var tName string
 	var fn any
+	var inArgs []reflect.Value
 	outputDir = "sql"
 	err = os.MkdirAll(outputDir, 0755)
 	if err != nil {
@@ -813,6 +814,7 @@ func ExportDatabase(_ context.Context) error {
 	}
 	ch = make(chan rawQueryResult, 72)
 	results = make([]tablePrintResult, 0, 72)
+	inArgs = []reflect.Value{reflect.ValueOf(ctx)}
 	callers = map[string]any{
 		"public.polling_protocol":                       dao.GetAllPollingProtocolDao,
 		"public.access":                                 dao.GetAllAccessDao,
@@ -915,7 +917,7 @@ func ExportDatabase(_ context.Context) error {
 			var dataSlice any
 			var fetchErr any
 			fVal = reflect.ValueOf(fetchFunc)
-			out = fVal.Call(nil)
+			out = fVal.Call(inArgs)
 			dataSlice = out[0].Interface()
 			fetchErr = out[1].Interface()
 			if fetchErr != nil {
