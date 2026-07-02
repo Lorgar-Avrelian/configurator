@@ -790,3 +790,9 @@ type DeviceSnmp struct {
 	Thresholds []ThresholdDao
 	Components []Component
 }
+
+type ChangeLogDao struct {
+	ID       int32  `db:"id" json:"id"`
+	Script   string `db:"script" json:"script"`
+	Executed bool   `db:"executed" json:"executed"`
+}

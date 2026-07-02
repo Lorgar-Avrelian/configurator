@@ -960,3 +960,15 @@ func ImportMappingDao(ctx context.Context, list []MappingDao) error {
 		return b
 	})
 }
+
+func ImportChangeLogDao(ctx context.Context, list []ChangeLogDao) error {
+	var batches [][]ChangeLogDao
+	var query string
+	batches = dropArray(list)
+	query = `INSERT INTO public.changelog ("id", "script", "executed") 
+			 VALUES ($1, $2, $3)`
+	return executeBatchInsert(ctx, batches, func(b pgx.Batch, item ChangeLogDao) pgx.Batch {
+		b.Queue(query, item.ID, item.Script, item.Executed)
+		return b
+	})
+}

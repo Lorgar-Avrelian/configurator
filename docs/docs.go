@@ -238,6 +238,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/component/{prevId}/{newId}": {
+            "patch": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "1. Модельный каталог: Компоненты"
+                ],
+                "summary": "Изменить данные компонента по ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Предыдущий ID компонента",
+                        "name": "prevId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID компонента",
+                        "name": "newId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/components": {
             "get": {
                 "produces": [

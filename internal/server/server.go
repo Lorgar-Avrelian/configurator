@@ -32,6 +32,7 @@ func NewServer() *Server {
 			component.GET("/:id", GetComponent)
 			component.PUT("/:id", UpdateComponent)
 			component.DELETE("/:id", DeleteComponent)
+			component.PATCH("/:prevId/:newId", ChangeComponentDataHandler)
 		}
 		v1.GET("/params", GetAllParams)
 		var param *gin.RouterGroup

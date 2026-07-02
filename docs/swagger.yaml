@@ -802,6 +802,45 @@ paths:
       summary: Обновить компонент по ID
       tags:
       - '1. Модельный каталог: Компоненты'
+  /api/v1/component/{prevId}/{newId}:
+    patch:
+      parameters:
+      - description: Предыдущий ID компонента
+        in: path
+        name: prevId
+        required: true
+        type: integer
+      - description: Новый ID компонента
+        in: path
+        name: newId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Изменить данные компонента по ID
+      tags:
+      - '1. Модельный каталог: Компоненты'
   /api/v1/component/search:
     get:
       description: Ищет компоненты, у которых title, name_en, name_ru, description_en

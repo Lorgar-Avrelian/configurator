@@ -24,6 +24,7 @@ var TableGroups = [][]string{
 		"public.asn1_type",
 		"public.logic_operator",
 		"public.vendor",
+		"public.changelog",
 	},
 	{
 		"public.mib",
@@ -57,7 +58,6 @@ var TableGroups = [][]string{
 		"public.sequence",
 		"public.textual_convention",
 		"public.trap_type",
-		"public.device_indicator",
 	},
 	{
 		"public.mib_to_agent_capabilities",
@@ -76,7 +76,10 @@ var TableGroups = [][]string{
 		"public.mib_to_sequence",
 		"public.mib_to_textual_convention",
 		"public.mib_to_trap_type",
+		"public.device_indicator",
 		"public.param_indicator",
+	},
+	{
 		"public.mapping",
 		"public.device_component",
 	},
@@ -111,7 +114,7 @@ func GetAllData(ctx context.Context) (
 	[]MibToSequenceDao, []MibToTextualConventionDao, []MibToTrapTypeDao, []DeviceIndicatorDao, []ParamIndicatorDao,
 	[]MappingDao, []DeviceComponentDao, []DeviceComponentMappingDao, []ConfigurationDao, []DefaultConfigurationDao,
 	[]ThresholdDao, []DeviceSnmpDao, []ResultDao, []AffectedThresholdDao, []AffectedParamDao,
-	[]ConfigInProcessDao, error,
+	[]ConfigInProcessDao, []ChangeLogDao, error,
 ) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
@@ -192,6 +195,7 @@ func GetAllData(ctx context.Context) (
 	var out69 []AffectedThresholdDao
 	var out70 []AffectedParamDao
 	var out71 []ConfigInProcessDao
+	var out72 []ChangeLogDao
 	inArgs = []reflect.Value{reflect.ValueOf(ctx)}
 	results = make(map[string]any)
 	callers = map[string]any{
@@ -266,6 +270,7 @@ func GetAllData(ctx context.Context) (
 		"public.affected_threshold":                     GetAllAffectedThresholdDao,
 		"public.affected_param":                         GetAllAffectedParamDao,
 		"public.config_in_process":                      GetAllConfigInProcessDao,
+		"public.changelog":                              GetAllCChangeLogDao,
 	}
 	for tName, fn = range callers {
 		wg.Add(1)
@@ -294,7 +299,7 @@ func GetAllData(ctx context.Context) (
 	}
 	wg.Wait()
 	if errResult != nil {
-		return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, errResult
+		return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, errResult
 	}
 	out1, _ = results["public.polling_protocol"].([]PollingProtocolDao)
 	out2, _ = results["public.access"].([]AccessDao)
@@ -367,125 +372,22 @@ func GetAllData(ctx context.Context) (
 	out69, _ = results["public.affected_threshold"].([]AffectedThresholdDao)
 	out70, _ = results["public.affected_param"].([]AffectedParamDao)
 	out71, _ = results["public.config_in_process"].([]ConfigInProcessDao)
-	return out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16, out17, out18, out19, out20, out21, out22, out23, out24, out25, out26, out27, out28, out29, out30, out31, out32, out33, out34, out35, out36, out37, out38, out39, out40, out41, out42, out43, out44, out45, out46, out47, out48, out49, out50, out51, out52, out53, out54, out55, out56, out57, out58, out59, out60, out61, out62, out63, out64, out65, out66, out67, out68, out69, out70, out71, nil
+	out72, _ = results["public.changelog"].([]ChangeLogDao)
+	return out1, out2, out3, out4, out5, out6, out7, out8, out9, out10, out11, out12, out13, out14, out15, out16, out17, out18, out19, out20, out21, out22, out23, out24, out25, out26, out27, out28, out29, out30, out31, out32, out33, out34, out35, out36, out37, out38, out39, out40, out41, out42, out43, out44, out45, out46, out47, out48, out49, out50, out51, out52, out53, out54, out55, out56, out57, out58, out59, out60, out61, out62, out63, out64, out65, out66, out67, out68, out69, out70, out71, out72, nil
 }
 
 func ClearAllData(ctx context.Context) {
-	var wg sync.WaitGroup
-	var callers map[string]any
-	var inArgs []reflect.Value
-	var totalGroups int
-	var groupIdx int
-	var currentGroup []string
-	var tName string
-	var fn any
-	inArgs = []reflect.Value{reflect.ValueOf(ctx)}
-	callers = map[string]any{
-		"public.polling_protocol":                       ClearPollingProtocolDao,
-		"public.access":                                 ClearAccessDao,
-		"public.version_snmp":                           ClearVersionSnmpDao,
-		"public.auth_protocol_snmp":                     ClearAuthProtocolSnmpDao,
-		"public.privacy_protocol_snmp":                  ClearPrivacyProtocolSnmpDao,
-		"public.oid_type":                               ClearOidTypeDao,
-		"public.logic_operator":                         ClearLogicOperatorDao,
-		"public.alarm_level":                            ClearAlarmLevelDao,
-		"public.var_type":                               ClearVarTypeDao,
-		"public.polling_frequency":                      ClearPollingFrequencyDao,
-		"public.oid_access":                             ClearOidAccessDao,
-		"public.oid_status":                             ClearOidStatusDao,
-		"public.asn1_type":                              ClearAsn1TypeDao,
-		"public.vendor":                                 ClearVendorDao,
-		"public.component":                              ClearComponentDao,
-		"public.param":                                  ClearParamDao,
-		"public.component_param":                        ClearComponentParamDao,
-		"public.agent_capabilities":                     ClearAgentCapabilitiesDao,
-		"public.agent_capabilities_module":              ClearAgentCapabilitiesModuleDao,
-		"public.agent_capabilities_module_notification": ClearAgentCapabilitiesModuleNotificationDao,
-		"public.agent_capabilities_module_object":       ClearAgentCapabilitiesModuleObjectDao,
-		"public.choice":                                 ClearChoiceDao,
-		"public.explicit":                               ClearExplicitDao,
-		"public.implicit":                               ClearImplicitDao,
-		"public.import":                                 ClearImportDao,
-		"public.mib":                                    ClearMibDao,
-		"public.module_compliance":                      ClearModuleComplianceDao,
-		"public.module_compliance_module":               ClearModuleComplianceModuleDao,
-		"public.module_compliance_module_group":         ClearModuleComplianceModuleGroupDao,
-		"public.module_compliance_module_object":        ClearModuleComplianceModuleObjectDao,
-		"public.module_identity":                        ClearModuleIdentityDao,
-		"public.notification_group":                     ClearNotificationGroupDao,
-		"public.notification_type":                      ClearNotificationTypeDao,
-		"public.object_group":                           ClearObjectGroupDao,
-		"public.object_identifier":                      ClearObjectIdentifierDao,
-		"public.object_identity":                        ClearObjectIdentityDao,
-		"public.object_type":                            ClearObjectTypeDao,
-		"public.oid":                                    ClearOidDao,
-		"public.revision":                               ClearRevisionDao,
-		"public.sequence":                               ClearSequenceDao,
-		"public.textual_convention":                     ClearTextualConventionDao,
-		"public.trap_type":                              ClearTrapTypeDao,
-		"public.mib_to_agent_capabilities":              ClearMibToAgentCapabilitiesDao,
-		"public.mib_to_choice":                          ClearMibToChoiceDao,
-		"public.mib_to_explicit":                        ClearMibToExplicitDao,
-		"public.mib_to_implicit":                        ClearMibToImplicitDao,
-		"public.mib_to_import":                          ClearMibToImportDao,
-		"public.mib_to_module_compliance":               ClearMibToModuleComplianceDao,
-		"public.mib_to_module_identity":                 ClearMibToModuleIdentityDao,
-		"public.mib_to_notification_group":              ClearMibToNotificationGroupDao,
-		"public.mib_to_notification_type":               ClearMibToNotificationTypeDao,
-		"public.mib_to_object_group":                    ClearMibToObjectGroupDao,
-		"public.mib_to_object_identifier":               ClearMibToObjectIdentifierDao,
-		"public.mib_to_object_identity":                 ClearMibToObjectIdentityDao,
-		"public.mib_to_object_type":                     ClearMibToObjectTypeDao,
-		"public.mib_to_sequence":                        ClearMibToSequenceDao,
-		"public.mib_to_textual_convention":              ClearMibToTextualConventionDao,
-		"public.mib_to_trap_type":                       ClearMibToTrapTypeDao,
-		"public.device_indicator":                       ClearDeviceIndicatorDao,
-		"public.param_indicator":                        ClearParamIndicatorDao,
-		"public.mapping":                                ClearMappingDao,
-		"public.device_component":                       ClearDeviceComponentDao,
-		"public.device_component_mapping":               ClearDeviceComponentMappingDao,
-		"public.configuration":                          ClearConfigurationDao,
-		"public.default_configuration":                  ClearDefaultConfigurationDao,
-		"public.threshold":                              ClearThresholdDao,
-		"public.device_snmp":                            ClearDeviceSnmpDao,
-		"public.result":                                 ClearResultDao,
-		"public.affected_threshold":                     ClearAffectedThresholdDao,
-		"public.affected_param":                         ClearAffectedParamDao,
-		"public.config_in_process":                      ClearConfigInProcessDao,
+	var err error
+	err = DropSchema(ctx)
+	if err != nil {
+		logger.Error("Failed to drop schema: %v", err)
+		return
 	}
-	totalGroups = len(TableGroups)
-	go func() {
-		groupIdx = totalGroups
-		for groupIdx > 0 {
-			groupIdx--
-			currentGroup = TableGroups[groupIdx]
-			var tableIdx int
-			var totalTables int
-			totalTables = len(currentGroup)
-			tableIdx = totalTables
-			for tableIdx > 0 {
-				tableIdx--
-				tName = currentGroup[totalTables-1-tableIdx]
-				fn = callers[tName]
-				wg.Add(1)
-				go func(tableName string, clearFunc any) {
-					var fVal reflect.Value
-					var out []reflect.Value
-					var clearErr any
-					fVal = reflect.ValueOf(clearFunc)
-					out = fVal.Call(inArgs)
-					if len(out) > 0 {
-						clearErr = out[0].Interface()
-					}
-					wg.Done()
-					if clearErr != nil {
-						logger.Error("Error clearing %s: %v", tableName, clearErr)
-					}
-				}(tName, fn)
-			}
-			wg.Wait()
-		}
-	}()
+	err = CreateSchema(ctx)
+	if err != nil {
+		logger.Error("Failed to create schema: %v", err)
+		return
+	}
 }
 
 func InsertAllData(
@@ -504,16 +406,13 @@ func InsertAllData(
 	in56 []MibToSequenceDao, in57 []MibToTextualConventionDao, in58 []MibToTrapTypeDao, in59 []DeviceIndicatorDao, in60 []ParamIndicatorDao,
 	in61 []MappingDao, in62 []DeviceComponentDao, in63 []DeviceComponentMappingDao, in64 []ConfigurationDao, in65 []DefaultConfigurationDao,
 	in66 []ThresholdDao, in67 []DeviceSnmpDao, in68 []ResultDao, in69 []AffectedThresholdDao, in70 []AffectedParamDao,
-	in71 []ConfigInProcessDao,
+	in71 []ConfigInProcessDao, in72 []ChangeLogDao,
 ) error {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	var callers map[string]any
 	var args map[string][]reflect.Value
 	var errResult error
-	var totalGroups int
-	var groupIdx int
-	var currentGroup []string
 	var tName string
 	var fn any
 	callers = map[string]any{
@@ -588,6 +487,7 @@ func InsertAllData(
 		"public.affected_threshold":                     ImportAffectedThresholdDao,
 		"public.affected_param":                         ImportAffectedParamDao,
 		"public.config_in_process":                      ImportConfigInProcessDao,
+		"public.changelog":                              ImportChangeLogDao,
 	}
 	args = map[string][]reflect.Value{
 		"public.polling_protocol":                       {reflect.ValueOf(ctx), reflect.ValueOf(in1)},
@@ -661,44 +561,37 @@ func InsertAllData(
 		"public.affected_threshold":                     {reflect.ValueOf(ctx), reflect.ValueOf(in69)},
 		"public.affected_param":                         {reflect.ValueOf(ctx), reflect.ValueOf(in70)},
 		"public.config_in_process":                      {reflect.ValueOf(ctx), reflect.ValueOf(in71)},
+		"public.changelog":                              {reflect.ValueOf(ctx), reflect.ValueOf(in72)},
 	}
-	totalGroups = len(TableGroups)
-	groupIdx = 0
-	for totalGroups > groupIdx {
-		currentGroup = TableGroups[groupIdx]
-		var tableIdx int
-		var totalTables int
-		totalTables = len(currentGroup)
-		tableIdx = totalTables
-		for tableIdx > 0 {
-			tableIdx--
-			tName = currentGroup[totalTables-1-tableIdx]
-			fn = callers[tName]
-			wg.Add(1)
-			go func(tableName string, insertFunc any) {
-				var fVal reflect.Value
-				var out []reflect.Value
-				var insertErr any
-				fVal = reflect.ValueOf(insertFunc)
-				out = fVal.Call(args[tableName])
-				if len(out) > 0 {
-					insertErr = out[0].Interface()
+	for tName, fn = range callers {
+		wg.Add(1)
+		go func(tableName string, insertFunc any) {
+			var fVal reflect.Value
+			var out []reflect.Value
+			var insertErr any
+			fVal = reflect.ValueOf(insertFunc)
+			out = fVal.Call(args[tableName])
+			if len(out) > 0 {
+				insertErr = out[0].Interface()
+			}
+			wg.Done()
+			if insertErr != nil {
+				mu.Lock()
+				if errResult == nil {
+					errResult = fmt.Errorf("error inserting %s: %v", tableName, insertErr)
 				}
-				wg.Done()
-				if insertErr != nil {
-					mu.Lock()
-					if errResult == nil {
-						errResult = fmt.Errorf("error inserting %s: %v", tableName, insertErr)
-					}
-					mu.Unlock()
-				}
-			}(tName, fn)
-		}
-		wg.Wait()
-		if errResult != nil {
-			return errResult
-		}
-		groupIdx++
+				mu.Unlock()
+			}
+		}(tName, fn)
+	}
+	wg.Wait()
+	if errResult != nil {
+		return errResult
+	}
+	errResult = CreateTableLinks(ctx)
+	if errResult != nil {
+		logger.Error("Failed to create table links: %v", errResult)
+		return errResult
 	}
 	return nil
 }

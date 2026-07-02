@@ -12,7 +12,8 @@ func GetAllPollingProtocolDao(ctx context.Context) ([]PollingProtocolDao, error)
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.polling_protocol`
+			 FROM public.polling_protocol
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -39,7 +40,8 @@ func GetAllAccessDao(ctx context.Context) ([]AccessDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.access`
+			 FROM public.access
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -66,7 +68,8 @@ func GetAllVersionSnmpDao(ctx context.Context) ([]VersionSnmpDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.version_snmp`
+			 FROM public.version_snmp
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -93,7 +96,8 @@ func GetAllAuthProtocolSnmpDao(ctx context.Context) ([]AuthProtocolSnmpDao, erro
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.auth_protocol_snmp`
+			 FROM public.auth_protocol_snmp
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -120,7 +124,8 @@ func GetAllPrivacyProtocolSnmpDao(ctx context.Context) ([]PrivacyProtocolSnmpDao
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.privacy_protocol_snmp`
+			 FROM public.privacy_protocol_snmp
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -147,7 +152,8 @@ func GetAllOidTypeDao(ctx context.Context) ([]OidTypeDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.oid_type`
+			 FROM public.oid_type
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -174,7 +180,8 @@ func GetAllLogicOperatorDao(ctx context.Context) ([]LogicOperatorDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "value", "type", "precedence", "arity"
-			 FROM public.logic_operator`
+			 FROM public.logic_operator
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -204,7 +211,8 @@ func GetAllAlarmLevelDao(ctx context.Context) ([]AlarmLevelDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.alarm_level`
+			 FROM public.alarm_level
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -231,7 +239,8 @@ func GetAllVarTypeDao(ctx context.Context) ([]VarTypeDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.var_type`
+			 FROM public.var_type
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -258,7 +267,8 @@ func GetAllPollingFrequencyDao(ctx context.Context) ([]PollingFrequencyDao, erro
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.polling_frequency`
+			 FROM public.polling_frequency
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -285,7 +295,8 @@ func GetAllOidAccessDao(ctx context.Context) ([]OidAccessDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.oid_access`
+			 FROM public.oid_access
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -312,7 +323,8 @@ func GetAllOidStatusDao(ctx context.Context) ([]OidStatusDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.oid_status`
+			 FROM public.oid_status
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -339,7 +351,8 @@ func GetAllAsn1TypeDao(ctx context.Context) ([]Asn1TypeDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "value"
-			 FROM public.asn1_type`
+			 FROM public.asn1_type
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -366,7 +379,8 @@ func GetAllVendorDao(ctx context.Context) ([]VendorDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "number", "contact", "email", "directory"
-			 FROM public.vendor`
+			 FROM public.vendor
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -397,7 +411,8 @@ func GetAllComponentDao(ctx context.Context) ([]ComponentDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "title", "name_en", "name_ru", "plural_name_en", "plural_name_ru", "base_component", "description_en", "description_ru", "access"
-			 FROM public.component`
+			 FROM public.component
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -432,7 +447,8 @@ func GetAllParamDao(ctx context.Context) ([]ParamDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "title", "name_en", "name_ru", "type", "value", "description_en", "description_ru", "units_en", "units_ru", "access", "saved", "visible"
-			 FROM public.param`
+			 FROM public.param
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -497,7 +513,8 @@ func GetAllAgentCapabilitiesDao(ctx context.Context) ([]AgentCapabilitiesDao, er
 	var err error
 	var query string
 	query = `SELECT "id", "name", "product_release", "status", "description", "reference"
-			 FROM public.agent_capabilities`
+			 FROM public.agent_capabilities
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -528,7 +545,8 @@ func GetAllAgentCapabilitiesModuleDao(ctx context.Context) ([]AgentCapabilitiesM
 	var err error
 	var query string
 	query = `SELECT "id", "supports", "includes"
-			 FROM public.agent_capabilities_module`
+			 FROM public.agent_capabilities_module
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -556,7 +574,8 @@ func GetAllAgentCapabilitiesModuleNotificationDao(ctx context.Context) ([]AgentC
 	var err error
 	var query string
 	query = `SELECT "id", "variation", "access", "description"
-			 FROM public.agent_capabilities_module_notification`
+			 FROM public.agent_capabilities_module_notification
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -585,7 +604,8 @@ func GetAllAgentCapabilitiesModuleObjectDao(ctx context.Context) ([]AgentCapabil
 	var err error
 	var query string
 	query = `SELECT "id", "variation", "syntax", "write_syntax", "access", "creation_requires", "defval", "description"
-			 FROM public.agent_capabilities_module_object`
+			 FROM public.agent_capabilities_module_object
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -618,7 +638,8 @@ func GetAllChoiceDao(ctx context.Context) ([]ChoiceDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "choices"
-			 FROM public.choice`
+			 FROM public.choice
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -646,7 +667,8 @@ func GetAllExplicitDao(ctx context.Context) ([]ExplicitDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "value"
-			 FROM public.explicit`
+			 FROM public.explicit
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -674,7 +696,8 @@ func GetAllImplicitDao(ctx context.Context) ([]ImplicitDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "application", "value"
-			 FROM public.implicit`
+			 FROM public.implicit
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -703,7 +726,8 @@ func GetAllImportDao(ctx context.Context) ([]ImportDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "param", "from"
-			 FROM public.import`
+			 FROM public.import
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -731,7 +755,8 @@ func GetAllMibDao(ctx context.Context) ([]MibDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "path", "name", "vendor"
-			 FROM public.mib`
+			 FROM public.mib
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -760,7 +785,8 @@ func GetAllModuleComplianceDao(ctx context.Context) ([]ModuleComplianceDao, erro
 	var err error
 	var query string
 	query = `SELECT "id", "name", "status", "description", "reference"
-			 FROM public.module_compliance`
+			 FROM public.module_compliance
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -790,7 +816,8 @@ func GetAllModuleComplianceModuleDao(ctx context.Context) ([]ModuleComplianceMod
 	var err error
 	var query string
 	query = `SELECT "id", "name", "mandatory_groups"
-			 FROM public.module_compliance_module`
+			 FROM public.module_compliance_module
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -818,7 +845,8 @@ func GetAllModuleComplianceModuleGroupDao(ctx context.Context) ([]ModuleComplian
 	var err error
 	var query string
 	query = `SELECT "id", "name", "description"
-			 FROM public.module_compliance_module_group`
+			 FROM public.module_compliance_module_group
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -846,7 +874,8 @@ func GetAllModuleComplianceModuleObjectDao(ctx context.Context) ([]ModuleComplia
 	var err error
 	var query string
 	query = `SELECT "id", "name", "syntax", "write_syntax", "access", "description"
-			 FROM public.module_compliance_module_object`
+			 FROM public.module_compliance_module_object
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -877,7 +906,8 @@ func GetAllModuleIdentityDao(ctx context.Context) ([]ModuleIdentityDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "last_updated", "organization", "contact_info", "description"
-			 FROM public.module_identity`
+			 FROM public.module_identity
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -908,7 +938,8 @@ func GetAllNotificationGroupDao(ctx context.Context) ([]NotificationGroupDao, er
 	var err error
 	var query string
 	query = `SELECT "id", "name", "notifications", "status", "description", "reference"
-			 FROM public.notification_group`
+			 FROM public.notification_group
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -939,7 +970,8 @@ func GetAllNotificationTypeDao(ctx context.Context) ([]NotificationTypeDao, erro
 	var err error
 	var query string
 	query = `SELECT "id", "name", "objects", "status", "description", "reference"
-			 FROM public.notification_type`
+			 FROM public.notification_type
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -970,7 +1002,8 @@ func GetAllObjectGroupDao(ctx context.Context) ([]ObjectGroupDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "objects", "status", "description", "reference"
-			 FROM public.object_group`
+			 FROM public.object_group
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1001,7 +1034,8 @@ func GetAllObjectIdentifierDao(ctx context.Context) ([]ObjectIdentifierDao, erro
 	var err error
 	var query string
 	query = `SELECT "id", "name", "num_oid", "str_oid", "parent", "type"
-			 FROM public.object_identifier`
+			 FROM public.object_identifier
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1032,7 +1066,8 @@ func GetAllObjectIdentityDao(ctx context.Context) ([]ObjectIdentityDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "status", "description", "reference"
-			 FROM public.object_identity`
+			 FROM public.object_identity
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1062,7 +1097,8 @@ func GetAllObjectTypeDao(ctx context.Context) ([]ObjectTypeDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "syntax", "units", "access", "status", "description", "reference", "index", "augments", "default_value"
-			 FROM public.object_type`
+			 FROM public.object_type
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1098,7 +1134,8 @@ func GetAllOidDao(ctx context.Context) ([]OidDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "mib", "type", "name", "number", "dotter_notation", "object_descriptor", "syntax", "enum", "status", "access", "units", "description", "category"
-			 FROM public.oid`
+			 FROM public.oid
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1137,7 +1174,8 @@ func GetAllRevisionDao(ctx context.Context) ([]RevisionDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "revision", "description"
-			 FROM public.revision`
+			 FROM public.revision
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1165,7 +1203,8 @@ func GetAllSequenceDao(ctx context.Context) ([]SequenceDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "pairs"
-			 FROM public.sequence`
+			 FROM public.sequence
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1193,7 +1232,8 @@ func GetAllTextualConventionDao(ctx context.Context) ([]TextualConventionDao, er
 	var err error
 	var query string
 	query = `SELECT "id", "name", "display_hint", "status", "description", "reference", "syntax"
-			 FROM public.textual_convention`
+			 FROM public.textual_convention
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1225,7 +1265,8 @@ func GetAllTrapTypeDao(ctx context.Context) ([]TrapTypeDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "variables", "description", "reference"
-			 FROM public.trap_type`
+			 FROM public.trap_type
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1255,7 +1296,8 @@ func GetAllMibToAgentCapabilitiesDao(ctx context.Context) ([]MibToAgentCapabilit
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "agent_capabilities_id", "agent_capabilities_module_id", "agent_capabilities_module_notification_id", "agent_capabilities_module_object_id"
-			 FROM public.mib_to_agent_capabilities`
+			 FROM public.mib_to_agent_capabilities
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1286,7 +1328,8 @@ func GetAllMibToChoiceDao(ctx context.Context) ([]MibToChoiceDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "choice_id"
-			 FROM public.mib_to_choice`
+			 FROM public.mib_to_choice
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1314,7 +1357,8 @@ func GetAllMibToExplicitDao(ctx context.Context) ([]MibToExplicitDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "explicit_id"
-			 FROM public.mib_to_explicit`
+			 FROM public.mib_to_explicit
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1342,7 +1386,8 @@ func GetAllMibToImplicitDao(ctx context.Context) ([]MibToImplicitDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "implicit_id"
-			 FROM public.mib_to_implicit`
+			 FROM public.mib_to_implicit
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1370,7 +1415,8 @@ func GetAllMibToImportDao(ctx context.Context) ([]MibToImportDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "import_id"
-			 FROM public.mib_to_import`
+			 FROM public.mib_to_import
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1398,7 +1444,8 @@ func GetAllMibToModuleComplianceDao(ctx context.Context) ([]MibToModuleComplianc
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "module_compliance_id", "module_compliance_module_id", "module_compliance_module_group_id", "module_compliance_module_object_id"
-			 FROM public.mib_to_module_compliance`
+			 FROM public.mib_to_module_compliance
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1429,7 +1476,8 @@ func GetAllMibToModuleIdentityDao(ctx context.Context) ([]MibToModuleIdentityDao
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "module_identity_id", "revision_id"
-			 FROM public.mib_to_module_identity`
+			 FROM public.mib_to_module_identity
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1458,7 +1506,8 @@ func GetAllMibToNotificationGroupDao(ctx context.Context) ([]MibToNotificationGr
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "notification_group_id"
-			 FROM public.mib_to_notification_group`
+			 FROM public.mib_to_notification_group
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1486,7 +1535,8 @@ func GetAllMibToNotificationTypeDao(ctx context.Context) ([]MibToNotificationTyp
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "notification_type_id"
-			 FROM public.mib_to_notification_type`
+			 FROM public.mib_to_notification_type
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1514,7 +1564,8 @@ func GetAllMibToObjectGroupDao(ctx context.Context) ([]MibToObjectGroupDao, erro
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "object_group_id"
-			 FROM public.mib_to_object_group`
+			 FROM public.mib_to_object_group
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1542,7 +1593,8 @@ func GetAllMibToObjectIdentifierDao(ctx context.Context) ([]MibToObjectIdentifie
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "object_identifier_id"
-			 FROM public.mib_to_object_identifier`
+			 FROM public.mib_to_object_identifier
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1570,7 +1622,8 @@ func GetAllMibToObjectIdentityDao(ctx context.Context) ([]MibToObjectIdentityDao
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "object_identity_id"
-			 FROM public.mib_to_object_identity`
+			 FROM public.mib_to_object_identity
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1598,7 +1651,8 @@ func GetAllMibToObjectTypeDao(ctx context.Context) ([]MibToObjectTypeDao, error)
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "object_type_id"
-			 FROM public.mib_to_object_type`
+			 FROM public.mib_to_object_type
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1626,7 +1680,8 @@ func GetAllMibToSequenceDao(ctx context.Context) ([]MibToSequenceDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "sequence_id"
-			 FROM public.mib_to_sequence`
+			 FROM public.mib_to_sequence
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1654,7 +1709,8 @@ func GetAllMibToTextualConventionDao(ctx context.Context) ([]MibToTextualConvent
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "textual_convention_id"
-			 FROM public.mib_to_textual_convention`
+			 FROM public.mib_to_textual_convention
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1682,7 +1738,8 @@ func GetAllMibToTrapTypeDao(ctx context.Context) ([]MibToTrapTypeDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "mib_id", "trap_type_id"
-			 FROM public.mib_to_trap_type`
+			 FROM public.mib_to_trap_type
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1710,7 +1767,8 @@ func GetAllDeviceIndicatorDao(ctx context.Context) ([]DeviceIndicatorDao, error)
 	var err error
 	var query string
 	query = `SELECT "id", "description", "object_id", "contact", "name", "location", "services"
-			 FROM public.device_indicator`
+			 FROM public.device_indicator
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1742,7 +1800,8 @@ func GetAllParamIndicatorDao(ctx context.Context) ([]ParamIndicatorDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "oid_id", "dotter_notation"
-			 FROM public.param_indicator`
+			 FROM public.param_indicator
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1770,7 +1829,8 @@ func GetAllMappingDao(ctx context.Context) ([]MappingDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "indicator", "param", "frequency", "value", "coefficient", "enum", "position", "from", "position_type"
-			 FROM public.mapping`
+			 FROM public.mapping
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1805,7 +1865,8 @@ func GetAllDeviceComponentDao(ctx context.Context) ([]DeviceComponentDao, error)
 	var err error
 	var query string
 	query = `SELECT "id", "model", "internal_order", "parent"
-			 FROM public.device_component`
+			 FROM public.device_component
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1861,7 +1922,8 @@ func GetAllConfigurationDao(ctx context.Context) ([]ConfigurationDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "indicator", "device_component_id"
-			 FROM public.configuration`
+			 FROM public.configuration
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1889,7 +1951,8 @@ func GetAllDefaultConfigurationDao(ctx context.Context) ([]DefaultConfigurationD
 	var err error
 	var query string
 	query = `SELECT "id", "indicator", "device_component_id"
-			 FROM public.default_configuration`
+			 FROM public.default_configuration
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -1917,7 +1980,8 @@ func GetAllThresholdDao(ctx context.Context) ([]ThresholdDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "name", "description", "author", "created", "query"
-			 FROM public.threshold`
+			 FROM public.threshold
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -2014,7 +2078,8 @@ func GetAllAffectedThresholdDao(ctx context.Context) ([]AffectedThresholdDao, er
 	var err error
 	var query string
 	query = `SELECT "id", "host", "port", "threshold", "enabled"
-			 FROM public.affected_threshold`
+			 FROM public.affected_threshold
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -2044,7 +2109,8 @@ func GetAllAffectedParamDao(ctx context.Context) ([]AffectedParamDao, error) {
 	var err error
 	var query string
 	query = `SELECT "id", "host", "port", "component", "internal_order", "param"
-			 FROM public.affected_param`
+			 FROM public.affected_param
+			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -2089,6 +2155,34 @@ func GetAllConfigInProcessDao(ctx context.Context) ([]ConfigInProcessDao, error)
 			&d.Host,
 			&d.Port,
 			&d.Protocol,
+		)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, d)
+	}
+	return list, nil
+}
+
+func GetAllCChangeLogDao(ctx context.Context) ([]ChangeLogDao, error) {
+	var rows pgx.Rows
+	var err error
+	var query string
+	query = `SELECT "id", "script", "executed"
+			 FROM public.changelog`
+	rows, err = database.Get().Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var list []ChangeLogDao
+	list = make([]ChangeLogDao, 0)
+	for rows.Next() {
+		var d ChangeLogDao
+		err = rows.Scan(
+			&d.ID,
+			&d.Script,
+			&d.Executed,
 		)
 		if err != nil {
 			return nil, err

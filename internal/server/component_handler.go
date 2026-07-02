@@ -183,3 +183,42 @@ func SearchComponents(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, res)
 }
+
+// ChangeComponentDataHandler изменяет данные компонента
+// @Summary         Изменить данные компонента по ID
+// @Tags            1. Модельный каталог: Компоненты
+// @Produce         json
+// @Param           prevId path      int  true  "Предыдущий ID компонента"
+// @Param           newId  path      int  true  "Новый ID компонента"
+// @Success         200  "OK"
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/component/{prevId}/{newId} [patch]
+func ChangeComponentDataHandler(c *gin.Context) {
+	var prevId int64
+	var newId int64
+	var err error
+	prevId, err = strconv.ParseInt(c.Param("prevId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid prevId format"})
+		return
+	}
+	newId, err = strconv.ParseInt(c.Param("newId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid newId format"})
+		return
+	}
+	var success bool
+	success, err = service.ChangeComponentData(c.Request.Context(), prevId, newId)
+	if err != nil {
+		logger.Error("Service error during changing component data from %d to %d: %v", prevId, newId, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if !success {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Operation rejected by service"})
+		return
+	}
+	c.Status(http.StatusOK)
+}
