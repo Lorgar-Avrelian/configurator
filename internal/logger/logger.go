@@ -137,8 +137,29 @@ func Warn(format string, v ...interface{})  { globalLogger.log(LevelWarn, format
 func Error(format string, v ...interface{}) { globalLogger.log(LevelError, format, v...) }
 func Debug(format string, v ...interface{}) { globalLogger.log(LevelDebug, format, v...) }
 
+func Debugf(format string, v ...interface{}) {
+	msg := fmt.Sprintf(format, v...)
+	globalLogger.log(LevelDebug, msg)
+}
+
+func Infof(format string, v ...interface{}) {
+	msg := fmt.Sprintf(format, v...)
+	globalLogger.log(LevelInfo, msg)
+}
+
+func Warnf(format string, v ...interface{}) {
+	msg := fmt.Sprintf(format, v...)
+	globalLogger.log(LevelWarn, msg)
+}
+
+func Errorf(format string, v ...interface{}) {
+	msg := fmt.Sprintf(format, v...)
+	globalLogger.log(LevelError, msg)
+}
+
 func Fatalf(format string, v ...interface{}) {
-	globalLogger.log(LevelFatal, format, v...)
+	msg := fmt.Sprintf(format, v...)
+	globalLogger.log(LevelFatal, msg)
 	os.Exit(1)
 }
 
