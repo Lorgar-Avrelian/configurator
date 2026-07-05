@@ -246,7 +246,7 @@ const docTemplate = `{
                 "tags": [
                     "1. Модельный каталог: Компоненты"
                 ],
-                "summary": "Изменить данные компонента по ID",
+                "summary": "Изменить ID компонента",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1237,6 +1237,65 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/configurator_internal_dto.DeviceComponentDto"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/device-component/{prevId}/{newId}": {
+            "patch": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "8. Конфигурация: Структура компонентов устройства"
+                ],
+                "summary": "Изменить ID составной части устройства",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Предыдущий ID составной части устройства",
+                        "name": "prevId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID составной части устройства",
+                        "name": "newId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -2316,6 +2375,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/mapping/{prevId}/{newId}": {
+            "patch": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "7. Конфигурация: Сопоставления параметров"
+                ],
+                "summary": "Изменить ID сопоставления",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Предыдущий ID сопоставления",
+                        "name": "prevId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID сопоставления",
+                        "name": "newId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/mappings": {
             "get": {
                 "produces": [
@@ -3041,6 +3159,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/param/{prevId}/{newId}": {
+            "patch": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "2. Модельный каталог: Параметры"
+                ],
+                "summary": "Изменить ID параметра",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Предыдущий ID параметра",
+                        "name": "prevId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID параметра",
+                        "name": "newId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/params": {
             "get": {
                 "produces": [
@@ -3303,6 +3480,65 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/threshold/{prevId}/{newId}": {
+            "patch": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "12. Конфигурация: Пороги"
+                ],
+                "summary": "Изменить ID порога",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Предыдущий ID порога",
+                        "name": "prevId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID порога",
+                        "name": "newId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",

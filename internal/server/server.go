@@ -45,6 +45,7 @@ func NewServer() *Server {
 			param.GET("/:id", GetParam)
 			param.PUT("/:id", UpdateParam)
 			param.DELETE("/:id", DeleteParam)
+			param.PATCH("/:prevId/:newId", ChangeParamDataHandler)
 		}
 		var linkComponentParam *gin.RouterGroup
 		linkComponentParam = v1.Group("/link/component-param")
@@ -87,6 +88,7 @@ func NewServer() *Server {
 			mapping.GET("/:id", GetMapping)
 			mapping.PUT("/:id", UpdateMapping)
 			mapping.DELETE("/:id", DeleteMapping)
+			mapping.PATCH("/:prevId/:newId", ChangeMappingDataHandler)
 		}
 		v1.GET("/device-components", GetAllDeviceComponents)
 		var deviceComponent *gin.RouterGroup
@@ -97,6 +99,7 @@ func NewServer() *Server {
 			deviceComponent.GET("/:id/own", GetDeviceComponentOwn)
 			deviceComponent.PUT("/:id", UpdateDeviceComponent)
 			deviceComponent.DELETE("/:id", DeleteDeviceComponent)
+			deviceComponent.PATCH("/:prevId/:newId", ChangeDeviceComponentDataHandler)
 		}
 		var linkDeviceComponentMapping *gin.RouterGroup
 		linkDeviceComponentMapping = v1.Group("/link/device-component-mapping")
@@ -130,6 +133,7 @@ func NewServer() *Server {
 			thresholdGroup.GET("/:id", GetThreshold)
 			thresholdGroup.PUT("/:id", UpdateThreshold)
 			thresholdGroup.DELETE("/:id", DeleteThreshold)
+			thresholdGroup.PATCH("/:prevId/:newId", ChangeThresholdDataHandler)
 		}
 		var configInProgressGroup *gin.RouterGroup
 		configInProgressGroup = v1.Group("/config/in-progress")

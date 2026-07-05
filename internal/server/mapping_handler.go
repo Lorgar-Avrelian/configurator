@@ -192,3 +192,42 @@ func GetMappingOwn(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, res)
 }
+
+// ChangeMappingDataHandler изменяет ID сопоставления
+// @Summary         Изменить ID сопоставления
+// @Tags            7. Конфигурация: Сопоставления параметров
+// @Produce         json
+// @Param           prevId path      int  true  "Предыдущий ID сопоставления"
+// @Param           newId  path      int  true  "Новый ID сопоставления"
+// @Success         200  "OK"
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/mapping/{prevId}/{newId} [patch]
+func ChangeMappingDataHandler(c *gin.Context) {
+	var prevId int64
+	var newId int64
+	var err error
+	prevId, err = strconv.ParseInt(c.Param("prevId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid prevId format"})
+		return
+	}
+	newId, err = strconv.ParseInt(c.Param("newId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid newId format"})
+		return
+	}
+	var success bool
+	success, err = service.ChangeMappingData(c.Request.Context(), prevId, newId)
+	if err != nil {
+		logger.Error("Service error during changing param mapping data from %d to %d: %v", prevId, newId, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if !success {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Operation rejected by service"})
+		return
+	}
+	c.Status(http.StatusOK)
+}

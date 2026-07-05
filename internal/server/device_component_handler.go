@@ -192,3 +192,42 @@ func GetDeviceComponentOwn(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, res)
 }
+
+// ChangeDeviceComponentDataHandler изменяет ID составной части устройства
+// @Summary         Изменить ID составной части устройства
+// @Tags            8. Конфигурация: Структура компонентов устройства
+// @Produce         json
+// @Param           prevId path      int  true  "Предыдущий ID составной части устройства"
+// @Param           newId  path      int  true  "Новый ID составной части устройства"
+// @Success         200  "OK"
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/device-component/{prevId}/{newId} [patch]
+func ChangeDeviceComponentDataHandler(c *gin.Context) {
+	var prevId int64
+	var newId int64
+	var err error
+	prevId, err = strconv.ParseInt(c.Param("prevId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid prevId format"})
+		return
+	}
+	newId, err = strconv.ParseInt(c.Param("newId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid newId format"})
+		return
+	}
+	var success bool
+	success, err = service.ChangeDeviceComponentData(c.Request.Context(), prevId, newId)
+	if err != nil {
+		logger.Error("Service error during changing device component data from %d to %d: %v", prevId, newId, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if !success {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Operation rejected by service"})
+		return
+	}
+	c.Status(http.StatusOK)
+}

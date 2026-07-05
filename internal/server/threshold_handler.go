@@ -170,3 +170,42 @@ func DeleteThreshold(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+
+// ChangeThresholdDataHandler изменяет ID порога
+// @Summary         Изменить ID порога
+// @Tags            12. Конфигурация: Пороги
+// @Produce         json
+// @Param           prevId path      int  true  "Предыдущий ID порога"
+// @Param           newId  path      int  true  "Новый ID порога"
+// @Success         200  "OK"
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/threshold/{prevId}/{newId} [patch]
+func ChangeThresholdDataHandler(c *gin.Context) {
+	var prevId int64
+	var newId int64
+	var err error
+	prevId, err = strconv.ParseInt(c.Param("prevId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid prevId format"})
+		return
+	}
+	newId, err = strconv.ParseInt(c.Param("newId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid newId format"})
+		return
+	}
+	var success bool
+	success, err = service.ChangeThresholdData(c.Request.Context(), prevId, newId)
+	if err != nil {
+		logger.Error("Service error during changing threshold data from %d to %d: %v", prevId, newId, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if !success {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Operation rejected by service"})
+		return
+	}
+	c.Status(http.StatusOK)
+}

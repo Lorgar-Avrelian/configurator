@@ -184,8 +184,8 @@ func SearchComponents(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// ChangeComponentDataHandler изменяет данные компонента
-// @Summary         Изменить данные компонента по ID
+// ChangeComponentDataHandler изменяет ID компонента
+// @Summary         Изменить ID компонента
 // @Tags            1. Модельный каталог: Компоненты
 // @Produce         json
 // @Param           prevId path      int  true  "Предыдущий ID компонента"

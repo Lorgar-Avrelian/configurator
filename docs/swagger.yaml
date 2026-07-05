@@ -838,7 +838,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Изменить данные компонента по ID
+      summary: Изменить ID компонента
       tags:
       - '1. Модельный каталог: Компоненты'
   /api/v1/component/search:
@@ -1510,6 +1510,45 @@ paths:
               type: string
             type: object
       summary: Получить изолированную составную часть устройства по ID
+      tags:
+      - '8. Конфигурация: Структура компонентов устройства'
+  /api/v1/device-component/{prevId}/{newId}:
+    patch:
+      parameters:
+      - description: Предыдущий ID составной части устройства
+        in: path
+        name: prevId
+        required: true
+        type: integer
+      - description: Новый ID составной части устройства
+        in: path
+        name: newId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Изменить ID составной части устройства
       tags:
       - '8. Конфигурация: Структура компонентов устройства'
   /api/v1/device-components:
@@ -2203,6 +2242,45 @@ paths:
       summary: Получить изолированное сопоставление по ID
       tags:
       - '7. Конфигурация: Сопоставления параметров'
+  /api/v1/mapping/{prevId}/{newId}:
+    patch:
+      parameters:
+      - description: Предыдущий ID сопоставления
+        in: path
+        name: prevId
+        required: true
+        type: integer
+      - description: Новый ID сопоставления
+        in: path
+        name: newId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Изменить ID сопоставления
+      tags:
+      - '7. Конфигурация: Сопоставления параметров'
   /api/v1/mappings:
     get:
       produces:
@@ -2591,6 +2669,45 @@ paths:
       summary: Обновить параметр
       tags:
       - '2. Модельный каталог: Параметры'
+  /api/v1/param/{prevId}/{newId}:
+    patch:
+      parameters:
+      - description: Предыдущий ID параметра
+        in: path
+        name: prevId
+        required: true
+        type: integer
+      - description: Новый ID параметра
+        in: path
+        name: newId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Изменить ID параметра
+      tags:
+      - '2. Модельный каталог: Параметры'
   /api/v1/param/search:
     get:
       description: Ищет параметры, у которых title, name_en, name_ru, description_en
@@ -2872,6 +2989,45 @@ paths:
               type: string
             type: object
       summary: Обновить порог по ID
+      tags:
+      - '12. Конфигурация: Пороги'
+  /api/v1/threshold/{prevId}/{newId}:
+    patch:
+      parameters:
+      - description: Предыдущий ID порога
+        in: path
+        name: prevId
+        required: true
+        type: integer
+      - description: Новый ID порога
+        in: path
+        name: newId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Изменить ID порога
       tags:
       - '12. Конфигурация: Пороги'
   /api/v1/thresholds:
