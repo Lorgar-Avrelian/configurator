@@ -275,490 +275,241 @@ func GetComponentDependentData(ctx context.Context) ([]dao.ComponentDao, []dao.C
 }
 
 func DropComponentDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(15)
-	go func() {
-		defer wg.Done()
-		err = dao.DropComponentDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropComponentParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.component_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceIndicatorDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropParamIndicatorDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.param_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDefaultConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceSnmpDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropResultDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigInProcessDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropConfigInProcessDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.config_in_process: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.result: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
+		return err
+	}
+	err = dao.DropDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.configuration: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component: %v", err)
+		return err
+	}
+	err = dao.DropMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.DropParamIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.DropDeviceIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_indicator: %v", err)
+		return err
+	}
+	err = dao.DropComponentParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.component_param: %v", err)
+		return err
+	}
+	err = dao.DropComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.component: %v", err)
+		return err
 	}
 	return nil
 }
 
 func DropComponentDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(15)
-	go func() {
-		defer wg.Done()
-		err = dao.DropComponentDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropComponentParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.component_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceIndicatorDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropParamIndicatorDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.param_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDefaultConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceSnmpDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropResultDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigInProcessDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropConfigInProcessDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.config_in_process: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropResultDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.result: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.threshold: %v", err)
+		return err
+	}
+	err = dao.DropDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.configuration: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component: %v", err)
+		return err
+	}
+	err = dao.DropMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.mapping: %v", err)
+		return err
+	}
+	err = dao.DropParamIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.DropDeviceIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_indicator: %v", err)
+		return err
+	}
+	err = dao.DropComponentParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.component_param: %v", err)
+		return err
+	}
+	err = dao.DropComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.component: %v", err)
+		return err
 	}
 	return nil
 }
 
 func CreateComponentDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(15)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateComponentDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateComponentParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.component_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceIndicatorDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateParamIndicatorDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.param_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDefaultConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceSnmpDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateResultDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigInProcessDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.component: %v", err)
+		return err
+	}
+	err = dao.CreateComponentParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.component_param: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateParamIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.CreateThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateResultDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.result: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateConfigInProcessDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.config_in_process: %v", err)
+		return err
 	}
 	return nil
 }
@@ -927,164 +678,81 @@ func InsertComponentDependentData(ctx context.Context, tComponent []dao.Componen
 }
 
 func CreateComponentDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(15)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateComponentDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateComponentParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.component_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceIndicatorDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateParamIndicatorDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.param_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceSnmpDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateResultDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigInProcessDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.component: %v", err)
+		return err
+	}
+	err = dao.CreateComponentParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.component_param: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateParamIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.CreateThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.result: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateConfigInProcessDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.config_in_process: %v", err)
+		return err
 	}
 	return nil
 }
@@ -1357,490 +1025,241 @@ func GetParamDependentData(ctx context.Context) ([]dao.ParamDao, []dao.Component
 }
 
 func DropParamDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(15)
-	go func() {
-		defer wg.Done()
-		err = dao.DropParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropComponentParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.component_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceIndicatorDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropParamIndicatorDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.param_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDefaultConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceSnmpDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropResultDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigInProcessDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropConfigInProcessDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.config_in_process: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.result: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
+		return err
+	}
+	err = dao.DropDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.configuration: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component: %v", err)
+		return err
+	}
+	err = dao.DropMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.DropParamIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.DropDeviceIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_indicator: %v", err)
+		return err
+	}
+	err = dao.DropComponentParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.component_param: %v", err)
+		return err
+	}
+	err = dao.DropParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.param: %v", err)
+		return err
 	}
 	return nil
 }
 
 func DropParamDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(15)
-	go func() {
-		defer wg.Done()
-		err = dao.DropParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropComponentParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.component_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceIndicatorDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropParamIndicatorDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.param_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDefaultConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceSnmpDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropResultDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigInProcessDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropConfigInProcessDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.config_in_process: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropResultDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.result: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.threshold: %v", err)
+		return err
+	}
+	err = dao.DropDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.configuration: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component: %v", err)
+		return err
+	}
+	err = dao.DropMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.mapping: %v", err)
+		return err
+	}
+	err = dao.DropParamIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.DropDeviceIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_indicator: %v", err)
+		return err
+	}
+	err = dao.DropComponentParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.component_param: %v", err)
+		return err
+	}
+	err = dao.DropParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.param: %v", err)
+		return err
 	}
 	return nil
 }
 
 func CreateParamDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(15)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateComponentParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.component_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceIndicatorDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateParamIndicatorDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.param_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDefaultConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceSnmpDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateResultDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigInProcessDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.param: %v", err)
+		return err
+	}
+	err = dao.CreateComponentParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.component_param: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateParamIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.CreateThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateResultDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.result: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateConfigInProcessDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.config_in_process: %v", err)
+		return err
 	}
 	return nil
 }
@@ -2009,164 +1428,81 @@ func InsertParamDependentData(ctx context.Context, tParam []dao.ParamDao, tCompP
 }
 
 func CreateParamDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(15)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateComponentParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.component_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceIndicatorDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateParamIndicatorDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.param_indicator: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceSnmpDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateResultDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigInProcessDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.param: %v", err)
+		return err
+	}
+	err = dao.CreateComponentParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.component_param: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateParamIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.CreateThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.result: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateConfigInProcessDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.config_in_process: %v", err)
+		return err
 	}
 	return nil
 }
@@ -2364,340 +1700,166 @@ func GetDeviceComponentDependentData(ctx context.Context) ([]dao.DeviceComponent
 }
 
 func DropDeviceComponentDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(10)
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDefaultConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceSnmpDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropResultDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigInProcessDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropConfigInProcessDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.config_in_process: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.result: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
+		return err
+	}
+	err = dao.DropDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.configuration: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component: %v", err)
+		return err
 	}
 	return nil
 }
 
 func DropDeviceComponentDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(10)
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDefaultConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceSnmpDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropResultDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigInProcessDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropConfigInProcessDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.config_in_process: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropResultDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.result: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.threshold: %v", err)
+		return err
+	}
+	err = dao.DropDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.configuration: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component: %v", err)
+		return err
 	}
 	return nil
 }
 
 func CreateDeviceComponentDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(10)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDefaultConfigurationDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceSnmpDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateResultDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigInProcessDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateDeviceComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.CreateThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateResultDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.result: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateConfigInProcessDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.config_in_process: %v", err)
+		return err
 	}
 	return nil
 }
@@ -2816,114 +1978,56 @@ func InsertDeviceComponentDependentData(ctx context.Context, tDevComp []dao.Devi
 }
 
 func CreateDeviceComponentDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(10)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_component: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceSnmpDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateResultDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigInProcessDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateDeviceComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.CreateThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.result: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateConfigInProcessDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.config_in_process: %v", err)
+		return err
 	}
 	return nil
 }
@@ -3001,100 +2105,46 @@ func GetMappingDependentData(ctx context.Context) ([]dao.MappingDao, []dao.Devic
 }
 
 func DropMappingDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(2)
-	go func() {
-		defer wg.Done()
-		err = dao.DropMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.mapping: %v", err)
+		return err
 	}
 	return nil
 }
 
 func DropMappingDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(2)
-	go func() {
-		defer wg.Done()
-		err = dao.DropMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceComponentMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.mapping: %v", err)
+		return err
 	}
 	return nil
 }
 
 func CreateMappingDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(2)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentMappingDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component_mapping: %v", err)
+		return err
 	}
 	return nil
 }
@@ -3133,34 +2183,16 @@ func InsertMappingDependentData(ctx context.Context, tMapping []dao.MappingDao, 
 }
 
 func CreateMappingDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(2)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
+		return err
 	}
 	return nil
 }
@@ -3298,220 +2330,106 @@ func GetThresholdDependentData(ctx context.Context) ([]dao.ThresholdDao, []dao.D
 }
 
 func DropThresholdDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(6)
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceSnmpDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropResultDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigInProcessDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping constraints for table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropConfigInProcessDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.config_in_process: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.result: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
+		return err
 	}
 	return nil
 }
 
 func DropThresholdDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(6)
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceSnmpDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropResultDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigInProcessDao(ctx)
-		if err != nil {
-			logger.Errorf("Error dropping table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.DropConfigInProcessDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.config_in_process: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropResultDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.result: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.threshold: %v", err)
+		return err
 	}
 	return nil
 }
 
 func CreateThresholdDependentTables(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(6)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceSnmpDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateResultDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedThresholdDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedParamDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigInProcessDao(ctx)
-		if err != nil {
-			logger.Errorf("Error creating table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateResultDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.result: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateConfigInProcessDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.config_in_process: %v", err)
+		return err
 	}
 	return nil
 }
@@ -3590,74 +2508,36 @@ func InsertThresholdDependentData(ctx context.Context, tThreshold []dao.Threshol
 }
 
 func CreateThresholdDependentConstraints(ctx context.Context) error {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	var errResult error
 	var err error
-	wg.Add(6)
-	go func() {
-		defer wg.Done()
-		err = dao.CreateThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateDeviceSnmpDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateResultDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.result: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedThresholdDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateAffectedParamDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.CreateConfigInProcessDaoConstraints(ctx)
-		if err != nil {
-			logger.Errorf("Error creating constraints for table public.config_in_process: %v", err)
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	wg.Wait()
-	if errResult != nil {
-		return errResult
+	err = dao.CreateThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.result: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateConfigInProcessDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.config_in_process: %v", err)
+		return err
 	}
 	return nil
 }
