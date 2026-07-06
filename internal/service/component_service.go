@@ -120,7 +120,7 @@ func DeleteComponent(ctx context.Context, id int64) (bool, error) {
 		if closestIdx != 0 {
 			_, err = ChangeComponentData(ctx, id+1, id)
 			if err != nil {
-				logger.Errorf("Error shifting ID from %d to %d: %v", id+1, id, err)
+				logger.Errorf("Error shifting ID from %d to %d: %v", closestIdx, id, err)
 				return true, err
 			}
 		}
