@@ -188,8 +188,7 @@ func DeleteComponent(ctx context.Context, id int64) (bool, error) {
 	var conn *pgxpool.Pool
 	conn = database.Get()
 	var query string
-	query = `DELETE FROM public.component
-       WHERE "id" = $1`
+	query = `DELETE FROM public.component WHERE "id" = $1`
 	var commandTag interface{ RowsAffected() int64 }
 	var err error
 	commandTag, err = conn.Exec(ctx, query, id)

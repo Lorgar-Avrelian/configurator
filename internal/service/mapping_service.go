@@ -3,6 +3,7 @@ package service
 import (
 	"configurator/internal/dao"
 	"configurator/internal/dto"
+	"configurator/internal/logger"
 	"configurator/internal/mapper"
 	"context"
 	"sort"
@@ -112,10 +113,30 @@ func UpdateMapping(ctx context.Context, id int64, d dto.MappingCreateDto) (*dto.
 }
 
 func DeleteMapping(ctx context.Context, id int64) (bool, error) {
-	var found bool
 	var err error
+	var mappings []dao.MappingDao
+	var found bool
+	mappings, err = dao.GetAllMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error getting mappings from table public.mapping: %v", err)
+		return false, err
+	}
 	found, err = dao.DeleteMapping(ctx, id)
-	return found, err
+	if err != nil {
+		logger.Errorf("Error deleting mapping ID %d: %v", id, err)
+		return false, err
+	}
+	if !found {
+		return false, nil
+	}
+	if id < int64(len(mappings)) {
+		_, err = ChangeMappingData(ctx, id+1, id)
+		if err != nil {
+			logger.Errorf("Error shifting ID from %d to %d: %v", id+1, id, err)
+			return true, err
+		}
+	}
+	return true, nil
 }
 
 func buildMappingTree(parent *dto.MappingDto, childrenMap map[int64][]dto.MappingDto) {

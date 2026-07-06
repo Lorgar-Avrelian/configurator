@@ -149,16 +149,14 @@ func DeleteMapping(ctx context.Context, id int64) (bool, error) {
 	var err error
 	var affected int64
 	conn = database.Get()
-	query = `DELETE FROM public.mapping
-			 WHERE "id" = $1`
+	query = `DELETE FROM public.mapping WHERE "id" = $1`
 	commandTag, err = conn.Exec(ctx, query, id)
 	if err != nil {
 		logger.Error("Failed to delete mapping ID %d: %v", id, err)
 		return false, err
 	}
 	affected = commandTag.RowsAffected()
-	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mapping', 'id'), COALESCE(MAX("id"), 1))
-				FROM public.mapping`
+	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mapping', 'id'), COALESCE(MAX("id"), 1)) FROM public.mapping`
 	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
 		logger.Error("Failed to reset mapping sequence: %v", err)
