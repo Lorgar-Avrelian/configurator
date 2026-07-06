@@ -30,10 +30,10 @@ func ChangeComponentData(ctx context.Context, prevId int64, newId int64) (bool, 
 	var tAffectedParam []dao.AffectedParamDao
 	var tConfigProc []dao.ConfigInProcessDao
 	tComponent, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc, err = GetComponentDependentData(ctx)
-	tComponent, tCompParam, tDevComp, tResult, tAffectedParam, err = changeComponentId(prevId, newId, tComponent, tCompParam, tDevComp, tResult, tAffectedParam)
 	if err != nil {
 		return false, err
 	}
+	tComponent, tCompParam, tDevComp, tResult, tAffectedParam, err = changeComponentId(prevId, newId, tComponent, tCompParam, tDevComp, tResult, tAffectedParam)
 	if err != nil {
 		return false, err
 	}
@@ -949,6 +949,9 @@ func CreateComponentDependentConstraints(ctx context.Context) error {
 }
 
 func ChangeParamData(ctx context.Context, prevId int64, newId int64) (bool, error) {
+	if prevId == newId {
+		return true, nil
+	}
 	var err error
 	var tParam []dao.ParamDao
 	var tCompParam []dao.ComponentParamDao
