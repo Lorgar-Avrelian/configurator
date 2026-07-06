@@ -2577,10 +2577,17 @@ func CreateDeviceComponentDependentConstraints(ctx context.Context) error {
 }
 
 func ChangeMappingData(ctx context.Context, prevId int64, newId int64) (bool, error) {
+	if prevId == newId {
+		return true, nil
+	}
 	var err error
 	var tMapping []dao.MappingDao
 	var tDevCompMap []dao.DeviceComponentMappingDao
 	tMapping, tDevCompMap, err = GetMappingDependentData(ctx)
+	if err != nil {
+		return false, err
+	}
+	tMapping, tDevCompMap, err = changeMappingId(prevId, newId, tMapping, tDevCompMap)
 	if err != nil {
 		return false, err
 	}
@@ -2605,6 +2612,148 @@ func ChangeMappingData(ctx context.Context, prevId int64, newId int64) (bool, er
 		return false, err
 	}
 	return true, nil
+}
+
+func changeMappingId(prevId int64, newId int64, mappings []dao.MappingDao, componentMappings []dao.DeviceComponentMappingDao) ([]dao.MappingDao, []dao.DeviceComponentMappingDao, error) {
+	var i int
+	var err error
+	var idMap map[int64]int64
+	var item dao.MappingDao
+	var prevComponent dao.MappingDao
+	var foundPrev bool
+	var fromIdPtr *int64
+	var zero int64
+	zero = int64(0)
+	if zero >= newId || zero >= prevId {
+		return nil, nil, errors.New("ID cannot be less than or equal to zero")
+	}
+	if newId > int64(len(mappings)) {
+		return nil, nil, errors.New("ID cannot be greater than Mappings count")
+	}
+	for i = range mappings {
+		item = mappings[i]
+		if item.ID == prevId {
+			prevComponent = item
+			foundPrev = true
+			break
+		}
+	}
+	if !foundPrev {
+		return nil, nil, fmt.Errorf("Mapping with ID = %d is not exists", prevId)
+	}
+	fromIdPtr = util.SqlNullInt64ToInt64Ptr(prevComponent.From)
+	if fromIdPtr != nil && *fromIdPtr >= newId {
+		return nil, nil, errors.New("ID of the parent mapping cannot be less than the ID of the child mapping")
+	}
+	idMap, err = calculateMappingIdMap(prevId, newId, mappings)
+	if err != nil {
+		return nil, nil, err
+	}
+	updateMappingIds(mappings, idMap)
+	updateDeviceCompMappingsMappingIds(componentMappings, idMap)
+	return mappings, componentMappings, nil
+}
+
+func calculateMappingIdMap(prevId int64, newId int64, mappings []dao.MappingDao) (map[int64]int64, error) {
+	var idMap map[int64]int64
+	var i int
+	var j int
+	var k int
+	var length int
+	var sortedIds []int64
+	var currentId int64
+	var firstSortedId int64
+	var tmp int64
+	idMap = make(map[int64]int64)
+	length = len(mappings)
+	sortedIds = make([]int64, length)
+	for i = range mappings {
+		sortedIds[i] = mappings[i].ID
+	}
+	for j = range sortedIds {
+		for k = range sortedIds {
+			if sortedIds[k] > sortedIds[j] {
+				tmp = sortedIds[j]
+				sortedIds[j] = sortedIds[k]
+				sortedIds[k] = tmp
+			}
+		}
+	}
+	currentId = int64(1)
+	if length > 0 {
+		firstSortedId = sortedIds[0]
+		if currentId > firstSortedId {
+			currentId = firstSortedId
+		}
+	}
+	if currentId > newId {
+		currentId = newId
+	}
+	buildDenseMappingIdMap(idMap, sortedIds, prevId, newId, currentId)
+	return idMap, nil
+}
+
+func buildDenseMappingIdMap(idMap map[int64]int64, sortedIds []int64, prevId int64, newId int64, startId int64) {
+	var i int
+	var val int64
+	var nextId int64
+	nextId = startId
+	for i = range sortedIds {
+		val = sortedIds[i]
+		if val == prevId {
+			idMap[val] = newId
+		}
+	}
+	for i = range sortedIds {
+		val = sortedIds[i]
+		if val == prevId {
+			continue
+		}
+		if nextId == newId {
+			nextId = nextId + 1
+		}
+		idMap[val] = nextId
+		nextId = nextId + 1
+	}
+}
+
+func updateMappingIds(mappings []dao.MappingDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	var fromIdPtr *int64
+	var newFromId int64
+	for i = range mappings {
+		oldId = mappings[i].ID
+		newId, exists = idMap[oldId]
+		if exists {
+			mappings[i].ID = newId
+		}
+		fromIdPtr = util.SqlNullInt64ToInt64Ptr(mappings[i].From)
+		if fromIdPtr != nil {
+			oldId = *fromIdPtr
+			newId, exists = idMap[oldId]
+			if exists {
+				newFromId = newId
+				mappings[i].From = util.Int64PtrToSqlNullInt64(&newFromId)
+			}
+		}
+	}
+}
+
+func updateDeviceCompMappingsMappingIds(componentMappings []dao.DeviceComponentMappingDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	for i = range componentMappings {
+		oldId = componentMappings[i].MappingID
+		newId, exists = idMap[oldId]
+		if exists {
+			componentMappings[i].MappingID = newId
+		}
+	}
 }
 
 func GetMappingDependentData(ctx context.Context) ([]dao.MappingDao, []dao.DeviceComponentMappingDao, error) {
