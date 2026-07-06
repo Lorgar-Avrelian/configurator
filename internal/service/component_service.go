@@ -3,6 +3,7 @@ package service
 import (
 	"configurator/internal/dao"
 	"configurator/internal/dto"
+	"configurator/internal/logger"
 	"configurator/internal/mapper"
 	"context"
 )
@@ -84,8 +85,45 @@ func UpdateComponent(ctx context.Context, id int64, d dto.ComponentUpdateDto) (*
 }
 
 func DeleteComponent(ctx context.Context, id int64) (bool, error) {
-	var found bool
 	var err error
+	var i int
+	var closestIdx int64
+	var components []dao.ComponentDao
+	var found bool
+	components, err = dao.GetAllComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error getting components from table public.component: %v", err)
+		return false, err
+	}
 	found, err = dao.DeleteComponent(ctx, id)
-	return found, err
+	if err != nil {
+		logger.Errorf("Error deleting component ID %d: %v", id, err)
+		return false, err
+	}
+	if !found {
+		return false, nil
+	}
+	if id < int64(len(components)) {
+		closestIdx = 0
+		components, err = dao.GetAllComponentDao(ctx)
+		if err != nil {
+			logger.Errorf("Error getting components from table public.component: %v", err)
+			return false, err
+		}
+		for i = range components {
+			if components[i].ID <= id {
+				continue
+			}
+			closestIdx = components[i].ID
+			break
+		}
+		if closestIdx != 0 {
+			_, err = ChangeComponentData(ctx, id+1, id)
+			if err != nil {
+				logger.Errorf("Error shifting ID from %d to %d: %v", id+1, id, err)
+				return true, err
+			}
+		}
+	}
+	return true, nil
 }

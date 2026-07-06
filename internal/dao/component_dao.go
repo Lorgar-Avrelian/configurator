@@ -188,13 +188,8 @@ func DeleteComponent(ctx context.Context, id int64) (bool, error) {
 	var conn *pgxpool.Pool
 	conn = database.Get()
 	var query string
-	query = `WITH RECURSIVE component_tree AS (
-		SELECT "id" FROM public.component WHERE "id" = $1
-		UNION ALL
-		SELECT c."id" FROM public.component c
-		JOIN component_tree ct ON c."base_component" = ct."id"
-	)
-	DELETE FROM public.component WHERE "id" IN (SELECT "id" FROM component_tree)`
+	query = `DELETE FROM public.component
+       WHERE "id" = $1`
 	var commandTag interface{ RowsAffected() int64 }
 	var err error
 	commandTag, err = conn.Exec(ctx, query, id)

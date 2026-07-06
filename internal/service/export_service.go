@@ -571,45 +571,45 @@ ALTER TABLE public.vendor
   ADD CONSTRAINT "vendor_number_key" UNIQUE ("number");
 
 ALTER TABLE public.agent_capabilities 
-  ADD CONSTRAINT "agent_capabilities_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+  ADD CONSTRAINT "agent_capabilities_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.agent_capabilities_module_notification 
-  ADD CONSTRAINT "agent_capabilities_module_notification_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id");
+  ADD CONSTRAINT "agent_capabilities_module_notification_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.agent_capabilities_module_object 
-  ADD CONSTRAINT "agent_capabilities_module_object_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id");
+  ADD CONSTRAINT "agent_capabilities_module_object_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.mib 
   ADD CONSTRAINT "mib_path_key" UNIQUE ("path"),
-  ADD CONSTRAINT "mib_vendor_fkey" FOREIGN KEY ("vendor") REFERENCES public.vendor ("id");
+  ADD CONSTRAINT "mib_vendor_fkey" FOREIGN KEY ("vendor") REFERENCES public.vendor ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.module_compliance 
-  ADD CONSTRAINT "module_compliance_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+  ADD CONSTRAINT "module_compliance_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.module_compliance_module_object 
-  ADD CONSTRAINT "module_compliance_module_object_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id");
+  ADD CONSTRAINT "module_compliance_module_object_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.notification_group 
-  ADD CONSTRAINT "notification_group_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+  ADD CONSTRAINT "notification_group_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.notification_type 
-  ADD CONSTRAINT "notification_type_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+  ADD CONSTRAINT "notification_type_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.object_group 
-  ADD CONSTRAINT "object_group_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+  ADD CONSTRAINT "object_group_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.object_identifier 
-  ADD CONSTRAINT "object_identifier_type_fkey" FOREIGN KEY ("type") REFERENCES public.asn1_type ("id");
+  ADD CONSTRAINT "object_identifier_type_fkey" FOREIGN KEY ("type") REFERENCES public.asn1_type ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.object_identity 
-  ADD CONSTRAINT "object_identity_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+  ADD CONSTRAINT "object_identity_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.object_type 
-  ADD CONSTRAINT "object_type_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id"),
-  ADD CONSTRAINT "object_type_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+  ADD CONSTRAINT "object_type_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id") ON DELETE CASCADE,
+  ADD CONSTRAINT "object_type_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.textual_convention 
-  ADD CONSTRAINT "textual_convention_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id");
+  ADD CONSTRAINT "textual_convention_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.mib_to_agent_capabilities 
   ADD CONSTRAINT "mib_to_agent_capabilities_mib_id_fkey" FOREIGN KEY ("mib_id") REFERENCES public.mib ("id") ON DELETE CASCADE,
@@ -699,13 +699,13 @@ ALTER TABLE public.mib_to_trap_type
   ADD CONSTRAINT "mib_tt" UNIQUE NULLS NOT DISTINCT ("mib_id", "trap_type_id");
 
 ALTER TABLE public.oid 
-  ADD CONSTRAINT "oid_mib_fkey" FOREIGN KEY ("mib") REFERENCES public.mib ("id"),
-  ADD CONSTRAINT "oid_type_fkey" FOREIGN KEY ("type") REFERENCES public.asn1_type ("id"),
-  ADD CONSTRAINT "oid_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id"),
-  ADD CONSTRAINT "oid_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id");
+  ADD CONSTRAINT "oid_mib_fkey" FOREIGN KEY ("mib") REFERENCES public.mib ("id") ON DELETE CASCADE,
+  ADD CONSTRAINT "oid_type_fkey" FOREIGN KEY ("type") REFERENCES public.asn1_type ("id") ON DELETE CASCADE,
+  ADD CONSTRAINT "oid_status_fkey" FOREIGN KEY ("status") REFERENCES public.oid_status ("id") ON DELETE CASCADE,
+  ADD CONSTRAINT "oid_access_fkey" FOREIGN KEY ("access") REFERENCES public.oid_access ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.component 
-  ADD CONSTRAINT "component_base_component_fkey" FOREIGN KEY ("base_component") REFERENCES public.component ("id"),
+  ADD CONSTRAINT "component_base_component_fkey" FOREIGN KEY ("base_component") REFERENCES public.component ("id") ON DELETE CASCADE,
   ADD CONSTRAINT "component_access_fkey" FOREIGN KEY ("access") REFERENCES public.access ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.param 
@@ -713,14 +713,14 @@ ALTER TABLE public.param
   ADD CONSTRAINT "param_access_fkey" FOREIGN KEY ("access") REFERENCES public.access ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.component_param 
-  ADD CONSTRAINT "component_param_component_id_fkey" FOREIGN KEY ("component_id") REFERENCES public.component ("id"),
-  ADD CONSTRAINT "component_param_param_id_fkey" FOREIGN KEY ("param_id") REFERENCES public.param ("id");
+  ADD CONSTRAINT "component_param_component_id_fkey" FOREIGN KEY ("component_id") REFERENCES public.component ("id") ON DELETE CASCADE,
+  ADD CONSTRAINT "component_param_param_id_fkey" FOREIGN KEY ("param_id") REFERENCES public.param ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.device_indicator 
   ADD CONSTRAINT "device_indicator_tt" UNIQUE NULLS NOT DISTINCT ("description", "object_id", "contact", "name", "location", "services");
 
 ALTER TABLE public.param_indicator 
-  ADD CONSTRAINT "param_indicator_oid_id_fkey" FOREIGN KEY ("oid_id") REFERENCES public.oid ("id");
+  ADD CONSTRAINT "param_indicator_oid_id_fkey" FOREIGN KEY ("oid_id") REFERENCES public.oid ("id") ON DELETE CASCADE;
 
 ALTER TABLE public.mapping 
   ADD CONSTRAINT "mapping_indicator_fkey" FOREIGN KEY ("indicator") REFERENCES public.param_indicator ("id") ON DELETE CASCADE,
