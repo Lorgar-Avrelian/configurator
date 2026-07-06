@@ -115,6 +115,7 @@ func NewServer() *Server {
 			defaultConfig.GET("/:id", GetDefaultConfiguration)
 			defaultConfig.PUT("/:id", UpdateDefaultConfiguration)
 			defaultConfig.DELETE("/:id", DeleteDefaultConfiguration)
+			defaultConfig.PATCH("/:prevId/:newId", ChangeDefaultConfigurationDataHandler)
 		}
 		v1.GET("/configurations", GetAllConfigurations)
 		var configGroup *gin.RouterGroup

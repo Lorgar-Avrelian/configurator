@@ -1313,6 +1313,45 @@ paths:
       summary: Обновить конфигурацию по умолчанию по ID
       tags:
       - '10. Конфигурация: Конфигурации по-умолчанию'
+  /api/v1/default-configuration/{prevId}/{newId}:
+    patch:
+      parameters:
+      - description: Предыдущий ID конфигурации по умолчанию
+        in: path
+        name: prevId
+        required: true
+        type: integer
+      - description: Новый ID конфигурации по умолчанию
+        in: path
+        name: newId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Изменить ID конфигурации по умолчанию
+      tags:
+      - '10. Конфигурация: Конфигурации по-умолчанию'
   /api/v1/default-configurations:
     get:
       produces:

@@ -2818,6 +2818,155 @@ func CreateMappingDependentConstraints(ctx context.Context) error {
 	return nil
 }
 
+func ChangeDefaultConfigurationData(ctx context.Context, prevId int64, newId int64) (bool, error) {
+	if prevId == newId {
+		return true, nil
+	}
+	var err error
+	var tDefaultConfiguration []dao.DefaultConfigurationDao
+	tDefaultConfiguration, err = dao.GetAllDefaultConfigurationDao(ctx)
+	if err != nil {
+		return false, err
+	}
+	tDefaultConfiguration, err = changeDefaultConfigurationId(prevId, newId, tDefaultConfiguration)
+	if err != nil {
+		return false, err
+	}
+	err = dao.DropDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
+		return false, err
+	}
+	err = dao.DropDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.default_configuration: %v", err)
+		return false, err
+	}
+	err = dao.CreateDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.default_configuration: %v", err)
+		return false, err
+	}
+	err = dao.ImportDefaultConfigurationDao(ctx, tDefaultConfiguration)
+	if err != nil {
+		logger.Errorf("Error importing data into table public.default_configuration: %v", err)
+		return false, err
+	}
+	err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
+		return false, err
+	}
+	return true, nil
+}
+
+func changeDefaultConfigurationId(prevId int64, newId int64, defaultConfigurations []dao.DefaultConfigurationDao) ([]dao.DefaultConfigurationDao, error) {
+	var i int
+	var err error
+	var idMap map[int64]int64
+	var foundPrev bool
+	var zero int64
+	zero = int64(0)
+	if zero >= newId || zero >= prevId {
+		return nil, errors.New("ID cannot be less than or equal to zero")
+	}
+	if newId > int64(len(defaultConfigurations)) {
+		return nil, errors.New("ID cannot be greater than Default Configurations count")
+	}
+	for i = range defaultConfigurations {
+		if defaultConfigurations[i].ID == prevId {
+			foundPrev = true
+			break
+		}
+	}
+	if !foundPrev {
+		return nil, fmt.Errorf("Default configuration with ID = %d is not exists", prevId)
+	}
+	idMap, err = calculateDefaultConfigIdMap(prevId, newId, defaultConfigurations)
+	if err != nil {
+		return nil, err
+	}
+	updateDefaultConfigIds(defaultConfigurations, idMap)
+	return defaultConfigurations, nil
+}
+
+func calculateDefaultConfigIdMap(prevId int64, newId int64, defaultConfigurations []dao.DefaultConfigurationDao) (map[int64]int64, error) {
+	var idMap map[int64]int64
+	var i int
+	var j int
+	var k int
+	var length int
+	var sortedIds []int64
+	var currentId int64
+	var firstSortedId int64
+	var tmp int64
+	idMap = make(map[int64]int64)
+	length = len(defaultConfigurations)
+	sortedIds = make([]int64, length)
+	for i = range defaultConfigurations {
+		sortedIds[i] = defaultConfigurations[i].ID
+	}
+	for j = range sortedIds {
+		for k = range sortedIds {
+			if sortedIds[k] > sortedIds[j] {
+				tmp = sortedIds[j]
+				sortedIds[j] = sortedIds[k]
+				sortedIds[k] = tmp
+			}
+		}
+	}
+	currentId = int64(1)
+	if length > 0 {
+		firstSortedId = sortedIds[0]
+		if currentId > firstSortedId {
+			currentId = firstSortedId
+		}
+	}
+	if currentId > newId {
+		currentId = newId
+	}
+	buildDenseDefaultConfigIdMap(idMap, sortedIds, prevId, newId, currentId)
+	return idMap, nil
+}
+
+func buildDenseDefaultConfigIdMap(idMap map[int64]int64, sortedIds []int64, prevId int64, newId int64, startId int64) {
+	var i int
+	var val int64
+	var nextId int64
+	nextId = startId
+	for i = range sortedIds {
+		val = sortedIds[i]
+		if val == prevId {
+			idMap[val] = newId
+		}
+	}
+	for i = range sortedIds {
+		val = sortedIds[i]
+		if val == prevId {
+			continue
+		}
+		if nextId == newId {
+			nextId = nextId + 1
+		}
+		idMap[val] = nextId
+		nextId = nextId + 1
+	}
+}
+
+func updateDefaultConfigIds(defaultConfigurations []dao.DefaultConfigurationDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	for i = range defaultConfigurations {
+		oldId = defaultConfigurations[i].ID
+		newId, exists = idMap[oldId]
+		if exists {
+			defaultConfigurations[i].ID = newId
+		}
+	}
+}
+
 func ChangeThresholdData(ctx context.Context, prevId int64, newId int64) (bool, error) {
 	if prevId == newId {
 		return true, nil

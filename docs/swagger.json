@@ -956,6 +956,65 @@
                 }
             }
         },
+        "/api/v1/default-configuration/{prevId}/{newId}": {
+            "patch": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "10. Конфигурация: Конфигурации по-умолчанию"
+                ],
+                "summary": "Изменить ID конфигурации по умолчанию",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Предыдущий ID конфигурации по умолчанию",
+                        "name": "prevId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Новый ID конфигурации по умолчанию",
+                        "name": "newId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/default-configurations": {
             "get": {
                 "produces": [

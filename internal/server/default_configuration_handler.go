@@ -214,3 +214,42 @@ func DeleteDefaultConfiguration(c *gin.Context) {
 	}
 	c.Status(http.StatusNoContent)
 }
+
+// ChangeDefaultConfigurationDataHandler изменяет ID конфигурации по умолчанию
+// @Summary         Изменить ID конфигурации по умолчанию
+// @Tags            10. Конфигурация: Конфигурации по-умолчанию
+// @Produce         json
+// @Param           prevId path      int  true  "Предыдущий ID конфигурации по умолчанию"
+// @Param           newId  path      int  true  "Новый ID конфигурации по умолчанию"
+// @Success         200  "OK"
+// @Failure         400  {object}  map[string]string
+// @Failure         404  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/default-configuration/{prevId}/{newId} [patch]
+func ChangeDefaultConfigurationDataHandler(c *gin.Context) {
+	var prevId int64
+	var newId int64
+	var err error
+	prevId, err = strconv.ParseInt(c.Param("prevId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid prevId format"})
+		return
+	}
+	newId, err = strconv.ParseInt(c.Param("newId"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid newId format"})
+		return
+	}
+	var success bool
+	success, err = service.ChangeDefaultConfigurationData(c.Request.Context(), prevId, newId)
+	if err != nil {
+		logger.Error("Service error during changing threshold data from %d to %d: %v", prevId, newId, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if !success {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Operation rejected by service"})
+		return
+	}
+	c.Status(http.StatusOK)
+}
