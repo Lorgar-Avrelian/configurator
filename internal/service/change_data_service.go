@@ -1067,32 +1067,8 @@ func calculateParamIdMap(prevId int64, newId int64, params []dao.ParamDao) (map[
 	if currentId > newId {
 		currentId = newId
 	}
-	buildDenseParamIdMap(idMap, sortedIds, prevId, newId, currentId)
+	buildDenseIdMap(idMap, sortedIds, prevId, newId, currentId)
 	return idMap, nil
-}
-
-func buildDenseParamIdMap(idMap map[int64]int64, sortedIds []int64, prevId int64, newId int64, startId int64) {
-	var i int
-	var val int64
-	var nextId int64
-	nextId = startId
-	for i = range sortedIds {
-		val = sortedIds[i]
-		if val == prevId {
-			idMap[val] = newId
-		}
-	}
-	for i = range sortedIds {
-		val = sortedIds[i]
-		if val == prevId {
-			continue
-		}
-		if nextId == newId {
-			nextId = nextId + 1
-		}
-		idMap[val] = nextId
-		nextId = nextId + 1
-	}
 }
 
 func updateParamsIds(params []dao.ParamDao, idMap map[int64]int64) {
@@ -1983,32 +1959,8 @@ func calculateDeviceCompIdMap(prevId int64, newId int64, deviceComponents []dao.
 	if currentId > newId {
 		currentId = newId
 	}
-	buildDenseDeviceCompIdMap(idMap, sortedIds, prevId, newId, currentId)
+	buildDenseIdMap(idMap, sortedIds, prevId, newId, currentId)
 	return idMap, nil
-}
-
-func buildDenseDeviceCompIdMap(idMap map[int64]int64, sortedIds []int64, prevId int64, newId int64, startId int64) {
-	var i int
-	var val int64
-	var nextId int64
-	nextId = startId
-	for i = range sortedIds {
-		val = sortedIds[i]
-		if val == prevId {
-			idMap[val] = newId
-		}
-	}
-	for i = range sortedIds {
-		val = sortedIds[i]
-		if val == prevId {
-			continue
-		}
-		if nextId == newId {
-			nextId = nextId + 1
-		}
-		idMap[val] = nextId
-		nextId = nextId + 1
-	}
 }
 
 func updateDeviceCompIds(deviceComponents []dao.DeviceComponentDao, idMap map[int64]int64) {
@@ -2689,32 +2641,8 @@ func calculateMappingIdMap(prevId int64, newId int64, mappings []dao.MappingDao)
 	if currentId > newId {
 		currentId = newId
 	}
-	buildDenseMappingIdMap(idMap, sortedIds, prevId, newId, currentId)
+	buildDenseIdMap(idMap, sortedIds, prevId, newId, currentId)
 	return idMap, nil
-}
-
-func buildDenseMappingIdMap(idMap map[int64]int64, sortedIds []int64, prevId int64, newId int64, startId int64) {
-	var i int
-	var val int64
-	var nextId int64
-	nextId = startId
-	for i = range sortedIds {
-		val = sortedIds[i]
-		if val == prevId {
-			idMap[val] = newId
-		}
-	}
-	for i = range sortedIds {
-		val = sortedIds[i]
-		if val == prevId {
-			continue
-		}
-		if nextId == newId {
-			nextId = nextId + 1
-		}
-		idMap[val] = nextId
-		nextId = nextId + 1
-	}
 }
 
 func updateMappingIds(mappings []dao.MappingDao, idMap map[int64]int64) {
@@ -2891,6 +2819,9 @@ func CreateMappingDependentConstraints(ctx context.Context) error {
 }
 
 func ChangeThresholdData(ctx context.Context, prevId int64, newId int64) (bool, error) {
+	if prevId == newId {
+		return true, nil
+	}
 	var err error
 	var tThreshold []dao.ThresholdDao
 	var tDevSnmp []dao.DeviceSnmpDao
@@ -2899,6 +2830,10 @@ func ChangeThresholdData(ctx context.Context, prevId int64, newId int64) (bool, 
 	var tAffectedParam []dao.AffectedParamDao
 	var tConfigProc []dao.ConfigInProcessDao
 	tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc, err = GetThresholdDependentData(ctx)
+	if err != nil {
+		return false, err
+	}
+	tThreshold, tAffectedTh, err = changeThresholdId(prevId, newId, tThreshold, tAffectedTh)
 	if err != nil {
 		return false, err
 	}
@@ -2923,6 +2858,104 @@ func ChangeThresholdData(ctx context.Context, prevId int64, newId int64) (bool, 
 		return false, err
 	}
 	return true, nil
+}
+
+func changeThresholdId(prevId int64, newId int64, thresholds []dao.ThresholdDao, affectedThresholds []dao.AffectedThresholdDao) ([]dao.ThresholdDao, []dao.AffectedThresholdDao, error) {
+	var i int
+	var err error
+	var idMap map[int64]int64
+	var foundPrev bool
+	var zero int64
+	zero = int64(0)
+	if zero >= newId || zero >= prevId {
+		return nil, nil, errors.New("ID cannot be less than or equal to zero")
+	}
+	if newId > int64(len(thresholds)) {
+		return nil, nil, errors.New("ID cannot be greater than Thresholds count")
+	}
+	for i = range thresholds {
+		if thresholds[i].ID == prevId {
+			foundPrev = true
+			break
+		}
+	}
+	if !foundPrev {
+		return nil, nil, fmt.Errorf("Threshold with ID = %d is not exists", prevId)
+	}
+	idMap, err = calculateThresholdIdMap(prevId, newId, thresholds)
+	if err != nil {
+		return nil, nil, err
+	}
+	updateThresholdIds(thresholds, idMap)
+	updateAffectedThresholdsIds(affectedThresholds, idMap)
+	return thresholds, affectedThresholds, nil
+}
+
+func calculateThresholdIdMap(prevId int64, newId int64, thresholds []dao.ThresholdDao) (map[int64]int64, error) {
+	var idMap map[int64]int64
+	var i int
+	var j int
+	var k int
+	var length int
+	var sortedIds []int64
+	var currentId int64
+	var firstSortedId int64
+	var tmp int64
+	idMap = make(map[int64]int64)
+	length = len(thresholds)
+	sortedIds = make([]int64, length)
+	for i = range thresholds {
+		sortedIds[i] = thresholds[i].ID
+	}
+	for j = range sortedIds {
+		for k = range sortedIds {
+			if sortedIds[k] > sortedIds[j] {
+				tmp = sortedIds[j]
+				sortedIds[j] = sortedIds[k]
+				sortedIds[k] = tmp
+			}
+		}
+	}
+	currentId = int64(1)
+	if length > 0 {
+		firstSortedId = sortedIds[0]
+		if currentId > firstSortedId {
+			currentId = firstSortedId
+		}
+	}
+	if currentId > newId {
+		currentId = newId
+	}
+	buildDenseIdMap(idMap, sortedIds, prevId, newId, currentId)
+	return idMap, nil
+}
+
+func updateThresholdIds(thresholds []dao.ThresholdDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	for i = range thresholds {
+		oldId = thresholds[i].ID
+		newId, exists = idMap[oldId]
+		if exists {
+			thresholds[i].ID = newId
+		}
+	}
+}
+
+func updateAffectedThresholdsIds(affectedThresholds []dao.AffectedThresholdDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	for i = range affectedThresholds {
+		oldId = affectedThresholds[i].Threshold
+		newId, exists = idMap[oldId]
+		if exists {
+			affectedThresholds[i].Threshold = newId
+		}
+	}
 }
 
 func GetThresholdDependentData(ctx context.Context) ([]dao.ThresholdDao, []dao.DeviceSnmpDao, []dao.ResultDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao, []dao.ConfigInProcessDao, error) {
