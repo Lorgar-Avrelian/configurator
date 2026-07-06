@@ -74,6 +74,9 @@ func changeComponentId(prevId int64, newId int64, components []dao.ComponentDao,
 	if newId <= zero || prevId <= zero {
 		return nil, nil, nil, nil, nil, errors.New("ID cannot be less than or equal to zero")
 	}
+	if newId > int64(len(components)) {
+		return nil, nil, nil, nil, nil, errors.New("ID cannot be greater than Components count")
+	}
 	for i = range components {
 		item = components[i]
 		if item.ID == prevId {
@@ -1016,6 +1019,9 @@ func changeParamId(prevId int64, newId int64, params []dao.ParamDao, componentPa
 	if newId <= zero || prevId <= zero {
 		return nil, nil, nil, nil, nil, errors.New("ID cannot be less than or equal to zero")
 	}
+	if newId > int64(len(params)) {
+		return nil, nil, nil, nil, nil, errors.New("ID cannot be greater than Params count")
+	}
 	for i = range params {
 		if params[i].ID == prevId {
 			foundPrev = true
@@ -1050,7 +1056,7 @@ func calculateParamIdMap(prevId int64, newId int64, params []dao.ParamDao) (map[
 	for i = range params {
 		sortedIds[i] = params[i].ID
 	}
-	sortParamIdsArray(sortedIds)
+	sortIdsArray(sortedIds)
 	currentId = int64(1)
 	if length > 0 {
 		firstSortedId = sortedIds[0]
@@ -1063,21 +1069,6 @@ func calculateParamIdMap(prevId int64, newId int64, params []dao.ParamDao) (map[
 	}
 	buildDenseParamIdMap(idMap, sortedIds, prevId, newId, currentId)
 	return idMap, nil
-}
-
-func sortParamIdsArray(ids []int64) {
-	var j int
-	var k int
-	var tmp int64
-	for j = range ids {
-		for k = range ids {
-			if ids[k] > ids[j] {
-				tmp = ids[j]
-				ids[j] = ids[k]
-				ids[k] = tmp
-			}
-		}
-	}
 }
 
 func buildDenseParamIdMap(idMap map[int64]int64, sortedIds []int64, prevId int64, newId int64, startId int64) {
@@ -1881,6 +1872,9 @@ func CreateParamDependentConstraints(ctx context.Context) error {
 }
 
 func ChangeDeviceComponentData(ctx context.Context, prevId int64, newId int64) (bool, error) {
+	if prevId == newId {
+		return true, nil
+	}
 	var err error
 	var tDevComp []dao.DeviceComponentDao
 	var tDevCompMap []dao.DeviceComponentMappingDao
@@ -1893,6 +1887,10 @@ func ChangeDeviceComponentData(ctx context.Context, prevId int64, newId int64) (
 	var tAffectedParam []dao.AffectedParamDao
 	var tConfigProc []dao.ConfigInProcessDao
 	tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc, err = GetDeviceComponentDependentData(ctx)
+	if err != nil {
+		return false, err
+	}
+	tDevComp, tDevCompMap, tConfig, tDefConfig, err = changeDeviceComponentId(prevId, newId, tDevComp, tDevCompMap, tConfig, tDefConfig)
 	if err != nil {
 		return false, err
 	}
@@ -1917,6 +1915,179 @@ func ChangeDeviceComponentData(ctx context.Context, prevId int64, newId int64) (
 		return false, err
 	}
 	return true, nil
+}
+
+func changeDeviceComponentId(prevId int64, newId int64, deviceComponents []dao.DeviceComponentDao, deviceComponentMappings []dao.DeviceComponentMappingDao, configurations []dao.ConfigurationDao, defaultConfigurations []dao.DefaultConfigurationDao) ([]dao.DeviceComponentDao, []dao.DeviceComponentMappingDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, error) {
+	var i int
+	var err error
+	var idMap map[int64]int64
+	var item dao.DeviceComponentDao
+	var prevComponent dao.DeviceComponentDao
+	var foundPrev bool
+	var parentIdPtr *int64
+	var zero int64
+	zero = int64(0)
+	if newId <= zero || prevId <= zero {
+		return nil, nil, nil, nil, errors.New("ID cannot be less than or equal to zero")
+	}
+	if newId > int64(len(deviceComponents)) {
+		return nil, nil, nil, nil, errors.New("ID cannot be greater than Device Components count")
+	}
+	for i = range deviceComponents {
+		item = deviceComponents[i]
+		if item.ID == prevId {
+			prevComponent = item
+			foundPrev = true
+			break
+		}
+	}
+	if !foundPrev {
+		return nil, nil, nil, nil, fmt.Errorf("Device Component with ID = %d is not exists", prevId)
+	}
+	parentIdPtr = util.SqlNullInt64ToInt64Ptr(prevComponent.Parent)
+	if parentIdPtr != nil && *parentIdPtr >= newId {
+		return nil, nil, nil, nil, errors.New("ID of the parent device component cannot be less than the ID of the child device component")
+	}
+	idMap, err = calculateDeviceCompIdMap(prevId, newId, deviceComponents)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+	updateDeviceCompIds(deviceComponents, idMap)
+	updateDeviceCompMappingsIds(deviceComponentMappings, idMap)
+	updateConfigurationsIds(configurations, idMap)
+	updateDefaultConfigurationsIds(defaultConfigurations, idMap)
+	return deviceComponents, deviceComponentMappings, configurations, defaultConfigurations, nil
+}
+
+func calculateDeviceCompIdMap(prevId int64, newId int64, deviceComponents []dao.DeviceComponentDao) (map[int64]int64, error) {
+	var idMap map[int64]int64
+	var i int
+	var length int
+	var sortedIds []int64
+	var currentId int64
+	var firstSortedId int64
+	idMap = make(map[int64]int64)
+	length = len(deviceComponents)
+	sortedIds = make([]int64, length)
+	for i = range deviceComponents {
+		sortedIds[i] = deviceComponents[i].ID
+	}
+	sortIdsArray(sortedIds)
+	currentId = int64(1)
+	if length > 0 {
+		firstSortedId = sortedIds[0]
+		if currentId > firstSortedId {
+			currentId = firstSortedId
+		}
+	}
+	if currentId > newId {
+		currentId = newId
+	}
+	buildDenseDeviceCompIdMap(idMap, sortedIds, prevId, newId, currentId)
+	return idMap, nil
+}
+
+func buildDenseDeviceCompIdMap(idMap map[int64]int64, sortedIds []int64, prevId int64, newId int64, startId int64) {
+	var i int
+	var val int64
+	var nextId int64
+	nextId = startId
+	for i = range sortedIds {
+		val = sortedIds[i]
+		if val == prevId {
+			idMap[val] = newId
+		}
+	}
+	for i = range sortedIds {
+		val = sortedIds[i]
+		if val == prevId {
+			continue
+		}
+		if nextId == newId {
+			nextId = nextId + 1
+		}
+		idMap[val] = nextId
+		nextId = nextId + 1
+	}
+}
+
+func updateDeviceCompIds(deviceComponents []dao.DeviceComponentDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	var parentIdPtr *int64
+	var newParentId int64
+	for i = range deviceComponents {
+		oldId = deviceComponents[i].ID
+		newId, exists = idMap[oldId]
+		if exists {
+			deviceComponents[i].ID = newId
+		}
+		parentIdPtr = util.SqlNullInt64ToInt64Ptr(deviceComponents[i].Parent)
+		if parentIdPtr != nil {
+			oldId = *parentIdPtr
+			newId, exists = idMap[oldId]
+			if exists {
+				newParentId = newId
+				deviceComponents[i].Parent = util.Int64PtrToSqlNullInt64(&newParentId)
+			}
+		}
+	}
+}
+
+func updateDeviceCompMappingsIds(mappings []dao.DeviceComponentMappingDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	for i = range mappings {
+		oldId = mappings[i].DeviceComponentID
+		newId, exists = idMap[oldId]
+		if exists {
+			mappings[i].DeviceComponentID = newId
+		}
+	}
+}
+
+func updateConfigurationsIds(configurations []dao.ConfigurationDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	var idPtr *int64
+	var newNullId int64
+	for i = range configurations {
+		idPtr = util.SqlNullInt64ToInt64Ptr(configurations[i].DeviceComponentID)
+		if idPtr != nil {
+			oldId = *idPtr
+			newId, exists = idMap[oldId]
+			if exists {
+				newNullId = newId
+				configurations[i].DeviceComponentID = util.Int64PtrToSqlNullInt64(&newNullId)
+			}
+		}
+	}
+}
+
+func updateDefaultConfigurationsIds(defaultConfigurations []dao.DefaultConfigurationDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	var idPtr *int64
+	var newNullId int64
+	for i = range defaultConfigurations {
+		idPtr = util.SqlNullInt64ToInt64Ptr(defaultConfigurations[i].DeviceComponentID)
+		if idPtr != nil {
+			oldId = *idPtr
+			newId, exists = idMap[oldId]
+			if exists {
+				newNullId = newId
+				defaultConfigurations[i].DeviceComponentID = util.Int64PtrToSqlNullInt64(&newNullId)
+			}
+		}
+	}
 }
 
 func GetDeviceComponentDependentData(ctx context.Context) ([]dao.DeviceComponentDao, []dao.DeviceComponentMappingDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.ThresholdDao, []dao.DeviceSnmpDao, []dao.ResultDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao, []dao.ConfigInProcessDao, error) {
