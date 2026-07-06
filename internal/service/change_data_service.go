@@ -3,11 +3,16 @@ package service
 import (
 	"configurator/internal/dao"
 	"configurator/internal/logger"
+	"configurator/internal/util"
 	"context"
+	"errors"
 	"sync"
 )
 
 func ChangeComponentData(ctx context.Context, prevId int64, newId int64) (bool, error) {
+	if prevId == newId {
+		return true, nil
+	}
 	var err error
 	var tComponent []dao.ComponentDao
 	var tCompParam []dao.ComponentParamDao
@@ -25,6 +30,10 @@ func ChangeComponentData(ctx context.Context, prevId int64, newId int64) (bool, 
 	var tAffectedParam []dao.AffectedParamDao
 	var tConfigProc []dao.ConfigInProcessDao
 	tComponent, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc, err = GetComponentDependentData(ctx)
+	tComponent, tCompParam, tDevComp, tResult, tAffectedParam, err = changeComponentId(prevId, newId, tComponent, tCompParam, tDevComp, tResult, tAffectedParam)
+	if err != nil {
+		return false, err
+	}
 	if err != nil {
 		return false, err
 	}
@@ -49,6 +58,188 @@ func ChangeComponentData(ctx context.Context, prevId int64, newId int64) (bool, 
 		return false, err
 	}
 	return true, nil
+}
+
+func changeComponentId(prevId int64, newId int64, components []dao.ComponentDao, componentParams []dao.ComponentParamDao, deviceComponents []dao.DeviceComponentDao, results []dao.ResultDao, affectedParams []dao.AffectedParamDao) ([]dao.ComponentDao, []dao.ComponentParamDao, []dao.DeviceComponentDao, []dao.ResultDao, []dao.AffectedParamDao, error) {
+	var i int
+	var err error
+	var idMap map[int64]int64
+	var item dao.ComponentDao
+	var prevComponent dao.ComponentDao
+	var foundPrev bool
+	var baseIdPtr *int64
+	for i = range components {
+		item = components[i]
+		if item.ID == prevId {
+			prevComponent = item
+			foundPrev = true
+			break
+		}
+	}
+	if foundPrev {
+		baseIdPtr = util.SqlNullInt64ToInt64Ptr(prevComponent.BaseComponent)
+		if baseIdPtr != nil && *baseIdPtr >= newId {
+			return nil, nil, nil, nil, nil, errors.New("ID of the parent model cannot be less than the ID of the child model")
+		}
+	}
+	idMap, err = calculateIdMap(prevId, newId, components)
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+	updateComponentsIds(components, idMap)
+	updateComponentParamsIds(componentParams, idMap)
+	updateDeviceComponentsIds(deviceComponents, idMap)
+	updateResultsIds(results, idMap)
+	updateAffectedParamsIds(affectedParams, idMap)
+	return components, componentParams, deviceComponents, results, affectedParams, nil
+}
+
+func calculateIdMap(prevId int64, newId int64, components []dao.ComponentDao) (map[int64]int64, error) {
+	var idMap map[int64]int64
+	var i int
+	var length int
+	var sortedIds []int64
+	var currentId int64
+	var firstSortedId int64
+	idMap = make(map[int64]int64)
+	length = len(components)
+	sortedIds = make([]int64, length)
+	for i = range components {
+		sortedIds[i] = components[i].ID
+	}
+	sortIdsArray(sortedIds)
+	currentId = int64(1)
+	if length > 0 {
+		firstSortedId = sortedIds[0]
+		if currentId > firstSortedId {
+			currentId = firstSortedId
+		}
+	}
+	if currentId > newId {
+		currentId = newId
+	}
+	buildDenseIdMap(idMap, sortedIds, prevId, newId, currentId)
+	return idMap, nil
+}
+
+func sortIdsArray(ids []int64) {
+	var j int
+	var k int
+	var tmp int64
+	for j = range ids {
+		for k = range ids {
+			if ids[k] > ids[j] {
+				tmp = ids[j]
+				ids[j] = ids[k]
+				ids[k] = tmp
+			}
+		}
+	}
+}
+
+func buildDenseIdMap(idMap map[int64]int64, sortedIds []int64, prevId int64, newId int64, startId int64) {
+	var i int
+	var val int64
+	var nextId int64
+	nextId = startId
+	for i = range sortedIds {
+		val = sortedIds[i]
+		if val == prevId {
+			idMap[val] = newId
+		}
+	}
+	for i = range sortedIds {
+		val = sortedIds[i]
+		if val == prevId {
+			continue
+		}
+		if nextId == newId {
+			nextId = nextId + 1
+		}
+		idMap[val] = nextId
+		nextId = nextId + 1
+	}
+}
+
+func updateComponentsIds(components []dao.ComponentDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	var baseIdPtr *int64
+	var newBaseId int64
+	for i = range components {
+		oldId = components[i].ID
+		newId, exists = idMap[oldId]
+		if exists {
+			components[i].ID = newId
+		}
+		baseIdPtr = util.SqlNullInt64ToInt64Ptr(components[i].BaseComponent)
+		if baseIdPtr != nil {
+			oldId = *baseIdPtr
+			newId, exists = idMap[oldId]
+			if exists {
+				newBaseId = newId
+				components[i].BaseComponent = util.Int64PtrToSqlNullInt64(&newBaseId)
+			}
+		}
+	}
+}
+
+func updateComponentParamsIds(componentParams []dao.ComponentParamDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	for i = range componentParams {
+		oldId = componentParams[i].ComponentID
+		newId, exists = idMap[oldId]
+		if exists {
+			componentParams[i].ComponentID = newId
+		}
+	}
+}
+
+func updateDeviceComponentsIds(deviceComponents []dao.DeviceComponentDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	for i = range deviceComponents {
+		oldId = deviceComponents[i].Model
+		newId, exists = idMap[oldId]
+		if exists {
+			deviceComponents[i].Model = newId
+		}
+	}
+}
+
+func updateResultsIds(results []dao.ResultDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	for i = range results {
+		oldId = results[i].Component
+		newId, exists = idMap[oldId]
+		if exists {
+			results[i].Component = newId
+		}
+	}
+}
+
+func updateAffectedParamsIds(affectedParams []dao.AffectedParamDao, idMap map[int64]int64) {
+	var i int
+	var oldId int64
+	var newId int64
+	var exists bool
+	for i = range affectedParams {
+		oldId = affectedParams[i].Component
+		newId, exists = idMap[oldId]
+		if exists {
+			affectedParams[i].Component = newId
+		}
+	}
 }
 
 func GetComponentDependentData(ctx context.Context) ([]dao.ComponentDao, []dao.ComponentParamDao, []dao.DeviceIndicatorDao, []dao.ParamIndicatorDao, []dao.MappingDao, []dao.DeviceComponentDao, []dao.DeviceComponentMappingDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.ThresholdDao, []dao.DeviceSnmpDao, []dao.ResultDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao, []dao.ConfigInProcessDao, error) {
