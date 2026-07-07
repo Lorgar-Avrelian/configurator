@@ -59,5 +59,9 @@ func DeleteConfiguration(ctx context.Context, id int64) (bool, error) {
 	var found bool
 	var err error
 	found, err = dao.DeleteConfiguration(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	CompressConfigurationDependentData(ctx)
 	return found, err
 }

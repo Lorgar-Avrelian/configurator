@@ -2635,3 +2635,306 @@ func ResetMappingDependentCountersForMapping(ctx context.Context) error {
 	wg.Wait()
 	return errResult
 }
+
+func CompressConfigurationDependentData(ctx context.Context) {
+	var err error
+	var tConfig []dao.ConfigurationDao
+	var tDevSnmp []dao.DeviceSnmpDao
+	var tAffectedTh []dao.AffectedThresholdDao
+	var tAffectedParam []dao.AffectedParamDao
+	tConfig, tDevSnmp, tAffectedTh, tAffectedParam, err = GetConfigurationDependentDataOnly(ctx)
+	if err != nil {
+		logger.Error("Error while loading configuration dependent data:", err)
+		return
+	}
+	tConfig, tDevSnmp, tAffectedTh, tAffectedParam = overrideConfigurationDependentIds(tConfig, tDevSnmp, tAffectedTh, tAffectedParam)
+	err = DropConfigurationDependentConstraintsForConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while dropping configuration dependent constraints:", err)
+		return
+	}
+	err = DropConfigurationDependentTablesForConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while dropping configuration dependent tables:", err)
+		return
+	}
+	err = CreateConfigurationDependentTablesForConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while creating configuration dependent tables:", err)
+		return
+	}
+	err = InsertConfigurationDependentDataForConfiguration(ctx, tConfig, tDevSnmp, tAffectedTh, tAffectedParam)
+	if err != nil {
+		logger.Error("Error while inserting configuration dependent data:", err)
+		return
+	}
+	err = CreateConfigurationDependentConstraintsForConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while creating configuration dependent constraints:", err)
+		return
+	}
+	err = ResetConfigurationDependentCountersForConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while resetting configuration dependent counters:", err)
+	}
+}
+
+func overrideConfigurationDependentIds(configurations []dao.ConfigurationDao, deviceSnmps []dao.DeviceSnmpDao, affectedThresholds []dao.AffectedThresholdDao, affectedParams []dao.AffectedParamDao) ([]dao.ConfigurationDao, []dao.DeviceSnmpDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao) {
+	var idMap map[int64]int64
+	idMap = make(map[int64]int64)
+	configurations, deviceSnmps = processConfigurations(configurations, deviceSnmps, idMap)
+	clear(idMap)
+	affectedParams = processAffectedParamsSelfIds(affectedParams, idMap)
+	clear(idMap)
+	affectedThresholds = processAffectedThresholdsSelfIds(affectedThresholds, idMap)
+	clear(idMap)
+	return configurations, deviceSnmps, affectedThresholds, affectedParams
+}
+
+func GetConfigurationDependentDataOnly(ctx context.Context) ([]dao.ConfigurationDao, []dao.DeviceSnmpDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao, error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	var tConfig []dao.ConfigurationDao
+	var tDevSnmp []dao.DeviceSnmpDao
+	var tAffectedTh []dao.AffectedThresholdDao
+	var tAffectedParam []dao.AffectedParamDao
+	wg.Add(4)
+	go func() {
+		defer wg.Done()
+		var res []dao.ConfigurationDao
+		res, err = dao.GetAllConfigurationDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tConfig = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.DeviceSnmpDao
+		res, err = dao.GetAllDeviceSnmpDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tDevSnmp = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.AffectedThresholdDao
+		res, err = dao.GetAllAffectedThresholdDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tAffectedTh = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.AffectedParamDao
+		res, err = dao.GetAllAffectedParamDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tAffectedParam = res
+	}()
+	wg.Wait()
+	if errResult != nil {
+		return nil, nil, nil, nil, errResult
+	}
+	return tConfig, tDevSnmp, tAffectedTh, tAffectedParam, nil
+}
+
+func DropConfigurationDependentConstraintsForConfiguration(ctx context.Context) error {
+	var err error
+	err = dao.DropAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.configuration: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropConfigurationDependentTablesForConfiguration(ctx context.Context) error {
+	var err error
+	err = dao.DropAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.configuration: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateConfigurationDependentTablesForConfiguration(ctx context.Context) error {
+	var err error
+	err = dao.CreateConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_threshold: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateConfigurationDependentConstraintsForConfiguration(ctx context.Context) error {
+	var err error
+	err = dao.CreateConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	return nil
+}
+
+func InsertConfigurationDependentDataForConfiguration(ctx context.Context, tConfig []dao.ConfigurationDao, tDevSnmp []dao.DeviceSnmpDao, tAffectedTh []dao.AffectedThresholdDao, tAffectedParam []dao.AffectedParamDao) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(4)
+	go func() {
+		defer wg.Done()
+		err = dao.ImportConfigurationDao(ctx, tConfig)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportDeviceSnmpDao(ctx, tDevSnmp)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportAffectedParamDao(ctx, tAffectedParam)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportAffectedThresholdDao(ctx, tAffectedTh)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}
+
+func ResetConfigurationDependentCountersForConfiguration(ctx context.Context) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(3)
+	go func() {
+		defer wg.Done()
+		err = dao.DropConfigurationDaoCounter(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.DropAffectedParamDaoCounter(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.DropAffectedThresholdDaoCounter(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}
