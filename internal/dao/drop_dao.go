@@ -2,6 +2,7 @@ package dao
 
 import (
 	"configurator/internal/database"
+	"configurator/internal/logger"
 	"context"
 )
 
@@ -1468,6 +1469,798 @@ func DropConfigInProcessDaoConstraints(ctx context.Context) error {
     DROP CONSTRAINT "config_in_process_protocol_fkey";`
 	_, err = database.Get().Exec(ctx, query)
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DropPollingProtocolDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.polling_protocol', 'id'), COALESCE(MAX("id"), 1)) FROM public.polling_protocol;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.polling_protocol counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAccessDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.access', 'id'), COALESCE(MAX("id"), 1)) FROM public.access;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.access counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropVersionSnmpDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.version_snmp', 'id'), COALESCE(MAX("id"), 1)) FROM public.version_snmp;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.version_snmp counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAuthProtocolSnmpDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.auth_protocol_snmp', 'id'), COALESCE(MAX("id"), 1)) FROM public.auth_protocol_snmp;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.auth_protocol_snmp counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropPrivacyProtocolSnmpDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.privacy_protocol_snmp', 'id'), COALESCE(MAX("id"), 1)) FROM public.privacy_protocol_snmp;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.privacy_protocol_snmp counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropOidTypeDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.oid_type', 'id'), COALESCE(MAX("id"), 1)) FROM public.oid_type;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.oid_type counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropLogicOperatorDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.logic_operator', 'id'), COALESCE(MAX("id"), 1)) FROM public.logic_operator;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.logic_operator counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAlarmLevelDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.alarm_level', 'id'), COALESCE(MAX("id"), 1)) FROM public.alarm_level;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.alarm_level counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropVarTypeDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.var_type', 'id'), COALESCE(MAX("id"), 1)) FROM public.var_type;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.var_type counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropPollingFrequencyDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.polling_frequency', 'id'), COALESCE(MAX("id"), 1)) FROM public.polling_frequency;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.polling_frequency counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropOidAccessDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.oid_access', 'id'), COALESCE(MAX("id"), 1)) FROM public.oid_access;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.oid_access counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropOidStatusDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.oid_status', 'id'), COALESCE(MAX("id"), 1)) FROM public.oid_status;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.oid_status counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAsn1TypeDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.asn1_type', 'id'), COALESCE(MAX("id"), 1)) FROM public.asn1_type;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.asn1_type counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropVendorDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.vendor', 'id'), COALESCE(MAX("id"), 1)) FROM public.vendor;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.vendor counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropComponentDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.component', 'id'), COALESCE(MAX("id"), 1)) FROM public.component;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.component counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropParamDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.param', 'id'), COALESCE(MAX("id"), 1)) FROM public.param;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.param counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAgentCapabilitiesDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.agent_capabilities', 'id'), COALESCE(MAX("id"), 1)) FROM public.agent_capabilities;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.agent_capabilities counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAgentCapabilitiesModuleDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.agent_capabilities_module', 'id'), COALESCE(MAX("id"), 1)) FROM public.agent_capabilities_module;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.agent_capabilities_module counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAgentCapabilitiesModuleNotificationDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.agent_capabilities_module_notification', 'id'), COALESCE(MAX("id"), 1)) FROM public.agent_capabilities_module_notification;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.agent_capabilities_module_notification counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAgentCapabilitiesModuleObjectDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.agent_capabilities_module_object', 'id'), COALESCE(MAX("id"), 1)) FROM public.agent_capabilities_module_object;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.agent_capabilities_module_object counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropChoiceDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.choice', 'id'), COALESCE(MAX("id"), 1)) FROM public.choice;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.choice counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropExplicitDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.explicit', 'id'), COALESCE(MAX("id"), 1)) FROM public.explicit;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.explicit counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropImplicitDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.implicit', 'id'), COALESCE(MAX("id"), 1)) FROM public.implicit;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.implicit counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropImportDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.import', 'id'), COALESCE(MAX("id"), 1)) FROM public.import;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.import counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropModuleComplianceDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.module_compliance', 'id'), COALESCE(MAX("id"), 1)) FROM public.module_compliance;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.module_compliance counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropModuleComplianceModuleDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.module_compliance_module', 'id'), COALESCE(MAX("id"), 1)) FROM public.module_compliance_module;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.module_compliance_module counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropModuleComplianceModuleGroupDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.module_compliance_module_group', 'id'), COALESCE(MAX("id"), 1)) FROM public.module_compliance_module_group;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.module_compliance_module_group counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropModuleComplianceModuleObjectDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.module_compliance_module_object', 'id'), COALESCE(MAX("id"), 1)) FROM public.module_compliance_module_object;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.module_compliance_module_object counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropModuleIdentityDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.module_identity', 'id'), COALESCE(MAX("id"), 1)) FROM public.module_identity;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.module_identity counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropNotificationGroupDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.notification_group', 'id'), COALESCE(MAX("id"), 1)) FROM public.notification_group;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.notification_group counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropNotificationTypeDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.notification_type', 'id'), COALESCE(MAX("id"), 1)) FROM public.notification_type;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.notification_type counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropObjectGroupDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.object_group', 'id'), COALESCE(MAX("id"), 1)) FROM public.object_group;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.object_group counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropObjectIdentifierDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.object_identifier', 'id'), COALESCE(MAX("id"), 1)) FROM public.object_identifier;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.object_identifier counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropObjectIdentityDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.object_identity', 'id'), COALESCE(MAX("id"), 1)) FROM public.object_identity;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.object_identity counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropObjectTypeDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.object_type', 'id'), COALESCE(MAX("id"), 1)) FROM public.object_type;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.object_type counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropRevisionDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.revision', 'id'), COALESCE(MAX("id"), 1)) FROM public.revision;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.revision counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropSequenceDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.sequence', 'id'), COALESCE(MAX("id"), 1)) FROM public.sequence;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.sequence counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropTextualConventionDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.textual_convention', 'id'), COALESCE(MAX("id"), 1)) FROM public.textual_convention;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.textual_convention counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropTrapTypeDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.trap_type', 'id'), COALESCE(MAX("id"), 1)) FROM public.trap_type;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.trap_type counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToAgentCapabilitiesDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_agent_capabilities', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_agent_capabilities;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_agent_capabilities counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToChoiceDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_choice', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_choice;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_choice counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToExplicitDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_explicit', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_explicit;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_explicit counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToImplicitDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_implicit', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_implicit;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_implicit counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToImportDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_import', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_import;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_import counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToModuleComplianceDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_module_compliance', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_module_compliance;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_module_compliance counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToModuleIdentityDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_module_identity', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_module_identity;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_module_identity counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToNotificationGroupDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_notification_group', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_notification_group;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_notification_group counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToNotificationTypeDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_notification_type', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_notification_type;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_notification_type counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToObjectGroupDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_object_group', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_object_group;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_object_group counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToObjectIdentifierDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_object_identifier', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_object_identifier;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_object_identifier counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToObjectIdentityDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_object_identity', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_object_identity;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_object_identity counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibObjectTypeDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_object_type', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_object_type;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_object_type counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToSequenceDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_sequence', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_sequence;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_sequence counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToTextualConventionDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_textual_convention', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_textual_convention;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_textual_convention counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMibToTrapTypeDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mib_to_trap_type', 'id'), COALESCE(MAX("id"), 1)) FROM public.mib_to_trap_type;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mib_to_trap_type counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropDeviceIndicatorDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.device_indicator', 'id'), COALESCE(MAX("id"), 1)) FROM public.device_indicator;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.device_indicator counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropParamIndicatorDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.param_indicator', 'id'), COALESCE(MAX("id"), 1)) FROM public.param_indicator;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.param_indicator counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMappingDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mapping', 'id'), COALESCE(MAX("id"), 1)) FROM public.mapping;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.mapping counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropDeviceComponentDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.device_component', 'id'), COALESCE(MAX("id"), 1)) FROM public.device_component;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.device_component counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropConfigurationDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.configuration', 'id'), COALESCE(MAX("id"), 1)) FROM public.configuration;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.configuration counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropDefaultConfigurationDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.default_configuration', 'id'), COALESCE(MAX("id"), 1)) FROM public.default_configuration;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.default_configuration counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropThresholdDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.threshold', 'id'), COALESCE(MAX("id"), 1)) FROM public.threshold;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.threshold counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAffectedThresholdDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.affected_threshold', 'id'), COALESCE(MAX("id"), 1)) FROM public.affected_threshold;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.affected_threshold counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropAffectedParamDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.affected_param', 'id'), COALESCE(MAX("id"), 1)) FROM public.affected_param;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.affected_param counter: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropChangeLogDaoCounter(ctx context.Context) error {
+	var err error
+	var query string
+	query = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.changelog', 'id'), COALESCE(MAX("id"), 1)) FROM public.changelog;`
+	_, err = database.Get().Exec(ctx, query)
+	if err != nil {
+		logger.Errorf("Failed to reset public.changelog counter: %v", err)
 		return err
 	}
 	return nil

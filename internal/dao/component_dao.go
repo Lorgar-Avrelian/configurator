@@ -193,17 +193,10 @@ func DeleteComponent(ctx context.Context, id int64) (bool, error) {
 	var err error
 	commandTag, err = conn.Exec(ctx, query, id)
 	if err != nil {
-		logger.Error("Failed to delete component ID %d: %v", id, err)
+		logger.Errorf("Failed to delete component ID %d: %v", id, err)
 		return false, err
 	}
 	var affected int64
 	affected = commandTag.RowsAffected()
-	var seqQuery string
-	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.component', 'id'), COALESCE(MAX("id"), 1)) FROM public.component`
-	_, err = conn.Exec(ctx, seqQuery)
-	if err != nil {
-		logger.Error("Failed to reset component sequence: %v", err)
-		return true, err
-	}
 	return affected > 0, nil
 }
