@@ -85,5 +85,9 @@ func DeleteParamIndicator(ctx context.Context, id int64) (bool, error) {
 	var found bool
 	var err error
 	found, err = dao.DeleteParamIndicator(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	CompressParamIndicatorDependentData(ctx)
 	return found, err
 }

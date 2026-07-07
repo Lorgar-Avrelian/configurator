@@ -4,6 +4,7 @@ import (
 	"configurator/internal/dao"
 	"configurator/internal/logger"
 	"context"
+	"database/sql"
 	"sync"
 )
 
@@ -11,68 +12,55 @@ func CompressComponentDependentData(ctx context.Context) {
 	var err error
 	var tComponent []dao.ComponentDao
 	var tCompParam []dao.ComponentParamDao
-	var tDevInd []dao.DeviceIndicatorDao
-	var tParamInd []dao.ParamIndicatorDao
-	var tMapping []dao.MappingDao
 	var tDevComp []dao.DeviceComponentDao
 	var tDevCompMap []dao.DeviceComponentMappingDao
 	var tConfig []dao.ConfigurationDao
 	var tDefConfig []dao.DefaultConfigurationDao
-	var tThreshold []dao.ThresholdDao
 	var tDevSnmp []dao.DeviceSnmpDao
 	var tResult []dao.ResultDao
 	var tAffectedTh []dao.AffectedThresholdDao
 	var tAffectedParam []dao.AffectedParamDao
-	var tConfigProc []dao.ConfigInProcessDao
-	tComponent, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc, err = GetComponentDependentData(ctx)
+	tComponent, tCompParam, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tResult, tAffectedTh, tAffectedParam, err = GetComponentDependentDataOnly(ctx)
 	if err != nil {
 		logger.Error("Error while loading component dependent data:", err)
 		return
 	}
-	tComponent, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc = overrideComponentDependentIds(tComponent, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc)
-	err = DropComponentDependentConstraints(ctx)
+	tComponent, tCompParam, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tResult, tAffectedTh, tAffectedParam = overrideComponentDependentIds(tComponent, tCompParam, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tResult, tAffectedTh, tAffectedParam)
+	err = DropComponentDependentConstraintsForComponent(ctx)
 	if err != nil {
-		logger.Error("Error while dropping component dependent tables constraints:", err)
+		logger.Error("Error while dropping component dependent constraints:", err)
 		return
 	}
-	err = DropComponentDependentTables(ctx)
+	err = DropComponentDependentTablesForComponent(ctx)
 	if err != nil {
 		logger.Error("Error while dropping component dependent tables:", err)
 		return
 	}
-	err = CreateComponentDependentTables(ctx)
+	err = CreateComponentDependentTablesForComponent(ctx)
 	if err != nil {
 		logger.Error("Error while creating component dependent tables:", err)
 		return
 	}
-	err = InsertComponentDependentData(ctx, tComponent, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc)
+	err = InsertComponentDependentDataForComponent(ctx, tComponent, tCompParam, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam)
 	if err != nil {
-		logger.Error("Error while inserting component dependent tables data:", err)
+		logger.Error("Error while inserting component dependent data:", err)
 		return
 	}
-	err = CreateComponentDependentConstraints(ctx)
+	err = CreateComponentDependentConstraintsForComponent(ctx)
 	if err != nil {
-		logger.Error("Error while creating component dependent tables constraints:", err)
+		logger.Error("Error while creating component dependent constraints:", err)
 		return
 	}
-	err = ResetComponentDependentCounters(ctx)
+	err = ResetComponentDependentCountersForComponent(ctx)
 	if err != nil {
 		logger.Error("Error while resetting component dependent counters:", err)
 	}
 }
 
-func overrideComponentDependentIds(components []dao.ComponentDao, params []dao.ComponentParamDao, deviceIndicators []dao.DeviceIndicatorDao, paramIndicators []dao.ParamIndicatorDao, mappings []dao.MappingDao, deviceComponents []dao.DeviceComponentDao, deviceComponentMappings []dao.DeviceComponentMappingDao, configurations []dao.ConfigurationDao, defaultConfigurations []dao.DefaultConfigurationDao, thresholds []dao.ThresholdDao, deviceSnmps []dao.DeviceSnmpDao, results []dao.ResultDao, affectedThresholds []dao.AffectedThresholdDao, affectedParams []dao.AffectedParamDao, configInProcesses []dao.ConfigInProcessDao) ([]dao.ComponentDao, []dao.ComponentParamDao, []dao.DeviceIndicatorDao, []dao.ParamIndicatorDao, []dao.MappingDao, []dao.DeviceComponentDao, []dao.DeviceComponentMappingDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.ThresholdDao, []dao.DeviceSnmpDao, []dao.ResultDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao, []dao.ConfigInProcessDao) {
+func overrideComponentDependentIds(components []dao.ComponentDao, params []dao.ComponentParamDao, deviceComponents []dao.DeviceComponentDao, deviceComponentMappings []dao.DeviceComponentMappingDao, configurations []dao.ConfigurationDao, defaultConfigurations []dao.DefaultConfigurationDao, deviceSnmps []dao.DeviceSnmpDao, results []dao.ResultDao, affectedThresholds []dao.AffectedThresholdDao, affectedParams []dao.AffectedParamDao) ([]dao.ComponentDao, []dao.ComponentParamDao, []dao.DeviceComponentDao, []dao.DeviceComponentMappingDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.DeviceSnmpDao, []dao.ResultDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao) {
 	var idMap map[int64]int64
 	idMap = make(map[int64]int64)
 	components, params, deviceComponents, results, affectedParams = processComponents(components, params, deviceComponents, results, affectedParams, idMap)
-	clear(idMap)
-	deviceIndicators, mappings, configurations, defaultConfigurations = processDeviceIndicators(deviceIndicators, mappings, configurations, defaultConfigurations, idMap)
-	clear(idMap)
-	paramIndicators, mappings = processParamIndicators(paramIndicators, mappings, idMap)
-	clear(idMap)
-	thresholds, affectedThresholds = processThresholds(thresholds, affectedThresholds, idMap)
-	clear(idMap)
-	mappings, deviceComponentMappings = processMappings(mappings, deviceComponentMappings, idMap)
 	clear(idMap)
 	deviceComponents, deviceComponentMappings, configurations, defaultConfigurations = processDeviceComponents(deviceComponents, deviceComponentMappings, configurations, defaultConfigurations, idMap)
 	clear(idMap)
@@ -84,7 +72,150 @@ func overrideComponentDependentIds(components []dao.ComponentDao, params []dao.C
 	clear(idMap)
 	affectedThresholds = processAffectedThresholdsSelfIds(affectedThresholds, idMap)
 	clear(idMap)
-	return components, params, deviceIndicators, paramIndicators, mappings, deviceComponents, deviceComponentMappings, configurations, defaultConfigurations, thresholds, deviceSnmps, results, affectedThresholds, affectedParams, configInProcesses
+	return components, params, deviceComponents, deviceComponentMappings, configurations, defaultConfigurations, deviceSnmps, results, affectedThresholds, affectedParams
+}
+
+func GetComponentDependentDataOnly(ctx context.Context) ([]dao.ComponentDao, []dao.ComponentParamDao, []dao.DeviceComponentDao, []dao.DeviceComponentMappingDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.DeviceSnmpDao, []dao.ResultDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao, error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	var tComponent []dao.ComponentDao
+	var tCompParam []dao.ComponentParamDao
+	var tDevComp []dao.DeviceComponentDao
+	var tDevCompMap []dao.DeviceComponentMappingDao
+	var tConfig []dao.ConfigurationDao
+	var tDefConfig []dao.DefaultConfigurationDao
+	var tDevSnmp []dao.DeviceSnmpDao
+	var tResult []dao.ResultDao
+	var tAffectedTh []dao.AffectedThresholdDao
+	var tAffectedParam []dao.AffectedParamDao
+	wg.Add(10)
+	go func() {
+		defer wg.Done()
+		var res []dao.ComponentDao
+		res, err = dao.GetAllComponentDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tComponent = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.ComponentParamDao
+		res, err = dao.GetAllComponentParamDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tCompParam = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.DeviceComponentDao
+		res, err = dao.GetAllDeviceComponentDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tDevComp = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.DeviceComponentMappingDao
+		res, err = dao.GetAllDeviceComponentMappingDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tDevCompMap = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.ConfigurationDao
+		res, err = dao.GetAllConfigurationDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tConfig = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.DefaultConfigurationDao
+		res, err = dao.GetAllDefaultConfigurationDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tDefConfig = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.DeviceSnmpDao
+		res, err = dao.GetAllDeviceSnmpDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tDevSnmp = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.ResultDao
+		res, err = dao.GetAllResultDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tResult = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.AffectedThresholdDao
+		res, err = dao.GetAllAffectedThresholdDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tAffectedTh = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.AffectedParamDao
+		res, err = dao.GetAllAffectedParamDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tAffectedParam = res
+	}()
+	wg.Wait()
+	if errResult != nil {
+		return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, errResult
+	}
+	return tComponent, tCompParam, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tResult, tAffectedTh, tAffectedParam, nil
 }
 
 func processComponents(components []dao.ComponentDao, params []dao.ComponentParamDao, deviceComponents []dao.DeviceComponentDao, results []dao.ResultDao, affectedParams []dao.AffectedParamDao, compMap map[int64]int64) ([]dao.ComponentDao, []dao.ComponentParamDao, []dao.DeviceComponentDao, []dao.ResultDao, []dao.AffectedParamDao) {
@@ -110,10 +241,9 @@ func processComponents(components []dao.ComponentDao, params []dao.ComponentPara
 			oldBaseId = components[i].BaseComponent.Int64
 			newId, found = compMap[oldBaseId]
 			if found {
-				components[i].BaseComponent.Int64 = newId
+				components[i].BaseComponent = sql.NullInt64{Int64: newId, Valid: true}
 			} else {
-				components[i].BaseComponent.Valid = false
-				components[i].BaseComponent.Int64 = 0
+				components[i].BaseComponent = sql.NullInt64{Valid: false}
 			}
 		}
 	}
@@ -141,7 +271,11 @@ func updateComponentRefs(params []dao.ComponentParamDao, deviceComponents []dao.
 		}
 	}
 	for i = range results {
-		oldId = AntiquateResultComp(results[i], compMap)
+		oldId = results[i].Component
+		newId, found = compMap[oldId]
+		if found {
+			results[i].Component = newId
+		}
 	}
 	for i = range affectedParams {
 		oldId = affectedParams[i].Component
@@ -151,291 +285,6 @@ func updateComponentRefs(params []dao.ComponentParamDao, deviceComponents []dao.
 		}
 	}
 	return params, deviceComponents, results, affectedParams
-}
-
-func AntiquateResultComp(res dao.ResultDao, compMap map[int64]int64) int64 {
-	var oldId int64
-	var newId int64
-	var found bool
-	oldId = res.Component
-	newId, found = compMap[oldId]
-	if found {
-		res.Component = newId
-	}
-	return oldId
-}
-
-func CompressParamDependentData(ctx context.Context) {
-	var err error
-	var tParam []dao.ParamDao
-	var tCompParam []dao.ComponentParamDao
-	var tDevInd []dao.DeviceIndicatorDao
-	var tParamInd []dao.ParamIndicatorDao
-	var tMapping []dao.MappingDao
-	var tDevComp []dao.DeviceComponentDao
-	var tDevCompMap []dao.DeviceComponentMappingDao
-	var tConfig []dao.ConfigurationDao
-	var tDefConfig []dao.DefaultConfigurationDao
-	var tThreshold []dao.ThresholdDao
-	var tDevSnmp []dao.DeviceSnmpDao
-	var tResult []dao.ResultDao
-	var tAffectedTh []dao.AffectedThresholdDao
-	var tAffectedParam []dao.AffectedParamDao
-	var tConfigProc []dao.ConfigInProcessDao
-	tParam, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc, err = GetParamDependentData(ctx)
-	if err != nil {
-		logger.Error("Error while loading param dependent data:", err)
-		return
-	}
-	tParam, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc = overrideParamDependentIds(tParam, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc)
-	err = DropParamDependentConstraints(ctx)
-	if err != nil {
-		logger.Error("Error while dropping param dependent tables constraints:", err)
-		return
-	}
-	err = DropParamDependentTables(ctx)
-	if err != nil {
-		logger.Error("Error while dropping param dependent tables:", err)
-		return
-	}
-	err = CreateParamDependentTables(ctx)
-	if err != nil {
-		logger.Error("Error while creating param dependent tables:", err)
-		return
-	}
-	err = InsertParamDependentData(ctx, tParam, tCompParam, tDevInd, tParamInd, tMapping, tDevComp, tDevCompMap, tConfig, tDefConfig, tThreshold, tDevSnmp, tResult, tAffectedTh, tAffectedParam, tConfigProc)
-	if err != nil {
-		logger.Error("Error while inserting param dependent tables data:", err)
-		return
-	}
-	err = CreateParamDependentConstraints(ctx)
-	if err != nil {
-		logger.Error("Error while creating param dependent tables constraints:", err)
-		return
-	}
-	err = ResetParamDependentCounters(ctx)
-	if err != nil {
-		logger.Error("Error while resetting param dependent counters:", err)
-	}
-}
-
-func overrideParamDependentIds(params []dao.ParamDao, componentParams []dao.ComponentParamDao, deviceIndicators []dao.DeviceIndicatorDao, paramIndicators []dao.ParamIndicatorDao, mappings []dao.MappingDao, deviceComponents []dao.DeviceComponentDao, deviceComponentMappings []dao.DeviceComponentMappingDao, configurations []dao.ConfigurationDao, defaultConfigurations []dao.DefaultConfigurationDao, thresholds []dao.ThresholdDao, deviceSnmps []dao.DeviceSnmpDao, results []dao.ResultDao, affectedThresholds []dao.AffectedThresholdDao, affectedParams []dao.AffectedParamDao, configInProcesses []dao.ConfigInProcessDao) ([]dao.ParamDao, []dao.ComponentParamDao, []dao.DeviceIndicatorDao, []dao.ParamIndicatorDao, []dao.MappingDao, []dao.DeviceComponentDao, []dao.DeviceComponentMappingDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.ThresholdDao, []dao.DeviceSnmpDao, []dao.ResultDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao, []dao.ConfigInProcessDao) {
-	var idMap map[int64]int64
-	idMap = make(map[int64]int64)
-	params, componentParams, mappings, results, affectedParams = processParams(params, componentParams, mappings, results, affectedParams, idMap)
-	clear(idMap)
-	deviceIndicators, mappings, configurations, defaultConfigurations = processDeviceIndicators(deviceIndicators, mappings, configurations, defaultConfigurations, idMap)
-	clear(idMap)
-	paramIndicators, mappings = processParamIndicators(paramIndicators, mappings, idMap)
-	clear(idMap)
-	thresholds, affectedThresholds = processThresholds(thresholds, affectedThresholds, idMap)
-	clear(idMap)
-	mappings, deviceComponentMappings = processMappings(mappings, deviceComponentMappings, idMap)
-	clear(idMap)
-	deviceComponents, deviceComponentMappings, configurations, defaultConfigurations = processDeviceComponents(deviceComponents, deviceComponentMappings, configurations, defaultConfigurations, idMap)
-	clear(idMap)
-	configurations, deviceSnmps = processConfigurations(configurations, deviceSnmps, idMap)
-	clear(idMap)
-	defaultConfigurations = processDefaultConfigurations(defaultConfigurations, idMap)
-	clear(idMap)
-	affectedParams = processAffectedParamsSelfIds(affectedParams, idMap)
-	clear(idMap)
-	affectedThresholds = processAffectedThresholdsSelfIds(affectedThresholds, idMap)
-	clear(idMap)
-	return params, componentParams, deviceIndicators, paramIndicators, mappings, deviceComponents, deviceComponentMappings, configurations, defaultConfigurations, thresholds, deviceSnmps, results, affectedThresholds, affectedParams, configInProcesses
-}
-
-func processParams(params []dao.ParamDao, componentParams []dao.ComponentParamDao, mappings []dao.MappingDao, results []dao.ResultDao, affectedParams []dao.AffectedParamDao, paramMap map[int64]int64) ([]dao.ParamDao, []dao.ComponentParamDao, []dao.MappingDao, []dao.ResultDao, []dao.AffectedParamDao) {
-	var i int
-	var nextId int64
-	var oldId int64
-	var newId int64
-	var found bool
-	nextId = 1
-	for i = range params {
-		oldId = params[i].ID
-		paramMap[oldId] = nextId
-		nextId = nextId + 1
-	}
-	for i = range params {
-		oldId = params[i].ID
-		newId, found = paramMap[oldId]
-		if found {
-			params[i].ID = newId
-		}
-	}
-	componentParams, mappings, results, affectedParams = updateParamRefs(componentParams, mappings, results, affectedParams, paramMap)
-	return params, componentParams, mappings, results, affectedParams
-}
-
-func updateParamRefs(componentParams []dao.ComponentParamDao, mappings []dao.MappingDao, results []dao.ResultDao, affectedParams []dao.AffectedParamDao, paramMap map[int64]int64) ([]dao.ComponentParamDao, []dao.MappingDao, []dao.ResultDao, []dao.AffectedParamDao) {
-	var i int
-	var oldId int64
-	var newId int64
-	var found bool
-	for i = range componentParams {
-		oldId = componentParams[i].ParamID
-		newId, found = paramMap[oldId]
-		if found {
-			componentParams[i].ParamID = newId
-		}
-	}
-	for i = range mappings {
-		oldId = mappings[i].Param
-		newId, found = paramMap[oldId]
-		if found {
-			mappings[i].Param = newId
-		}
-	}
-	for i = range results {
-		oldId = results[i].Param
-		newId, found = paramMap[oldId]
-		if found {
-			results[i].Param = newId
-		}
-	}
-	for i = range affectedParams {
-		oldId = affectedParams[i].Param
-		newId, found = paramMap[oldId]
-		if found {
-			affectedParams[i].Param = newId
-		}
-	}
-	return componentParams, mappings, results, affectedParams
-}
-
-func processDeviceIndicators(deviceIndicators []dao.DeviceIndicatorDao, mappings []dao.MappingDao, configurations []dao.ConfigurationDao, defaultConfigurations []dao.DefaultConfigurationDao, indMap map[int64]int64) ([]dao.DeviceIndicatorDao, []dao.MappingDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao) {
-	var i int
-	var nextId int64
-	var oldId int64
-	var newId int64
-	var found bool
-	nextId = 1
-	for i = range deviceIndicators {
-		oldId = deviceIndicators[i].ID
-		indMap[oldId] = nextId
-		nextId = nextId + 1
-	}
-	for i = range deviceIndicators {
-		oldId = deviceIndicators[i].ID
-		newId, found = indMap[oldId]
-		if found {
-			deviceIndicators[i].ID = newId
-		}
-	}
-	for i = range mappings {
-		oldId = mappings[i].Indicator
-		newId, found = indMap[oldId]
-		if found {
-			mappings[i].Indicator = newId
-		}
-	}
-	for i = range configurations {
-		oldId = configurations[i].Indicator
-		newId, found = indMap[oldId]
-		if found {
-			configurations[i].Indicator = newId
-		}
-	}
-	for i = range defaultConfigurations {
-		oldId = defaultConfigurations[i].Indicator
-		newId, found = indMap[oldId]
-		if found {
-			defaultConfigurations[i].Indicator = newId
-		}
-	}
-	return deviceIndicators, mappings, configurations, defaultConfigurations
-}
-
-func processParamIndicators(paramIndicators []dao.ParamIndicatorDao, mappings []dao.MappingDao, pIndMap map[int64]int64) ([]dao.ParamIndicatorDao, []dao.MappingDao) {
-	var i int
-	var nextId int64
-	var oldId int64
-	var newId int64
-	var found bool
-	nextId = 1
-	for i = range paramIndicators {
-		oldId = paramIndicators[i].ID
-		pIndMap[oldId] = nextId
-		nextId = nextId + 1
-	}
-	for i = range paramIndicators {
-		oldId = paramIndicators[i].ID
-		newId, found = pIndMap[oldId]
-		if found {
-			paramIndicators[i].ID = newId
-		}
-	}
-	return paramIndicators, mappings
-}
-
-func processThresholds(thresholds []dao.ThresholdDao, affectedThresholds []dao.AffectedThresholdDao, threshMap map[int64]int64) ([]dao.ThresholdDao, []dao.AffectedThresholdDao) {
-	var i int
-	var nextId int64
-	var oldId int64
-	var newId int64
-	var found bool
-	nextId = 1
-	for i = range thresholds {
-		oldId = thresholds[i].ID
-		threshMap[oldId] = nextId
-		nextId = nextId + 1
-	}
-	for i = range thresholds {
-		oldId = thresholds[i].ID
-		newId, found = threshMap[oldId]
-		if found {
-			thresholds[i].ID = newId
-		}
-	}
-	for i = range affectedThresholds {
-		oldId = affectedThresholds[i].Threshold
-		newId, found = threshMap[oldId]
-		if found {
-			affectedThresholds[i].Threshold = newId
-		}
-	}
-	return thresholds, affectedThresholds
-}
-
-func processMappings(mappings []dao.MappingDao, deviceComponentMappings []dao.DeviceComponentMappingDao, mapIdMap map[int64]int64) ([]dao.MappingDao, []dao.DeviceComponentMappingDao) {
-	var i int
-	var nextId int64
-	var oldId int64
-	var newId int64
-	var found bool
-	var oldFromId int64
-	nextId = 1
-	for i = range mappings {
-		oldId = mappings[i].ID
-		mapIdMap[oldId] = nextId
-		nextId = nextId + 1
-	}
-	for i = range mappings {
-		oldId = mappings[i].ID
-		newId, found = mapIdMap[oldId]
-		if found {
-			mappings[i].ID = newId
-		}
-		if mappings[i].From.Valid {
-			oldFromId = mappings[i].From.Int64
-			newId, found = mapIdMap[oldFromId]
-			if found {
-				mappings[i].From.Int64 = newId
-			} else {
-				mappings[i].From.Valid = false
-				mappings[i].From.Int64 = 0
-			}
-		}
-	}
-	for i = range deviceComponentMappings {
-		oldId = deviceComponentMappings[i].MappingID
-		newId, found = mapIdMap[oldId]
-		if found {
-			deviceComponentMappings[i].MappingID = newId
-		}
-	}
-	return mappings, deviceComponentMappings
 }
 
 func processDeviceComponents(deviceComponents []dao.DeviceComponentDao, deviceComponentMappings []dao.DeviceComponentMappingDao, configurations []dao.ConfigurationDao, defaultConfigurations []dao.DefaultConfigurationDao, devCompMap map[int64]int64) ([]dao.DeviceComponentDao, []dao.DeviceComponentMappingDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao) {
@@ -461,10 +310,9 @@ func processDeviceComponents(deviceComponents []dao.DeviceComponentDao, deviceCo
 			oldParentId = deviceComponents[i].Parent.Int64
 			newId, found = devCompMap[oldParentId]
 			if found {
-				deviceComponents[i].Parent.Int64 = newId
+				deviceComponents[i].Parent = sql.NullInt64{Int64: newId, Valid: true}
 			} else {
-				deviceComponents[i].Parent.Valid = false
-				deviceComponents[i].Parent.Int64 = 0
+				deviceComponents[i].Parent = sql.NullInt64{Valid: false}
 			}
 		}
 	}
@@ -489,10 +337,9 @@ func updateDeviceComponentRefs(deviceComponentMappings []dao.DeviceComponentMapp
 			oldId = configurations[i].DeviceComponentID.Int64
 			newId, found = devCompMap[oldId]
 			if found {
-				configurations[i].DeviceComponentID.Int64 = newId
+				configurations[i].DeviceComponentID = sql.NullInt64{Int64: newId, Valid: true}
 			} else {
-				configurations[i].DeviceComponentID.Valid = false
-				configurations[i].DeviceComponentID.Int64 = 0
+				configurations[i].DeviceComponentID = sql.NullInt64{Valid: false}
 			}
 		}
 	}
@@ -501,10 +348,9 @@ func updateDeviceComponentRefs(deviceComponentMappings []dao.DeviceComponentMapp
 			oldId = defaultConfigurations[i].DeviceComponentID.Int64
 			newId, found = devCompMap[oldId]
 			if found {
-				defaultConfigurations[i].DeviceComponentID.Int64 = newId
+				defaultConfigurations[i].DeviceComponentID = sql.NullInt64{Int64: newId, Valid: true}
 			} else {
-				defaultConfigurations[i].DeviceComponentID.Valid = false
-				defaultConfigurations[i].DeviceComponentID.Int64 = 0
+				defaultConfigurations[i].DeviceComponentID = sql.NullInt64{Valid: false}
 			}
 		}
 	}
@@ -535,10 +381,9 @@ func processConfigurations(configurations []dao.ConfigurationDao, deviceSnmps []
 			oldId = deviceSnmps[i].Config.Int64
 			newId, found = configMap[oldId]
 			if found {
-				deviceSnmps[i].Config.Int64 = newId
+				deviceSnmps[i].Config = sql.NullInt64{Int64: newId, Valid: true}
 			} else {
-				deviceSnmps[i].Config.Valid = false
-				deviceSnmps[i].Config.Int64 = 0
+				deviceSnmps[i].Config = sql.NullInt64{Valid: false}
 			}
 		}
 	}
@@ -611,42 +456,306 @@ func processAffectedThresholdsSelfIds(affectedThresholds []dao.AffectedThreshold
 	return affectedThresholds
 }
 
-func ResetComponentDependentCounters(ctx context.Context) error {
+func DropComponentDependentConstraintsForComponent(ctx context.Context) error {
+	var err error
+	err = dao.DropAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.configuration: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component: %v", err)
+		return err
+	}
+	err = dao.DropComponentParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.component_param: %v", err)
+		return err
+	}
+	err = dao.DropComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.component: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropComponentDependentTablesForComponent(ctx context.Context) error {
+	var err error
+	err = dao.DropAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.DropDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.DropConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.configuration: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component: %v", err)
+		return err
+	}
+	err = dao.DropComponentParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.component_param: %v", err)
+		return err
+	}
+	err = dao.DropComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.component: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateComponentDependentTablesForComponent(ctx context.Context) error {
+	var err error
+	err = dao.CreateComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.component: %v", err)
+		return err
+	}
+	err = dao.CreateComponentParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.component_param: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_threshold: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateComponentDependentConstraintsForComponent(ctx context.Context) error {
+	var err error
+	err = dao.CreateComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.component: %v", err)
+		return err
+	}
+	err = dao.CreateComponentParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.component_param: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	return nil
+}
+
+func InsertComponentDependentDataForComponent(ctx context.Context, tComponent []dao.ComponentDao, tCompParam []dao.ComponentParamDao, tDevComp []dao.DeviceComponentDao, tDevCompMap []dao.DeviceComponentMappingDao, tConfig []dao.ConfigurationDao, tDefConfig []dao.DefaultConfigurationDao, tDevSnmp []dao.DeviceSnmpDao, tAffectedTh []dao.AffectedThresholdDao, tAffectedParam []dao.AffectedParamDao) error {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	var errResult error
 	var err error
-	wg.Add(10)
+	wg.Add(9)
+	go func() {
+		defer wg.Done()
+		err = dao.ImportComponentDao(ctx, tComponent)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportComponentParamDao(ctx, tCompParam)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportDeviceComponentDao(ctx, tDevComp)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportDeviceComponentMappingDao(ctx, tDevCompMap)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportConfigurationDao(ctx, tConfig)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportDefaultConfigurationDao(ctx, tDefConfig)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportDeviceSnmpDao(ctx, tDevSnmp)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportAffectedParamDao(ctx, tAffectedParam)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportAffectedThresholdDao(ctx, tAffectedTh)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}
+
+func ResetComponentDependentCountersForComponent(ctx context.Context) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(6)
 	go func() {
 		defer wg.Done()
 		err = dao.DropComponentDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceIndicatorDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropParamIndicatorDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropMappingDaoCounter(ctx)
 		if err != nil {
 			mu.Lock()
 			errResult = err
@@ -674,15 +783,6 @@ func ResetComponentDependentCounters(ctx context.Context) error {
 	go func() {
 		defer wg.Done()
 		err = dao.DropDefaultConfigurationDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDaoCounter(ctx)
 		if err != nil {
 			mu.Lock()
 			errResult = err
@@ -711,33 +811,436 @@ func ResetComponentDependentCounters(ctx context.Context) error {
 	return errResult
 }
 
-func ResetParamDependentCounters(ctx context.Context) error {
+func CompressParamDependentData(ctx context.Context) {
+	var err error
+	var tParam []dao.ParamDao
+	var tCompParam []dao.ComponentParamDao
+	var tMapping []dao.MappingDao
+	var tDevCompMap []dao.DeviceComponentMappingDao
+	var tResult []dao.ResultDao
+	var tAffectedParam []dao.AffectedParamDao
+	tParam, tCompParam, tMapping, tDevCompMap, tResult, tAffectedParam, err = GetParamDependentDataOnly(ctx)
+	if err != nil {
+		logger.Error("Error while loading param dependent data:", err)
+		return
+	}
+	tParam, tCompParam, tMapping, tDevCompMap, tResult, tAffectedParam = overrideParamDependentIds(tParam, tCompParam, tMapping, tDevCompMap, tResult, tAffectedParam)
+	err = DropParamDependentConstraintsForParam(ctx)
+	if err != nil {
+		logger.Error("Error while dropping param dependent constraints:", err)
+		return
+	}
+	err = DropParamDependentTablesForParam(ctx)
+	if err != nil {
+		logger.Error("Error while dropping param dependent tables:", err)
+		return
+	}
+	err = CreateParamDependentTablesForParam(ctx)
+	if err != nil {
+		logger.Error("Error while creating param dependent tables:", err)
+		return
+	}
+	err = InsertParamDependentDataForParam(ctx, tParam, tCompParam, tMapping, tDevCompMap, tAffectedParam)
+	if err != nil {
+		logger.Error("Error while inserting param dependent data:", err)
+		return
+	}
+	err = CreateParamDependentConstraintsForParam(ctx)
+	if err != nil {
+		logger.Error("Error while creating param dependent constraints:", err)
+		return
+	}
+	err = ResetParamDependentCountersForParam(ctx)
+	if err != nil {
+		logger.Error("Error while resetting param dependent counters:", err)
+	}
+}
+
+func overrideParamDependentIds(params []dao.ParamDao, componentParams []dao.ComponentParamDao, mappings []dao.MappingDao, deviceComponentMappings []dao.DeviceComponentMappingDao, results []dao.ResultDao, affectedParams []dao.AffectedParamDao) ([]dao.ParamDao, []dao.ComponentParamDao, []dao.MappingDao, []dao.DeviceComponentMappingDao, []dao.ResultDao, []dao.AffectedParamDao) {
+	var idMap map[int64]int64
+	idMap = make(map[int64]int64)
+	params, componentParams, mappings, results, affectedParams = processParams(params, componentParams, mappings, results, affectedParams, idMap)
+	clear(idMap)
+	mappings, deviceComponentMappings = processMappings(mappings, deviceComponentMappings, idMap)
+	clear(idMap)
+	affectedParams = processAffectedParamsSelfIds(affectedParams, idMap)
+	clear(idMap)
+	return params, componentParams, mappings, deviceComponentMappings, results, affectedParams
+}
+
+func GetParamDependentDataOnly(ctx context.Context) ([]dao.ParamDao, []dao.ComponentParamDao, []dao.MappingDao, []dao.DeviceComponentMappingDao, []dao.ResultDao, []dao.AffectedParamDao, error) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	var errResult error
 	var err error
-	wg.Add(10)
+	var tParam []dao.ParamDao
+	var tCompParam []dao.ComponentParamDao
+	var tMapping []dao.MappingDao
+	var tDevCompMap []dao.DeviceComponentMappingDao
+	var tResult []dao.ResultDao
+	var tAffectedParam []dao.AffectedParamDao
+	wg.Add(6)
+	go func() {
+		defer wg.Done()
+		var res []dao.ParamDao
+		res, err = dao.GetAllParamDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tParam = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.ComponentParamDao
+		res, err = dao.GetAllComponentParamDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tCompParam = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.MappingDao
+		res, err = dao.GetAllMappingDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tMapping = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.DeviceComponentMappingDao
+		res, err = dao.GetAllDeviceComponentMappingDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tDevCompMap = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.ResultDao
+		res, err = dao.GetAllResultDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tResult = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.AffectedParamDao
+		res, err = dao.GetAllAffectedParamDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tAffectedParam = res
+	}()
+	wg.Wait()
+	if errResult != nil {
+		return nil, nil, nil, nil, nil, nil, errResult
+	}
+	return tParam, tCompParam, tMapping, tDevCompMap, tResult, tAffectedParam, nil
+}
+
+func processParams(params []dao.ParamDao, componentParams []dao.ComponentParamDao, mappings []dao.MappingDao, results []dao.ResultDao, affectedParams []dao.AffectedParamDao, paramMap map[int64]int64) ([]dao.ParamDao, []dao.ComponentParamDao, []dao.MappingDao, []dao.ResultDao, []dao.AffectedParamDao) {
+	var i int
+	var nextId int64
+	var oldId int64
+	var newId int64
+	var found bool
+	nextId = 1
+	for i = range params {
+		oldId = params[i].ID
+		paramMap[oldId] = nextId
+		nextId = nextId + 1
+	}
+	for i = range params {
+		oldId = params[i].ID
+		newId, found = paramMap[oldId]
+		if found {
+			params[i].ID = newId
+		}
+	}
+	componentParams, mappings, results, affectedParams = updateParamRefs(componentParams, mappings, results, affectedParams, paramMap)
+	return params, componentParams, mappings, results, affectedParams
+}
+
+func updateParamRefs(componentParams []dao.ComponentParamDao, mappings []dao.MappingDao, results []dao.ResultDao, affectedParams []dao.AffectedParamDao, paramMap map[int64]int64) ([]dao.ComponentParamDao, []dao.MappingDao, []dao.ResultDao, []dao.AffectedParamDao) {
+	var i int
+	var oldId int64
+	var newId int64
+	var found bool
+	for i = range componentParams {
+		oldId = componentParams[i].ParamID
+		newId, found = paramMap[oldId]
+		if found {
+			componentParams[i].ParamID = newId
+		}
+	}
+	for i = range mappings {
+		oldId = mappings[i].Param
+		newId, found = paramMap[oldId]
+		if found {
+			mappings[i].Param = newId
+		}
+	}
+	for i = range results {
+		oldId = results[i].Param
+		newId, found = paramMap[oldId]
+		if found {
+			results[i].Param = newId
+		}
+	}
+	for i = range affectedParams {
+		oldId = affectedParams[i].Param
+		newId, found = paramMap[oldId]
+		if found {
+			affectedParams[i].Param = newId
+		}
+	}
+	return componentParams, mappings, results, affectedParams
+}
+
+func processMappings(mappings []dao.MappingDao, deviceComponentMappings []dao.DeviceComponentMappingDao, mapIdMap map[int64]int64) ([]dao.MappingDao, []dao.DeviceComponentMappingDao) {
+	var i int
+	var nextId int64
+	var oldId int64
+	var newId int64
+	var found bool
+	var oldFromId int64
+	nextId = 1
+	for i = range mappings {
+		oldId = mappings[i].ID
+		mapIdMap[oldId] = nextId
+		nextId = nextId + 1
+	}
+	for i = range mappings {
+		oldId = mappings[i].ID
+		newId, found = mapIdMap[oldId]
+		if found {
+			mappings[i].ID = newId
+		}
+		if mappings[i].From.Valid {
+			oldFromId = mappings[i].From.Int64
+			newId, found = mapIdMap[oldFromId]
+			if found {
+				mappings[i].From = sql.NullInt64{Int64: newId, Valid: true}
+			} else {
+				mappings[i].From = sql.NullInt64{Valid: false}
+			}
+		}
+	}
+	for i = range deviceComponentMappings {
+		oldId = deviceComponentMappings[i].MappingID
+		newId, found = mapIdMap[oldId]
+		if found {
+			deviceComponentMappings[i].MappingID = newId
+		}
+	}
+	return mappings, deviceComponentMappings
+}
+
+func DropParamDependentConstraintsForParam(ctx context.Context) error {
+	var err error
+	err = dao.DropAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.DropComponentParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.component_param: %v", err)
+		return err
+	}
+	err = dao.DropParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.param: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropParamDependentTablesForParam(ctx context.Context) error {
+	var err error
+	err = dao.DropAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.DropDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.mapping: %v", err)
+		return err
+	}
+	err = dao.DropComponentParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.component_param: %v", err)
+		return err
+	}
+	err = dao.DropParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.param: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateParamDependentTablesForParam(ctx context.Context) error {
+	var err error
+	err = dao.CreateParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.param: %v", err)
+		return err
+	}
+	err = dao.CreateComponentParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.component_param: %v", err)
+		return err
+	}
+	err = dao.CreateMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_param: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateParamDependentConstraintsForParam(ctx context.Context) error {
+	var err error
+	err = dao.CreateParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.param: %v", err)
+		return err
+	}
+	err = dao.CreateComponentParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.component_param: %v", err)
+		return err
+	}
+	err = dao.CreateMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
+		return err
+	}
+	return nil
+}
+
+func InsertParamDependentDataForParam(ctx context.Context, tParam []dao.ParamDao, tCompParam []dao.ComponentParamDao, tMapping []dao.MappingDao, tDevCompMap []dao.DeviceComponentMappingDao, tAffectedParam []dao.AffectedParamDao) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(5)
+	go func() {
+		defer wg.Done()
+		err = dao.ImportParamDao(ctx, tParam)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportComponentParamDao(ctx, tCompParam)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportMappingDao(ctx, tMapping)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportDeviceComponentMappingDao(ctx, tDevCompMap)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportAffectedParamDao(ctx, tAffectedParam)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}
+
+func ResetParamDependentCountersForParam(ctx context.Context) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(3)
 	go func() {
 		defer wg.Done()
 		err = dao.DropParamDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDeviceIndicatorDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropParamIndicatorDaoCounter(ctx)
 		if err != nil {
 			mu.Lock()
 			errResult = err
@@ -755,52 +1258,7 @@ func ResetParamDependentCounters(ctx context.Context) error {
 	}()
 	go func() {
 		defer wg.Done()
-		err = dao.DropDeviceComponentDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropConfigurationDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropDefaultConfigurationDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropThresholdDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
 		err = dao.DropAffectedParamDaoCounter(ctx)
-		if err != nil {
-			mu.Lock()
-			errResult = err
-			mu.Unlock()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err = dao.DropAffectedThresholdDaoCounter(ctx)
 		if err != nil {
 			mu.Lock()
 			errResult = err
@@ -817,44 +1275,46 @@ func CompressDeviceIndicatorDependentData(ctx context.Context) {
 	var tConfig []dao.ConfigurationDao
 	var tDefConfig []dao.DefaultConfigurationDao
 	var tDevSnmp []dao.DeviceSnmpDao
-	tDevInd, tConfig, tDefConfig, tDevSnmp, err = GetDeviceIndicatorDependentData(ctx)
+	var tAffectedTh []dao.AffectedThresholdDao
+	var tAffectedParam []dao.AffectedParamDao
+	tDevInd, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam, err = GetDeviceIndicatorDependentDataOnly(ctx)
 	if err != nil {
 		logger.Error("Error while loading device indicator dependent data:", err)
 		return
 	}
-	tDevInd, tConfig, tDefConfig, tDevSnmp = overrideDeviceIndicatorDependentIds(tDevInd, tConfig, tDefConfig, tDevSnmp)
-	err = DropDeviceIndicatorDependentConstraints(ctx)
+	tDevInd, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam = overrideDeviceIndicatorDependentIds(tDevInd, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam)
+	err = DropDeviceIndicatorDependentConstraintsForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while dropping device indicator constraints:", err)
+		logger.Error("Error while dropping device indicator dependent constraints:", err)
 		return
 	}
-	err = DropDeviceIndicatorDependentTables(ctx)
+	err = DropDeviceIndicatorDependentTablesForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while dropping device indicator tables:", err)
+		logger.Error("Error while dropping device indicator dependent tables:", err)
 		return
 	}
-	err = CreateDeviceIndicatorDependentTables(ctx)
+	err = CreateDeviceIndicatorDependentTablesForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while creating device indicator tables:", err)
+		logger.Error("Error while creating device indicator dependent tables:", err)
 		return
 	}
-	err = InsertDeviceIndicatorDependentData(ctx, tDevInd, tConfig, tDefConfig, tDevSnmp)
+	err = InsertDeviceIndicatorDependentDataForDeviceIndicator(ctx, tDevInd, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam)
 	if err != nil {
-		logger.Error("Error while inserting device indicator data:", err)
+		logger.Error("Error while inserting device indicator dependent data:", err)
 		return
 	}
-	err = CreateDeviceIndicatorDependentConstraints(ctx)
+	err = CreateDeviceIndicatorDependentConstraintsForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while creating device indicator constraints:", err)
+		logger.Error("Error while creating device indicator dependent constraints:", err)
 		return
 	}
-	err = ResetDeviceIndicatorDependentCounters(ctx)
+	err = ResetDeviceIndicatorDependentCountersForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while resetting device indicator counters:", err)
+		logger.Error("Error while resetting device indicator dependent counters:", err)
 	}
 }
 
-func overrideDeviceIndicatorDependentIds(deviceIndicators []dao.DeviceIndicatorDao, configurations []dao.ConfigurationDao, defaultConfigurations []dao.DefaultConfigurationDao, deviceSnmps []dao.DeviceSnmpDao) ([]dao.DeviceIndicatorDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.DeviceSnmpDao) {
+func overrideDeviceIndicatorDependentIds(deviceIndicators []dao.DeviceIndicatorDao, configurations []dao.ConfigurationDao, defaultConfigurations []dao.DefaultConfigurationDao, deviceSnmps []dao.DeviceSnmpDao, affectedThresholds []dao.AffectedThresholdDao, affectedParams []dao.AffectedParamDao) ([]dao.DeviceIndicatorDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.DeviceSnmpDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao) {
 	var idMap map[int64]int64
 	idMap = make(map[int64]int64)
 	deviceIndicators, configurations, defaultConfigurations = processDeviceIndicatorsOnly(deviceIndicators, configurations, defaultConfigurations, idMap)
@@ -863,7 +1323,11 @@ func overrideDeviceIndicatorDependentIds(deviceIndicators []dao.DeviceIndicatorD
 	clear(idMap)
 	defaultConfigurations = processDefaultConfigurations(defaultConfigurations, idMap)
 	clear(idMap)
-	return deviceIndicators, configurations, defaultConfigurations, deviceSnmps
+	affectedParams = processAffectedParamsSelfIds(affectedParams, idMap)
+	clear(idMap)
+	affectedThresholds = processAffectedThresholdsSelfIds(affectedThresholds, idMap)
+	clear(idMap)
+	return deviceIndicators, configurations, defaultConfigurations, deviceSnmps, affectedThresholds, affectedParams
 }
 
 func processDeviceIndicatorsOnly(deviceIndicators []dao.DeviceIndicatorDao, configurations []dao.ConfigurationDao, defaultConfigurations []dao.DefaultConfigurationDao, indMap map[int64]int64) ([]dao.DeviceIndicatorDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao) {
@@ -902,7 +1366,7 @@ func processDeviceIndicatorsOnly(deviceIndicators []dao.DeviceIndicatorDao, conf
 	return deviceIndicators, configurations, defaultConfigurations
 }
 
-func GetDeviceIndicatorDependentData(ctx context.Context) ([]dao.DeviceIndicatorDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.DeviceSnmpDao, error) {
+func GetDeviceIndicatorDependentDataOnly(ctx context.Context) ([]dao.DeviceIndicatorDao, []dao.ConfigurationDao, []dao.DefaultConfigurationDao, []dao.DeviceSnmpDao, []dao.AffectedThresholdDao, []dao.AffectedParamDao, error) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	var errResult error
@@ -911,7 +1375,9 @@ func GetDeviceIndicatorDependentData(ctx context.Context) ([]dao.DeviceIndicator
 	var tConfig []dao.ConfigurationDao
 	var tDefConfig []dao.DefaultConfigurationDao
 	var tDevSnmp []dao.DeviceSnmpDao
-	wg.Add(4)
+	var tAffectedTh []dao.AffectedThresholdDao
+	var tAffectedParam []dao.AffectedParamDao
+	wg.Add(6)
 	go func() {
 		defer wg.Done()
 		var res []dao.DeviceIndicatorDao
@@ -960,15 +1426,49 @@ func GetDeviceIndicatorDependentData(ctx context.Context) ([]dao.DeviceIndicator
 		}
 		tDevSnmp = res
 	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.AffectedThresholdDao
+		res, err = dao.GetAllAffectedThresholdDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tAffectedTh = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.AffectedParamDao
+		res, err = dao.GetAllAffectedParamDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tAffectedParam = res
+	}()
 	wg.Wait()
 	if errResult != nil {
-		return nil, nil, nil, nil, errResult
+		return nil, nil, nil, nil, nil, nil, errResult
 	}
-	return tDevInd, tConfig, tDefConfig, tDevSnmp, nil
+	return tDevInd, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam, nil
 }
 
-func DropDeviceIndicatorDependentConstraints(ctx context.Context) error {
+func DropDeviceIndicatorDependentConstraintsForDeviceIndicator(ctx context.Context) error {
 	var err error
+	err = dao.DropAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
+		return err
+	}
 	err = dao.DropDeviceSnmpDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
@@ -992,8 +1492,18 @@ func DropDeviceIndicatorDependentConstraints(ctx context.Context) error {
 	return nil
 }
 
-func DropDeviceIndicatorDependentTables(ctx context.Context) error {
+func DropDeviceIndicatorDependentTablesForDeviceIndicator(ctx context.Context) error {
 	var err error
+	err = dao.DropAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_param: %v", err)
+		return err
+	}
 	err = dao.DropDeviceSnmpDao(ctx)
 	if err != nil {
 		logger.Errorf("Error dropping table public.device_snmp: %v", err)
@@ -1017,7 +1527,7 @@ func DropDeviceIndicatorDependentTables(ctx context.Context) error {
 	return nil
 }
 
-func CreateDeviceIndicatorDependentTables(ctx context.Context) error {
+func CreateDeviceIndicatorDependentTablesForDeviceIndicator(ctx context.Context) error {
 	var err error
 	err = dao.CreateDeviceIndicatorDao(ctx)
 	if err != nil {
@@ -1039,10 +1549,20 @@ func CreateDeviceIndicatorDependentTables(ctx context.Context) error {
 		logger.Errorf("Error creating table public.device_snmp: %v", err)
 		return err
 	}
+	err = dao.CreateAffectedParamDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_threshold: %v", err)
+		return err
+	}
 	return nil
 }
 
-func CreateDeviceIndicatorDependentConstraints(ctx context.Context) error {
+func CreateDeviceIndicatorDependentConstraintsForDeviceIndicator(ctx context.Context) error {
 	var err error
 	err = dao.CreateDeviceIndicatorDaoConstraints(ctx)
 	if err != nil {
@@ -1064,15 +1584,25 @@ func CreateDeviceIndicatorDependentConstraints(ctx context.Context) error {
 		logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
 		return err
 	}
+	err = dao.CreateAffectedParamDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
+		return err
+	}
 	return nil
 }
 
-func InsertDeviceIndicatorDependentData(ctx context.Context, tDevInd []dao.DeviceIndicatorDao, tConfig []dao.ConfigurationDao, tDefConfig []dao.DefaultConfigurationDao, tDevSnmp []dao.DeviceSnmpDao) error {
+func InsertDeviceIndicatorDependentDataForDeviceIndicator(ctx context.Context, tDevInd []dao.DeviceIndicatorDao, tConfig []dao.ConfigurationDao, tDefConfig []dao.DefaultConfigurationDao, tDevSnmp []dao.DeviceSnmpDao, tAffectedTh []dao.AffectedThresholdDao, tAffectedParam []dao.AffectedParamDao) error {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	var errResult error
 	var err error
-	wg.Add(4)
+	wg.Add(6)
 	go func() {
 		defer wg.Done()
 		err = dao.ImportDeviceIndicatorDao(ctx, tDevInd)
@@ -1109,11 +1639,29 @@ func InsertDeviceIndicatorDependentData(ctx context.Context, tDevInd []dao.Devic
 			mu.Unlock()
 		}
 	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportAffectedParamDao(ctx, tAffectedParam)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportAffectedThresholdDao(ctx, tAffectedTh)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
 	wg.Wait()
 	return errResult
 }
 
-func ResetDeviceIndicatorDependentCounters(ctx context.Context) error {
+func ResetDeviceIndicatorDependentCountersForDeviceIndicator(ctx context.Context) error {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	var errResult error
@@ -1158,6 +1706,277 @@ func ResetDeviceIndicatorDependentCounters(ctx context.Context) error {
 	go func() {
 		defer wg.Done()
 		err = dao.DropAffectedThresholdDaoCounter(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}
+
+func CompressParamIndicatorDependentData(ctx context.Context) {
+	var err error
+	var tParamInd []dao.ParamIndicatorDao
+	var tMapping []dao.MappingDao
+	var tDevCompMap []dao.DeviceComponentMappingDao
+	tParamInd, tMapping, tDevCompMap, err = GetParamIndicatorDependentDataOnly(ctx)
+	if err != nil {
+		logger.Error("Error while loading param indicator dependent data:", err)
+		return
+	}
+	tParamInd, tMapping, tDevCompMap = overrideParamIndicatorDependentIds(tParamInd, tMapping, tDevCompMap)
+	err = DropParamIndicatorDependentConstraintsForParamIndicator(ctx)
+	if err != nil {
+		logger.Error("Error while dropping param indicator dependent constraints:", err)
+		return
+	}
+	err = DropParamIndicatorDependentTablesForParamIndicator(ctx)
+	if err != nil {
+		logger.Error("Error while dropping param indicator dependent tables:", err)
+		return
+	}
+	err = CreateParamIndicatorDependentTablesForParamIndicator(ctx)
+	if err != nil {
+		logger.Error("Error while creating param indicator dependent tables:", err)
+		return
+	}
+	err = InsertParamIndicatorDependentDataForParamIndicator(ctx, tParamInd, tMapping, tDevCompMap)
+	if err != nil {
+		logger.Error("Error while inserting param indicator dependent data:", err)
+		return
+	}
+	err = CreateParamIndicatorDependentConstraintsForParamIndicator(ctx)
+	if err != nil {
+		logger.Error("Error while creating param indicator dependent constraints:", err)
+		return
+	}
+	err = ResetParamIndicatorDependentCountersForParamIndicator(ctx)
+	if err != nil {
+		logger.Error("Error while resetting param indicator dependent counters:", err)
+	}
+}
+
+func overrideParamIndicatorDependentIds(paramIndicators []dao.ParamIndicatorDao, mappings []dao.MappingDao, deviceComponentMappings []dao.DeviceComponentMappingDao) ([]dao.ParamIndicatorDao, []dao.MappingDao, []dao.DeviceComponentMappingDao) {
+	var idMap map[int64]int64
+	idMap = make(map[int64]int64)
+	paramIndicators, mappings = processParamIndicators(paramIndicators, mappings, idMap)
+	clear(idMap)
+	mappings, deviceComponentMappings = processMappings(mappings, deviceComponentMappings, idMap)
+	clear(idMap)
+	return paramIndicators, mappings, deviceComponentMappings
+}
+
+func processParamIndicators(paramIndicators []dao.ParamIndicatorDao, mappings []dao.MappingDao, pIndMap map[int64]int64) ([]dao.ParamIndicatorDao, []dao.MappingDao) {
+	var i int
+	var nextId int64
+	var oldId int64
+	var newId int64
+	var found bool
+	nextId = 1
+	for i = range paramIndicators {
+		oldId = paramIndicators[i].ID
+		pIndMap[oldId] = nextId
+		nextId = nextId + 1
+	}
+	for i = range paramIndicators {
+		oldId = paramIndicators[i].ID
+		newId, found = pIndMap[oldId]
+		if found {
+			paramIndicators[i].ID = newId
+		}
+	}
+	return paramIndicators, mappings
+}
+
+func GetParamIndicatorDependentDataOnly(ctx context.Context) ([]dao.ParamIndicatorDao, []dao.MappingDao, []dao.DeviceComponentMappingDao, error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	var tParamInd []dao.ParamIndicatorDao
+	var tMapping []dao.MappingDao
+	var tDevCompMap []dao.DeviceComponentMappingDao
+	wg.Add(3)
+	go func() {
+		defer wg.Done()
+		var res []dao.ParamIndicatorDao
+		res, err = dao.GetAllParamIndicatorDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tParamInd = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.MappingDao
+		res, err = dao.GetAllMappingDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tMapping = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.DeviceComponentMappingDao
+		res, err = dao.GetAllDeviceComponentMappingDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tDevCompMap = res
+	}()
+	wg.Wait()
+	if errResult != nil {
+		return nil, nil, nil, errResult
+	}
+	return tParamInd, tMapping, tDevCompMap, nil
+}
+
+func DropParamIndicatorDependentConstraintsForParamIndicator(ctx context.Context) error {
+	var err error
+	err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.DropParamIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.param_indicator: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropParamIndicatorDependentTablesForParamIndicator(ctx context.Context) error {
+	var err error
+	err = dao.DropDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.mapping: %v", err)
+		return err
+	}
+	err = dao.DropParamIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.param_indicator: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateParamIndicatorDependentTablesForParamIndicator(ctx context.Context) error {
+	var err error
+	err = dao.CreateParamIndicatorDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component_mapping: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateParamIndicatorDependentConstraintsForParamIndicator(ctx context.Context) error {
+	var err error
+	err = dao.CreateParamIndicatorDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.param_indicator: %v", err)
+		return err
+	}
+	err = dao.CreateMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	return nil
+}
+
+func InsertParamIndicatorDependentDataForParamIndicator(ctx context.Context, tParamInd []dao.ParamIndicatorDao, tMapping []dao.MappingDao, tDevCompMap []dao.DeviceComponentMappingDao) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(3)
+	go func() {
+		defer wg.Done()
+		err = dao.ImportParamIndicatorDao(ctx, tParamInd)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportMappingDao(ctx, tMapping)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportDeviceComponentMappingDao(ctx, tDevCompMap)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}
+
+func ResetParamIndicatorDependentCountersForParamIndicator(ctx context.Context) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		err = dao.DropParamIndicatorDaoCounter(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.DropMappingDaoCounter(ctx)
 		if err != nil {
 			mu.Lock()
 			errResult = err
