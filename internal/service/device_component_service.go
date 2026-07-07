@@ -114,15 +114,7 @@ func UpdateDeviceComponent(ctx context.Context, id int64, d dto.DeviceComponentC
 
 func DeleteDeviceComponent(ctx context.Context, id int64) (bool, error) {
 	var err error
-	var i int
-	var closestIdx int64
-	var deviceComponents []dao.DeviceComponentDao
 	var found bool
-	deviceComponents, err = dao.GetAllDeviceComponentDao(ctx)
-	if err != nil {
-		logger.Errorf("Error getting device components from table public.device_component: %v", err)
-		return false, err
-	}
 	found, err = dao.DeleteDeviceComponent(ctx, id)
 	if err != nil {
 		logger.Errorf("Error deleting device component ID %d: %v", id, err)
@@ -131,28 +123,7 @@ func DeleteDeviceComponent(ctx context.Context, id int64) (bool, error) {
 	if !found {
 		return false, nil
 	}
-	if id < int64(len(deviceComponents)) {
-		closestIdx = 0
-		deviceComponents, err = dao.GetAllDeviceComponentDao(ctx)
-		if err != nil {
-			logger.Errorf("Error getting device components from table public.device_component: %v", err)
-			return false, err
-		}
-		for i = range deviceComponents {
-			if deviceComponents[i].ID <= id {
-				continue
-			}
-			closestIdx = deviceComponents[i].ID
-			break
-		}
-		if closestIdx != 0 {
-			_, err = ChangeDeviceComponentData(ctx, closestIdx, id)
-			if err != nil {
-				logger.Errorf("Error shifting ID from %d to %d: %v", closestIdx, id, err)
-				return true, err
-			}
-		}
-	}
+	CompressDeviceComponentDependentData(ctx)
 	return true, nil
 }
 
