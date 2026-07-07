@@ -59,5 +59,9 @@ func DeleteDefaultConfiguration(ctx context.Context, id int64) (bool, error) {
 	var found bool
 	var err error
 	found, err = dao.DeleteDefaultConfiguration(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	CompressDefaultConfigurationDependentData(ctx)
 	return found, err
 }

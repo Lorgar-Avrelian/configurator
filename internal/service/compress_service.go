@@ -2938,3 +2938,121 @@ func ResetConfigurationDependentCountersForConfiguration(ctx context.Context) er
 	wg.Wait()
 	return errResult
 }
+
+func CompressDefaultConfigurationDependentData(ctx context.Context) {
+	var err error
+	var tDefConfig []dao.DefaultConfigurationDao
+	tDefConfig, err = GetDefaultConfigurationDependentDataOnly(ctx)
+	if err != nil {
+		logger.Error("Error while loading default configuration dependent data:", err)
+		return
+	}
+	tDefConfig = overrideDefaultConfigurationDependentIds(tDefConfig)
+	err = DropDefaultConfigurationDependentConstraintsForDefaultConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while dropping default configuration dependent constraints:", err)
+		return
+	}
+	err = DropDefaultConfigurationDependentTablesForDefaultConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while dropping default configuration dependent tables:", err)
+		return
+	}
+	err = CreateDefaultConfigurationDependentTablesForDefaultConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while creating default configuration dependent tables:", err)
+		return
+	}
+	err = InsertDefaultConfigurationDependentDataForDefaultConfiguration(ctx, tDefConfig)
+	if err != nil {
+		logger.Error("Error while inserting default configuration dependent data:", err)
+		return
+	}
+	err = CreateDefaultConfigurationDependentConstraintsForDefaultConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while creating default configuration dependent constraints:", err)
+		return
+	}
+	err = ResetDefaultConfigurationDependentCountersForDefaultConfiguration(ctx)
+	if err != nil {
+		logger.Error("Error while resetting default configuration dependent counters:", err)
+	}
+}
+
+func overrideDefaultConfigurationDependentIds(defaultConfigurations []dao.DefaultConfigurationDao) []dao.DefaultConfigurationDao {
+	var idMap map[int64]int64
+	idMap = make(map[int64]int64)
+	defaultConfigurations = processDefaultConfigurations(defaultConfigurations, idMap)
+	clear(idMap)
+	return defaultConfigurations
+}
+
+func GetDefaultConfigurationDependentDataOnly(ctx context.Context) ([]dao.DefaultConfigurationDao, error) {
+	var err error
+	var tDefConfig []dao.DefaultConfigurationDao
+	var res []dao.DefaultConfigurationDao
+	res, err = dao.GetAllDefaultConfigurationDao(ctx)
+	if err != nil {
+		return nil, err
+	}
+	tDefConfig = res
+	return tDefConfig, nil
+}
+
+func DropDefaultConfigurationDependentConstraintsForDefaultConfiguration(ctx context.Context) error {
+	var err error
+	err = dao.DropDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropDefaultConfigurationDependentTablesForDefaultConfiguration(ctx context.Context) error {
+	var err error
+	err = dao.DropDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.default_configuration: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateDefaultConfigurationDependentTablesForDefaultConfiguration(ctx context.Context) error {
+	var err error
+	err = dao.CreateDefaultConfigurationDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.default_configuration: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateDefaultConfigurationDependentConstraintsForDefaultConfiguration(ctx context.Context) error {
+	var err error
+	err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
+		return err
+	}
+	return nil
+}
+
+func InsertDefaultConfigurationDependentDataForDefaultConfiguration(ctx context.Context, tDefConfig []dao.DefaultConfigurationDao) error {
+	var err error
+	err = dao.ImportDefaultConfigurationDao(ctx, tDefConfig)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func ResetDefaultConfigurationDependentCountersForDefaultConfiguration(ctx context.Context) error {
+	var err error
+	err = dao.DropDefaultConfigurationDaoCounter(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
