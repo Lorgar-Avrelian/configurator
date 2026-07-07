@@ -3056,3 +3056,238 @@ func ResetDefaultConfigurationDependentCountersForDefaultConfiguration(ctx conte
 	}
 	return nil
 }
+
+func CompressThresholdDependentData(ctx context.Context) {
+	var err error
+	var tThreshold []dao.ThresholdDao
+	var tAffectedTh []dao.AffectedThresholdDao
+	tThreshold, tAffectedTh, err = GetThresholdDependentDataOnly(ctx)
+	if err != nil {
+		logger.Error("Error while loading threshold dependent data:", err)
+		return
+	}
+	tThreshold, tAffectedTh = overrideThresholdDependentIds(tThreshold, tAffectedTh)
+	err = DropThresholdDependentConstraintsForThreshold(ctx)
+	if err != nil {
+		logger.Error("Error while dropping threshold dependent constraints:", err)
+		return
+	}
+	err = DropThresholdDependentTablesForThreshold(ctx)
+	if err != nil {
+		logger.Error("Error while dropping threshold dependent tables:", err)
+		return
+	}
+	err = CreateThresholdDependentTablesForThreshold(ctx)
+	if err != nil {
+		logger.Error("Error while creating threshold dependent tables:", err)
+		return
+	}
+	err = InsertThresholdDependentDataForThreshold(ctx, tThreshold, tAffectedTh)
+	if err != nil {
+		logger.Error("Error while inserting threshold dependent data:", err)
+		return
+	}
+	err = CreateThresholdDependentConstraintsForThreshold(ctx)
+	if err != nil {
+		logger.Error("Error while creating threshold dependent constraints:", err)
+		return
+	}
+	err = ResetThresholdDependentCountersForThreshold(ctx)
+	if err != nil {
+		logger.Error("Error while resetting threshold dependent counters:", err)
+	}
+}
+
+func overrideThresholdDependentIds(thresholds []dao.ThresholdDao, affectedThresholds []dao.AffectedThresholdDao) ([]dao.ThresholdDao, []dao.AffectedThresholdDao) {
+	var idMap map[int64]int64
+	idMap = make(map[int64]int64)
+	thresholds, affectedThresholds = processThresholds(thresholds, affectedThresholds, idMap)
+	clear(idMap)
+	affectedThresholds = processAffectedThresholdsSelfIds(affectedThresholds, idMap)
+	clear(idMap)
+	return thresholds, affectedThresholds
+}
+
+func processThresholds(thresholds []dao.ThresholdDao, affectedThresholds []dao.AffectedThresholdDao, threshMap map[int64]int64) ([]dao.ThresholdDao, []dao.AffectedThresholdDao) {
+	var i int
+	var nextId int64
+	var oldId int64
+	var newId int64
+	var found bool
+	nextId = 1
+	for i = range thresholds {
+		oldId = thresholds[i].ID
+		threshMap[oldId] = nextId
+		nextId = nextId + 1
+	}
+	for i = range thresholds {
+		oldId = thresholds[i].ID
+		newId, found = threshMap[oldId]
+		if found {
+			thresholds[i].ID = newId
+		}
+	}
+	for i = range affectedThresholds {
+		oldId = affectedThresholds[i].Threshold
+		newId, found = threshMap[oldId]
+		if found {
+			affectedThresholds[i].Threshold = newId
+		}
+	}
+	return thresholds, affectedThresholds
+}
+
+func GetThresholdDependentDataOnly(ctx context.Context) ([]dao.ThresholdDao, []dao.AffectedThresholdDao, error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	var tThreshold []dao.ThresholdDao
+	var tAffectedTh []dao.AffectedThresholdDao
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		var res []dao.ThresholdDao
+		res, err = dao.GetAllThresholdDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tThreshold = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.AffectedThresholdDao
+		res, err = dao.GetAllAffectedThresholdDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tAffectedTh = res
+	}()
+	wg.Wait()
+	if errResult != nil {
+		return nil, nil, errResult
+	}
+	return tThreshold, tAffectedTh, nil
+}
+
+func DropThresholdDependentConstraintsForThreshold(ctx context.Context) error {
+	var err error
+	err = dao.DropAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropThresholdDependentTablesForThreshold(ctx context.Context) error {
+	var err error
+	err = dao.DropAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.affected_threshold: %v", err)
+		return err
+	}
+	err = dao.DropThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.threshold: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateThresholdDependentTablesForThreshold(ctx context.Context) error {
+	var err error
+	err = dao.CreateThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.affected_threshold: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateThresholdDependentConstraintsForThreshold(ctx context.Context) error {
+	var err error
+	err = dao.CreateThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
+		return err
+	}
+	err = dao.CreateAffectedThresholdDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
+		return err
+	}
+	return nil
+}
+
+func InsertThresholdDependentDataForThreshold(ctx context.Context, tThreshold []dao.ThresholdDao, tAffectedTh []dao.AffectedThresholdDao) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		err = dao.ImportThresholdDao(ctx, tThreshold)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportAffectedThresholdDao(ctx, tAffectedTh)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}
+
+func ResetThresholdDependentCountersForThreshold(ctx context.Context) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		err = dao.DropThresholdDaoCounter(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.DropAffectedThresholdDaoCounter(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}

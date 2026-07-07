@@ -68,13 +68,7 @@ func UpdateThreshold(ctx context.Context, id int64, input dto.ThresholdCreateDto
 
 func DeleteThreshold(ctx context.Context, id int64) (bool, error) {
 	var err error
-	var thresholds []dao.ThresholdDao
 	var found bool
-	thresholds, err = dao.GetAllThresholdDao(ctx)
-	if err != nil {
-		logger.Errorf("Error getting thresholds from table public.threshold: %v", err)
-		return false, err
-	}
 	found, err = dao.DeleteThreshold(ctx, id)
 	if err != nil {
 		logger.Errorf("Error deleting threshold ID %d: %v", id, err)
@@ -83,12 +77,6 @@ func DeleteThreshold(ctx context.Context, id int64) (bool, error) {
 	if !found {
 		return false, nil
 	}
-	if id < int64(len(thresholds)) {
-		_, err = ChangeThresholdData(ctx, id+1, id)
-		if err != nil {
-			logger.Errorf("Error shifting ID from %d to %d: %v", id+1, id, err)
-			return true, err
-		}
-	}
+	CompressThresholdDependentData(ctx)
 	return true, nil
 }
