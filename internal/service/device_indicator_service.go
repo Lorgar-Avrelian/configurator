@@ -69,5 +69,9 @@ func DeleteDeviceIndicator(ctx context.Context, id int64) (bool, error) {
 	var found bool
 	var err error
 	found, err = dao.DeleteIndicator(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	CompressDeviceIndicatorDependentData(ctx)
 	return found, err
 }
