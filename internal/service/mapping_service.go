@@ -114,13 +114,7 @@ func UpdateMapping(ctx context.Context, id int64, d dto.MappingCreateDto) (*dto.
 
 func DeleteMapping(ctx context.Context, id int64) (bool, error) {
 	var err error
-	var mappings []dao.MappingDao
 	var found bool
-	mappings, err = dao.GetAllMappingDao(ctx)
-	if err != nil {
-		logger.Errorf("Error getting mappings from table public.mapping: %v", err)
-		return false, err
-	}
 	found, err = dao.DeleteMapping(ctx, id)
 	if err != nil {
 		logger.Errorf("Error deleting mapping ID %d: %v", id, err)
@@ -129,13 +123,7 @@ func DeleteMapping(ctx context.Context, id int64) (bool, error) {
 	if !found {
 		return false, nil
 	}
-	if id < int64(len(mappings)) {
-		_, err = ChangeMappingData(ctx, id+1, id)
-		if err != nil {
-			logger.Errorf("Error shifting ID from %d to %d: %v", id+1, id, err)
-			return true, err
-		}
-	}
+	CompressMappingDependentData(ctx)
 	return true, nil
 }
 

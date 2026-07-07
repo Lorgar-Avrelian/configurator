@@ -2440,3 +2440,198 @@ func ResetDeviceComponentDependentCountersForDeviceComponent(ctx context.Context
 	wg.Wait()
 	return errResult
 }
+
+func CompressMappingDependentData(ctx context.Context) {
+	var err error
+	var tMapping []dao.MappingDao
+	var tDevCompMap []dao.DeviceComponentMappingDao
+	tMapping, tDevCompMap, err = GetMappingDependentDataOnly(ctx)
+	if err != nil {
+		logger.Error("Error while loading mapping dependent data:", err)
+		return
+	}
+	tMapping, tDevCompMap = overrideMappingDependentIds(tMapping, tDevCompMap)
+	err = DropMappingDependentConstraintsForMapping(ctx)
+	if err != nil {
+		logger.Error("Error while dropping mapping dependent constraints:", err)
+		return
+	}
+	err = DropMappingDependentTablesForMapping(ctx)
+	if err != nil {
+		logger.Error("Error while dropping mapping dependent tables:", err)
+		return
+	}
+	err = CreateMappingDependentTablesForMapping(ctx)
+	if err != nil {
+		logger.Error("Error while creating mapping dependent tables:", err)
+		return
+	}
+	err = InsertMappingDependentDataForMapping(ctx, tMapping, tDevCompMap)
+	if err != nil {
+		logger.Error("Error while inserting mapping dependent data:", err)
+		return
+	}
+	err = CreateMappingDependentConstraintsForMapping(ctx)
+	if err != nil {
+		logger.Error("Error while creating mapping dependent constraints:", err)
+		return
+	}
+	err = ResetMappingDependentCountersForMapping(ctx)
+	if err != nil {
+		logger.Error("Error while resetting mapping dependent counters:", err)
+	}
+}
+
+func overrideMappingDependentIds(mappings []dao.MappingDao, deviceComponentMappings []dao.DeviceComponentMappingDao) ([]dao.MappingDao, []dao.DeviceComponentMappingDao) {
+	var idMap map[int64]int64
+	idMap = make(map[int64]int64)
+	mappings, deviceComponentMappings = processMappings(mappings, deviceComponentMappings, idMap)
+	clear(idMap)
+	return mappings, deviceComponentMappings
+}
+
+func GetMappingDependentDataOnly(ctx context.Context) ([]dao.MappingDao, []dao.DeviceComponentMappingDao, error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	var tMapping []dao.MappingDao
+	var tDevCompMap []dao.DeviceComponentMappingDao
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		var res []dao.MappingDao
+		res, err = dao.GetAllMappingDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tMapping = res
+	}()
+	go func() {
+		defer wg.Done()
+		var res []dao.DeviceComponentMappingDao
+		res, err = dao.GetAllDeviceComponentMappingDao(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+			return
+		}
+		tDevCompMap = res
+	}()
+	wg.Wait()
+	if errResult != nil {
+		return nil, nil, errResult
+	}
+	return tMapping, tDevCompMap, nil
+}
+
+func DropMappingDependentConstraintsForMapping(ctx context.Context) error {
+	var err error
+	err = dao.DropDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.mapping: %v", err)
+		return err
+	}
+	return nil
+}
+
+func DropMappingDependentTablesForMapping(ctx context.Context) error {
+	var err error
+	err = dao.DropDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.device_component_mapping: %v", err)
+		return err
+	}
+	err = dao.DropMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping table public.mapping: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateMappingDependentTablesForMapping(ctx context.Context) error {
+	var err error
+	err = dao.CreateMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDao(ctx)
+	if err != nil {
+		logger.Errorf("Error creating table public.device_component_mapping: %v", err)
+		return err
+	}
+	return nil
+}
+
+func CreateMappingDependentConstraintsForMapping(ctx context.Context) error {
+	var err error
+	err = dao.CreateMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.mapping: %v", err)
+		return err
+	}
+	err = dao.CreateDeviceComponentMappingDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.device_component_mapping: %v", err)
+		return err
+	}
+	return nil
+}
+
+func InsertMappingDependentDataForMapping(ctx context.Context, tMapping []dao.MappingDao, tDevCompMap []dao.DeviceComponentMappingDao) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		err = dao.ImportMappingDao(ctx, tMapping)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		err = dao.ImportDeviceComponentMappingDao(ctx, tDevCompMap)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}
+
+func ResetMappingDependentCountersForMapping(ctx context.Context) error {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errResult error
+	var err error
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err = dao.DropMappingDaoCounter(ctx)
+		if err != nil {
+			mu.Lock()
+			errResult = err
+			mu.Unlock()
+		}
+	}()
+	wg.Wait()
+	return errResult
+}
