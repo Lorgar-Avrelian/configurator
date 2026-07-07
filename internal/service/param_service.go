@@ -78,13 +78,7 @@ func UpdateParam(ctx context.Context, id int64, d dto.ParamUpdateDto) (*dto.Para
 
 func DeleteParam(ctx context.Context, id int64) (bool, error) {
 	var err error
-	var params []dao.ParamDao
 	var found bool
-	params, err = dao.GetAllParamDao(ctx)
-	if err != nil {
-		logger.Errorf("Error getting params from table public.param: %v", err)
-		return false, err
-	}
 	found, err = dao.DeleteParam(ctx, id)
 	if err != nil {
 		logger.Errorf("Error deleting param ID %d: %v", id, err)
@@ -93,13 +87,7 @@ func DeleteParam(ctx context.Context, id int64) (bool, error) {
 	if !found {
 		return false, nil
 	}
-	if id < int64(len(params)) {
-		_, err = ChangeParamData(ctx, id+1, id)
-		if err != nil {
-			logger.Errorf("Error shifting ID from %d to %d: %v", id+1, id, err)
-			return true, err
-		}
-	}
+	CompressParamDependentData(ctx)
 	return true, nil
 }
 
