@@ -10,9 +10,13 @@ import (
 
 func CreateThreshold(ctx context.Context, input dto.ThresholdCreateDto) (*dto.ThresholdDto, error) {
 	var thresholdDao dao.ThresholdDao
-	thresholdDao = mapper.ThresholdCreateDtoToThresholdDao(input)
-	var insertedID int64
 	var err error
+	thresholdDao, err = mapper.ThresholdCreateDtoToThresholdDao(input)
+	if err != nil {
+		logger.Errorf("Validation failed during threshold creation mapping: %v", err)
+		return nil, err
+	}
+	var insertedID int64
 	insertedID, err = dao.CreateThreshold(ctx, thresholdDao)
 	if err != nil {
 		logger.Errorf("Service layer failed to create threshold: %v", err)
@@ -58,9 +62,13 @@ func GetAllThresholds(ctx context.Context) ([]dto.ThresholdDto, error) {
 
 func UpdateThreshold(ctx context.Context, id int64, input dto.ThresholdCreateDto) (*dto.ThresholdDto, error) {
 	var thresholdDao dao.ThresholdDao
-	thresholdDao = mapper.ThresholdCreateDtoToThresholdDao(input)
-	var updated bool
 	var err error
+	thresholdDao, err = mapper.ThresholdCreateDtoToThresholdDao(input)
+	if err != nil {
+		logger.Errorf("Validation failed during threshold update mapping: %v", err)
+		return nil, err
+	}
+	var updated bool
 	updated, err = dao.UpdateThreshold(ctx, id, thresholdDao)
 	if err != nil {
 		logger.Errorf("Service layer failed to update threshold ID %d: %v", id, err)

@@ -4567,11 +4567,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "\u003e"
                 },
-                "result": {
-                    "type": "boolean",
-                    "x-nullable": true,
-                    "example": true
-                },
                 "target": {
                     "$ref": "#/definitions/configurator_internal_dto.ThresholdTargetDto"
                 },
@@ -4596,8 +4591,7 @@ const docTemplate = `{
                     "example": "admin"
                 },
                 "description": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                 },
                 "name": {
                     "type": "string",
@@ -4611,7 +4605,7 @@ const docTemplate = `{
                 },
                 "value": {
                     "type": "string",
-                    "example": "90"
+                    "example": "ALARM"
                 }
             }
         },
@@ -4623,12 +4617,10 @@ const docTemplate = `{
                     "example": "admin"
                 },
                 "created": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                 },
                 "description": {
-                    "type": "string",
-                    "x-nullable": true
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer",
@@ -4646,7 +4638,7 @@ const docTemplate = `{
                 },
                 "value": {
                     "type": "string",
-                    "example": "90"
+                    "example": "ALARM"
                 }
             }
         },
@@ -4654,16 +4646,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "comparison": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/configurator_internal_dto.ThresholdComparisonDto"
-                        }
-                    ],
-                    "x-nullable": true
+                    "$ref": "#/definitions/configurator_internal_dto.ThresholdComparisonDto"
                 },
                 "expression": {
-                    "type": "object",
-                    "x-nullable": true
+                    "type": "object"
                 }
             }
         },
@@ -4671,12 +4657,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "root": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/configurator_internal_dto.ThresholdNodeDto"
-                        }
-                    ],
-                    "x-nullable": true
+                    "$ref": "#/definitions/configurator_internal_dto.ThresholdNodeDto"
                 }
             }
         },
@@ -4687,12 +4668,10 @@ const docTemplate = `{
                     "$ref": "#/definitions/configurator_internal_dto.ThresholdElementDto"
                 },
                 "next": {
-                    "type": "object",
-                    "x-nullable": true
+                    "type": "object"
                 },
                 "operator": {
                     "type": "string",
-                    "x-nullable": true,
                     "example": "AND"
                 }
             }
@@ -4701,24 +4680,16 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "host": {
-                    "type": "string",
-                    "example": "127.0.0.1"
+                    "type": "string"
                 },
                 "port": {
-                    "type": "integer",
-                    "example": 161
+                    "type": "integer"
                 },
                 "protocol": {
-                    "type": "string",
-                    "example": "SNMP"
+                    "type": "string"
                 },
                 "target": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/configurator_internal_dto.ThresholdTargetNodeDto"
-                        }
-                    ],
-                    "x-nullable": true
+                    "$ref": "#/definitions/configurator_internal_dto.ThresholdTargetNodeDto"
                 }
             }
         },
@@ -4726,28 +4697,19 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "component": {
-                    "type": "string",
-                    "x-nullable": true,
-                    "example": "cpu"
+                    "type": "string"
                 },
                 "field": {
-                    "type": "string",
-                    "x-nullable": true,
-                    "example": "value"
+                    "type": "string"
                 },
                 "internalOrder": {
-                    "type": "integer",
-                    "x-nullable": true,
-                    "example": 1
+                    "type": "integer"
                 },
                 "next": {
-                    "type": "object",
-                    "x-nullable": true
+                    "type": "object"
                 },
                 "param": {
-                    "type": "string",
-                    "x-nullable": true,
-                    "example": "utilization"
+                    "type": "string"
                 }
             }
         }

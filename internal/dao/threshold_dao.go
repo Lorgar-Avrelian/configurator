@@ -13,6 +13,8 @@ func scanThresholdRows(rows pgx.Rows) ([]ThresholdDao, error) {
 	var list []ThresholdDao
 	list = []ThresholdDao{}
 	var cfg ThresholdDao
+	var queryStr string
+	var targetStr string
 	var err error
 	for rows.Next() {
 		err = rows.Scan(
@@ -21,14 +23,16 @@ func scanThresholdRows(rows pgx.Rows) ([]ThresholdDao, error) {
 			&cfg.Description,
 			&cfg.Author,
 			&cfg.Created,
-			&cfg.Query,
-			&cfg.Target,
+			&queryStr,
+			&targetStr,
 			&cfg.Value,
 		)
 		if err != nil {
 			logger.Errorf("Failed to scan threshold row: %v", err)
 			return nil, err
 		}
+		cfg.Query = []byte(queryStr)
+		cfg.Target = []byte(targetStr)
 		list = append(list, cfg)
 	}
 	err = rows.Err()
@@ -53,9 +57,9 @@ func CreateThreshold(ctx context.Context, t ThresholdDao) (int64, error) {
 		"query",
 		"target",
 		"value"
-	) VALUES ($1, $2, $3, NOW(), $4, $5, $6)
+	) VALUES ($1, $2, $3, NOW(), $4::jsonb, $5::jsonb, $6)
 	RETURNING "id"`
-	err = conn.QueryRow(ctx, query, t.Name, t.Description, t.Author, t.Query, t.Target, t.Value).Scan(&insertedID)
+	err = conn.QueryRow(ctx, query, t.Name, t.Description, t.Author, string(t.Query), string(t.Target), t.Value).Scan(&insertedID)
 	if err != nil {
 		logger.Errorf("Failed to insert threshold into DB: %v", err)
 		return 0, err
@@ -75,8 +79,8 @@ func GetThresholdByID(ctx context.Context, id int64) (*ThresholdDao, error) {
 		"description",
 		"author",
 		"created",
-		"query",
-		"target",
+		"query"::text,
+		"target"::text,
 		"value"
 	FROM public.threshold
 	WHERE "id" = $1`
@@ -110,8 +114,8 @@ func GetAllThresholds(ctx context.Context) ([]ThresholdDao, error) {
 		"description",
 		"author",
 		"created",
-		"query",
-		"target",
+		"query"::text,
+		"target"::text,
 		"value"
 	FROM public.threshold
 	ORDER BY "id" ASC`
@@ -141,11 +145,11 @@ func UpdateThreshold(ctx context.Context, id int64, t ThresholdDao) (bool, error
 		"name" = $1,
 		"description" = $2,
 		"author" = $3,
-		"query" = $4,
-		"target" = $5,
+		"query" = $4::jsonb,
+		"target" = $5::jsonb,
 		"value" = $6
 	WHERE "id" = $7`
-	commandTag, err = conn.Exec(ctx, query, t.Name, t.Description, t.Author, t.Query, t.Target, t.Value, id)
+	commandTag, err = conn.Exec(ctx, query, t.Name, t.Description, t.Author, string(t.Query), string(t.Target), t.Value, id)
 	if err != nil {
 		logger.Errorf("Failed to update threshold ID %d: %v", id, err)
 		return false, err
