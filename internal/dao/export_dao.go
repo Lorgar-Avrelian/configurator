@@ -2,6 +2,7 @@ package dao
 
 import (
 	"configurator/internal/database"
+	"configurator/internal/logger"
 	"context"
 
 	"github.com/jackc/pgx/v5"
@@ -1979,16 +1980,17 @@ func GetAllThresholdDao(ctx context.Context) ([]ThresholdDao, error) {
 	var rows pgx.Rows
 	var err error
 	var query string
-	query = `SELECT "id", "name", "description", "author", "created", "query"
-			 FROM public.threshold
-			 ORDER BY "id" ASC`
+	query = `SELECT "id", "name", "description", "author", "created", "query"::text, "target"::text, "value"
+	FROM public.threshold
+	ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
 	if err != nil {
+		logger.Errorf("Failed to execute select query for all thresholds: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
 	var list []ThresholdDao
-	list = make([]ThresholdDao, 0)
+	list = []ThresholdDao{}
 	for rows.Next() {
 		var d ThresholdDao
 		err = rows.Scan(
@@ -1998,11 +2000,19 @@ func GetAllThresholdDao(ctx context.Context) ([]ThresholdDao, error) {
 			&d.Author,
 			&d.Created,
 			&d.Query,
+			&d.Target,
+			&d.Value,
 		)
 		if err != nil {
+			logger.Errorf("Failed to scan row into threshold dao structure: %v", err)
 			return nil, err
 		}
 		list = append(list, d)
+	}
+	err = rows.Err()
+	if err != nil {
+		logger.Errorf("Threshold rows iterator processing error encountered: %v", err)
+		return nil, err
 	}
 	return list, nil
 }

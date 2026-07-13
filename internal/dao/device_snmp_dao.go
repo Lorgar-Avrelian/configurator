@@ -46,19 +46,14 @@ func GetThresholdsByHostPort(ctx context.Context, host string, port int32) ([]Th
 	var rows pgx.Rows
 	var err error
 	conn = database.Get()
-	query = `SELECT t."id", 
-                    t."name", 
-                    t."description", 
-                    t."author", 
-                    t."created", 
-                    t."query" 
+	query = `SELECT t."id", t."name", t."description", t."author", t."created", t."query"::text, t."target"::text, t."value"
              FROM public.threshold t 
                  JOIN public.affected_threshold af ON t."id" = af."threshold" 
              WHERE af."host" = $1 AND af."port" = $2 
              ORDER BY t."id" ASC`
 	rows, err = conn.Query(ctx, query, host, port)
 	if err != nil {
-		logger.Error("Failed to fetch thresholds for device: %v", err)
+		logger.Errorf("Failed to fetch thresholds for device %s:%d: %v", host, port, err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -66,13 +61,19 @@ func GetThresholdsByHostPort(ctx context.Context, host string, port int32) ([]Th
 	list = []ThresholdDao{}
 	var t ThresholdDao
 	for rows.Next() {
-		err = rows.Scan(&t.ID, &t.Name, &t.Description, &t.Author, &t.Created, &t.Query)
+		err = rows.Scan(&t.ID, &t.Name, &t.Description, &t.Author, &t.Created, &t.Query, &t.Target, &t.Value)
 		if err != nil {
+			logger.Errorf("Failed to scan row into threshold dao structure: %v", err)
 			return nil, err
 		}
 		list = append(list, t)
 	}
-	return list, rows.Err()
+	err = rows.Err()
+	if err != nil {
+		logger.Errorf("Threshold rows iterator processing error encountered: %v", err)
+		return nil, err
+	}
+	return list, nil
 }
 
 func GetComponentsWithTargetParamByHostPort(ctx context.Context, host string, port int32) ([]Component, error) {

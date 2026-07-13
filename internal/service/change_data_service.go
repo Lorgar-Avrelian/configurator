@@ -502,11 +502,6 @@ func DropComponentDependentConstraints(ctx context.Context) error {
 		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
 		return err
 	}
-	err = dao.DropThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
-		return err
-	}
 	err = dao.DropDefaultConfigurationDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
@@ -923,11 +918,6 @@ func CreateComponentDependentConstraints(ctx context.Context) error {
 	err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
-		return err
-	}
-	err = dao.CreateThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
 		return err
 	}
 	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
@@ -1391,11 +1381,6 @@ func DropParamDependentConstraints(ctx context.Context) error {
 		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
 		return err
 	}
-	err = dao.DropThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
-		return err
-	}
 	err = dao.DropDefaultConfigurationDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
@@ -1814,11 +1799,6 @@ func CreateParamDependentConstraints(ctx context.Context) error {
 		logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
 		return err
 	}
-	err = dao.CreateThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
-		return err
-	}
 	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)
@@ -2222,11 +2202,6 @@ func DropDeviceComponentDependentConstraints(ctx context.Context) error {
 		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
 		return err
 	}
-	err = dao.DropThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
-		return err
-	}
 	err = dao.DropDefaultConfigurationDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error dropping constraints for table public.default_configuration: %v", err)
@@ -2493,11 +2468,6 @@ func CreateDeviceComponentDependentConstraints(ctx context.Context) error {
 	err = dao.CreateDefaultConfigurationDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error creating constraints for table public.default_configuration: %v", err)
-		return err
-	}
-	err = dao.CreateThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
 		return err
 	}
 	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
@@ -3231,11 +3201,6 @@ func DropThresholdDependentConstraints(ctx context.Context) error {
 		logger.Errorf("Error dropping constraints for table public.device_snmp: %v", err)
 		return err
 	}
-	err = dao.DropThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
-		return err
-	}
 	return nil
 }
 
@@ -3384,11 +3349,6 @@ func InsertThresholdDependentData(ctx context.Context, tThreshold []dao.Threshol
 
 func CreateThresholdDependentConstraints(ctx context.Context) error {
 	var err error
-	err = dao.CreateThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
-		return err
-	}
 	err = dao.CreateDeviceSnmpDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error creating constraints for table public.device_snmp: %v", err)

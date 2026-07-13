@@ -1395,18 +1395,6 @@ func DropDefaultConfigurationDaoConstraints(ctx context.Context) error {
 	return nil
 }
 
-func DropThresholdDaoConstraints(ctx context.Context) error {
-	var err error
-	var query string
-	query = `ALTER TABLE public.threshold
-    DROP CONSTRAINT "threshold_query_key";`
-	_, err = database.Get().Exec(ctx, query)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func DropDeviceSnmpDaoConstraints(ctx context.Context) error {
 	var err error
 	var query string

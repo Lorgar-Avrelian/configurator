@@ -3183,11 +3183,6 @@ func DropThresholdDependentConstraintsForThreshold(ctx context.Context) error {
 		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
 		return err
 	}
-	err = dao.DropThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error dropping constraints for table public.threshold: %v", err)
-		return err
-	}
 	return nil
 }
 
@@ -3223,11 +3218,6 @@ func CreateThresholdDependentTablesForThreshold(ctx context.Context) error {
 
 func CreateThresholdDependentConstraintsForThreshold(ctx context.Context) error {
 	var err error
-	err = dao.CreateThresholdDaoConstraints(ctx)
-	if err != nil {
-		logger.Errorf("Error creating constraints for table public.threshold: %v", err)
-		return err
-	}
 	err = dao.CreateAffectedThresholdDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)

@@ -2,6 +2,7 @@ package dao
 
 import (
 	"configurator/internal/database"
+	"configurator/internal/logger"
 	"context"
 
 	"github.com/jackc/pgx/v5"
@@ -876,12 +877,28 @@ func ImportThresholdDao(ctx context.Context, list []ThresholdDao) error {
 	var batches [][]ThresholdDao
 	var query string
 	batches = dropArray(list)
-	query = `INSERT INTO public.threshold ("id", "name", "description", "author", "created", "query") 
-			 VALUES ($1, $2, $3, $4, $5, $6)`
-	return executeBatchInsert(ctx, batches, func(b pgx.Batch, item ThresholdDao) pgx.Batch {
-		b.Queue(query, item.ID, item.Name, item.Description, item.Author, item.Created, item.Query)
+	query = `INSERT INTO public.threshold ("id", "name", "description", "author", "created", "query", "target", "value") 
+VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7::jsonb, $8)`
+	var err error
+	err = executeBatchInsert(ctx, batches, func(b pgx.Batch, item ThresholdDao) pgx.Batch {
+		b.Queue(
+			query,
+			item.ID,
+			item.Name,
+			item.Description,
+			item.Author,
+			item.Created,
+			string(item.Query),
+			string(item.Target),
+			item.Value,
+		)
 		return b
 	})
+	if err != nil {
+		logger.Errorf("Failed to execute batch import for thresholds: %v", err)
+		return err
+	}
+	return nil
 }
 
 func ImportDeviceSnmpDao(ctx context.Context, list []DeviceSnmpDao) error {
