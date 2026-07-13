@@ -299,3 +299,18 @@ type ParamResultGetDto struct {
 	InternalOrder  *int32  `json:"internal_order" form:"internal_order" example:"1"`
 	ParamTitle     *string `json:"param_title" form:"param_title" example:"name"`
 }
+
+type ThresholdInputStringDto struct {
+	Name        string  `json:"name" swaggertype:"string" example:"Высокая загрузка ядер CPU"`
+	Description *string `json:"description" swaggertype:"string" example:"Проверка превышения порога"`
+	Author      string  `json:"author" swaggertype:"string" example:"system_admin"`
+	Expression  string  `json:"expression" swaggertype:"string" example:"IF *:*:*.cpu.*.load_percent > 90 THEN ..."`
+}
+type ThresholdStringDto struct {
+	ID          int64   `json:"id" example:"1"`
+	Name        string  `json:"name" example:"Высокая загрузка ядер CPU"`
+	Description *string `json:"description" example:"Проверка превышения порога"`
+	Author      string  `json:"author" example:"system_admin"`
+	Expression  string  `json:"expression" example:"IF *:*:*.cpu.*.load_percent > 90 THEN ..."`
+	Created     *string `json:"created" example:"2026-07-13T19:04:37Z"`
+}

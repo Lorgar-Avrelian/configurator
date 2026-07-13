@@ -3422,7 +3422,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdInputStringDto"
                         }
                     }
                 ],
@@ -3641,13 +3641,22 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Эквивалентное строковое выражение порога",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdStringDto"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -3691,19 +3700,28 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdInputStringDto"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/configurator_internal_dto.ThresholdDto"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -4814,6 +4832,27 @@ const docTemplate = `{
                 }
             }
         },
+        "configurator_internal_dto.ThresholdInputStringDto": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string",
+                    "example": "system_admin"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Проверка превышения порога"
+                },
+                "expression": {
+                    "type": "string",
+                    "example": "IF *:*:*.cpu.*.load_percent \u003e 90 THEN ..."
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Высокая загрузка ядер CPU"
+                }
+            }
+        },
         "configurator_internal_dto.ThresholdNodeDto": {
             "type": "object",
             "properties": {
@@ -4826,6 +4865,35 @@ const docTemplate = `{
                 "operator": {
                     "type": "string",
                     "example": "AND"
+                }
+            }
+        },
+        "configurator_internal_dto.ThresholdStringDto": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string",
+                    "example": "system_admin"
+                },
+                "created": {
+                    "type": "string",
+                    "example": "2026-07-13T19:04:37Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Проверка превышения порога"
+                },
+                "expression": {
+                    "type": "string",
+                    "example": "IF *:*:*.cpu.*.load_percent \u003e 90 THEN ..."
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Высокая загрузка ядер CPU"
                 }
             }
         },

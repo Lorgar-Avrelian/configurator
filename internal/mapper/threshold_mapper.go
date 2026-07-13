@@ -37,6 +37,7 @@ func validateTargetNode(n *dto.ThresholdTargetNodeDto) error {
 	}
 	return validateTargetNode(n.Next)
 }
+
 func parseTargetNode(n *dto.ThresholdTargetNodeDto) *dto.ThresholdTargetNodeDto {
 	if n == nil {
 		return nil
@@ -49,6 +50,7 @@ func parseTargetNode(n *dto.ThresholdTargetNodeDto) *dto.ThresholdTargetNodeDto 
 	res.Next = parseTargetNode(n.Next)
 	return &res
 }
+
 func parseTarget(t *dto.ThresholdTargetDto) *dto.ThresholdTargetDto {
 	if t == nil {
 		return nil
@@ -60,6 +62,7 @@ func parseTarget(t *dto.ThresholdTargetDto) *dto.ThresholdTargetDto {
 	res.Target = parseTargetNode(t.Target)
 	return &res
 }
+
 func pStr(s string) *string {
 	if s == "*" || s == "ANY" || s == "" {
 		return nil
@@ -71,6 +74,7 @@ func pStr(s string) *string {
 	}
 	return &s
 }
+
 func pInt(s string) *int32 {
 	var clean string
 	clean = s
@@ -115,6 +119,7 @@ func parseElement(e *dto.ThresholdElementDto) *dto.ThresholdElementDto {
 	}
 	return &res
 }
+
 func parseExpressionNode(n *dto.ThresholdNodeDto) *dto.ThresholdNodeDto {
 	if n == nil {
 		return nil
@@ -129,6 +134,7 @@ func parseExpressionNode(n *dto.ThresholdNodeDto) *dto.ThresholdNodeDto {
 	}
 	return &res
 }
+
 func validateExpressionNode(n *dto.ThresholdNodeDto) error {
 	if n == nil {
 		return nil
@@ -149,6 +155,7 @@ func validateExpressionNode(n *dto.ThresholdNodeDto) error {
 	}
 	return validateExpressionNode(n.Next)
 }
+
 func ThresholdCreateDtoToThresholdDao(d dto.ThresholdCreateDto) (dao.ThresholdDao, error) {
 	var res dao.ThresholdDao
 	var err error
@@ -184,6 +191,7 @@ func ThresholdCreateDtoToThresholdDao(d dto.ThresholdCreateDto) (dao.ThresholdDa
 	res.Value = d.Value
 	return res, nil
 }
+
 func ThresholdDaoToThresholdDto(d dao.ThresholdDao) dto.ThresholdDto {
 	var res dto.ThresholdDto
 	var qExpr dto.ThresholdExpressionDto
@@ -215,6 +223,7 @@ func ThresholdDaoToThresholdDto(d dao.ThresholdDao) dto.ThresholdDto {
 	}
 	return res
 }
+
 func ThresholdDaoArrayToThresholdDtoArray(arr []dao.ThresholdDao) []dto.ThresholdDto {
 	var res []dto.ThresholdDto
 	res = []dto.ThresholdDto{}
@@ -282,6 +291,7 @@ func parseTargetDto(s string) (*dto.ThresholdTargetDto, error) {
 	res.Target = buildTargetNodes(nodeParts, 0)
 	return &res, nil
 }
+
 func buildTargetNodes(parts []string, idx int) *dto.ThresholdTargetNodeDto {
 	if idx >= len(parts) {
 		return nil
@@ -314,6 +324,7 @@ func buildTargetNodes(parts []string, idx int) *dto.ThresholdTargetNodeDto {
 	res.Next = buildTargetNodes(parts, nextIdx)
 	return &res
 }
+
 func tokenizeExpression(s string) []string {
 	var cleanStr string
 	cleanStr = strings.TrimSpace(s)
@@ -413,6 +424,7 @@ func tokenizeExpression(s string) []string {
 func parseExpressionWords(words []string) (*dto.ThresholdNodeDto, error) {
 	return parseExpressionSubRange(words, 0, len(words))
 }
+
 func parseExpressionSubRange(words []string, start int, end int) (*dto.ThresholdNodeDto, error) {
 	var outputQueue []string
 	var operatorStack []string
@@ -583,7 +595,8 @@ func buildASTFromQueueWithSub(queue []string, subExprs map[int]*dto.ThresholdNod
 	}
 	return stack[0], nil
 }
-func StringToThresholdCreateDto(s string) (dto.ThresholdCreateDto, error) {
+
+func StringToThresholdCreateDto(s string, name string, desc *string, author string) (dto.ThresholdCreateDto, error) {
 	var res dto.ThresholdCreateDto
 	var words []string
 	words = tokenizeExpression(s)
@@ -625,8 +638,9 @@ func StringToThresholdCreateDto(s string) (dto.ThresholdCreateDto, error) {
 	if err != nil {
 		return res, err
 	}
-	res.Name = "Auto Generated Expression String Threshold"
-	res.Author = "string_api"
+	res.Name = name
+	res.Description = desc
+	res.Author = author
 	res.Query.Root = rootNode
 	res.Target = *actionTarget
 	var cleanValue string
@@ -693,6 +707,7 @@ func renderTarget(t *dto.ThresholdTargetDto) string {
 	}
 	return sb.String()
 }
+
 func renderExpressionNode(n *dto.ThresholdNodeDto) string {
 	if n == nil {
 		return ""
@@ -723,6 +738,7 @@ func renderExpressionNode(n *dto.ThresholdNodeDto) string {
 	}
 	return sb.String()
 }
+
 func ThresholdDtoToString(d dto.ThresholdDto) string {
 	var sb strings.Builder
 	sb.WriteString("IF ")
@@ -740,4 +756,15 @@ func ThresholdDtoToString(d dto.ThresholdDto) string {
 	}
 	sb.WriteString(finalVal)
 	return sb.String()
+}
+
+func ThresholdDtoToThresholdStringDto(d dto.ThresholdDto) dto.ThresholdStringDto {
+	var res dto.ThresholdStringDto
+	res.ID = d.ID
+	res.Name = d.Name
+	res.Description = d.Description
+	res.Author = d.Author
+	res.Expression = ThresholdDtoToString(d)
+	res.Created = d.Created
+	return res
 }

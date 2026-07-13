@@ -713,6 +713,21 @@ definitions:
       root:
         $ref: '#/definitions/configurator_internal_dto.ThresholdNodeDto'
     type: object
+  configurator_internal_dto.ThresholdInputStringDto:
+    properties:
+      author:
+        example: system_admin
+        type: string
+      description:
+        example: Проверка превышения порога
+        type: string
+      expression:
+        example: IF *:*:*.cpu.*.load_percent > 90 THEN ...
+        type: string
+      name:
+        example: Высокая загрузка ядер CPU
+        type: string
+    type: object
   configurator_internal_dto.ThresholdNodeDto:
     properties:
       element:
@@ -721,6 +736,27 @@ definitions:
         type: object
       operator:
         example: AND
+        type: string
+    type: object
+  configurator_internal_dto.ThresholdStringDto:
+    properties:
+      author:
+        example: system_admin
+        type: string
+      created:
+        example: "2026-07-13T19:04:37Z"
+        type: string
+      description:
+        example: Проверка превышения порога
+        type: string
+      expression:
+        example: IF *:*:*.cpu.*.load_percent > 90 THEN ...
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Высокая загрузка ядер CPU
         type: string
     type: object
   configurator_internal_dto.ThresholdTargetDto:
@@ -3107,11 +3143,17 @@ paths:
       - text/plain
       responses:
         "200":
-          description: Эквивалентное строковое выражение порога
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/configurator_internal_dto.ThresholdStringDto'
         "400":
           description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
           schema:
             additionalProperties:
               type: string
@@ -3139,16 +3181,22 @@ paths:
         name: request
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/configurator_internal_dto.ThresholdInputStringDto'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/configurator_internal_dto.ThresholdDto'
         "400":
           description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
           schema:
             additionalProperties:
               type: string
@@ -3211,7 +3259,7 @@ paths:
         name: request
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/configurator_internal_dto.ThresholdInputStringDto'
       produces:
       - application/json
       responses:

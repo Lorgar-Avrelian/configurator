@@ -102,10 +102,10 @@ func DeleteThreshold(ctx context.Context, id int64) (bool, error) {
 	return true, nil
 }
 
-func CreateThresholdFromString(ctx context.Context, expr string) (dto.ThresholdDto, error) {
+func CreateThresholdFromString(ctx context.Context, input dto.ThresholdInputStringDto) (dto.ThresholdDto, error) {
 	var createDto dto.ThresholdCreateDto
 	var err error
-	createDto, err = mapper.StringToThresholdCreateDto(expr)
+	createDto, err = mapper.StringToThresholdCreateDto(input.Expression, input.Name, input.Description, input.Author)
 	if err != nil {
 		logger.Errorf("Failed to parse string expression for creation: %v", err)
 		return dto.ThresholdDto{}, err
@@ -121,10 +121,10 @@ func CreateThresholdFromString(ctx context.Context, expr string) (dto.ThresholdD
 	return *res, nil
 }
 
-func UpdateThresholdFromString(ctx context.Context, id int64, expr string) (dto.ThresholdDto, error) {
+func UpdateThresholdFromString(ctx context.Context, id int64, input dto.ThresholdInputStringDto) (dto.ThresholdDto, error) {
 	var createDto dto.ThresholdCreateDto
 	var err error
-	createDto, err = mapper.StringToThresholdCreateDto(expr)
+	createDto, err = mapper.StringToThresholdCreateDto(input.Expression, input.Name, input.Description, input.Author)
 	if err != nil {
 		logger.Errorf("Failed to parse string expression for update: %v", err)
 		return dto.ThresholdDto{}, err
@@ -153,20 +153,16 @@ func UpdateThresholdFromString(ctx context.Context, id int64, expr string) (dto.
 	return mapper.ThresholdDaoToThresholdDto(*updated), nil
 }
 
-func GetThresholdStringByID(ctx context.Context, id int64) (string, error) {
+func GetThresholdStringByID(ctx context.Context, id int64) (dto.ThresholdStringDto, error) {
 	var daoObj *dao.ThresholdDao
 	var err error
 	daoObj, err = dao.GetThresholdByID(ctx, id)
 	if err != nil {
 		logger.Errorf("Failed to fetch threshold ID %d for string rendering: %v", id, err)
-		return "", err
+		return dto.ThresholdStringDto{}, err
 	}
 	if daoObj == nil {
-		return "", errors.New("requested threshold configuration entry data not found by id")
+		return dto.ThresholdStringDto{}, errors.New("requested threshold configuration entry data not found by id")
 	}
-	var d dto.ThresholdDto
-	d = mapper.ThresholdDaoToThresholdDto(*daoObj)
-	var expr string
-	expr = mapper.ThresholdDtoToString(d)
-	return expr, nil
+	return mapper.ThresholdDtoToThresholdStringDto(mapper.ThresholdDaoToThresholdDto(*daoObj)), nil
 }
