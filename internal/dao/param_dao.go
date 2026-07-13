@@ -75,7 +75,7 @@ func DeleteParam(ctx context.Context, id int64) (bool, error) {
 	var affected int64
 	affected = commandTag.RowsAffected()
 	var seqQuery string
-	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.param', 'id'), COALESCE(MAX("id"), 1)) FROM public.param`
+	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.param', 'id'), COALESCE(MAX("id"), 0) + 1, false) FROM public.param`
 	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
 		logger.Error("Failed to reset param sequence: %v", err)

@@ -148,7 +148,7 @@ func DeleteDeviceComponent(ctx context.Context, id int64) (bool, error) {
 		return false, err
 	}
 	affected = commandTag.RowsAffected()
-	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.device_component', 'id'), COALESCE(MAX("id"), 1)) FROM public.device_component`
+	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.device_component', 'id'), COALESCE(MAX("id"), 0) + 1, false) FROM public.device_component`
 	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
 		logger.Error("Failed to reset device component sequence: %v", err)

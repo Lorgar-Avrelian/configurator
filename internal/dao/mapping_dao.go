@@ -156,7 +156,7 @@ func DeleteMapping(ctx context.Context, id int64) (bool, error) {
 		return false, err
 	}
 	affected = commandTag.RowsAffected()
-	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mapping', 'id'), COALESCE(MAX("id"), 1)) FROM public.mapping`
+	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mapping', 'id'), COALESCE(MAX("id"), 0) + 1, false) FROM public.mapping`
 	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
 		logger.Error("Failed to reset mapping sequence: %v", err)

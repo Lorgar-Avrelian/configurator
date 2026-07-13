@@ -175,7 +175,7 @@ func DeleteThreshold(ctx context.Context, id int64) (bool, error) {
 	}
 	var affected int64
 	affected = commandTag.RowsAffected()
-	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.threshold', 'id'), COALESCE(MAX("id"), 1)) FROM public.threshold`
+	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.threshold', 'id'), COALESCE(MAX("id"), 0) + 1, false) FROM public.threshold`
 	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
 		logger.Errorf("Failed to reset threshold sequence: %v", err)

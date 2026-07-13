@@ -198,7 +198,7 @@ func DeleteDefaultConfiguration(ctx context.Context, id int64) (bool, error) {
 	}
 	var affected int64
 	affected = commandTag.RowsAffected()
-	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.default_configuration', 'id'), COALESCE(MAX("id"), 1)) FROM public.default_configuration`
+	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.default_configuration', 'id'), COALESCE(MAX("id"), 0) + 1, false) FROM public.default_configuration`
 	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
 		logger.Error("Failed to reset default_configuration sequence: %v", err)
