@@ -15,11 +15,16 @@ func CreateThreshold(ctx context.Context, input dto.ThresholdCreateDto) (*dto.Th
 	var err error
 	insertedID, err = dao.CreateThreshold(ctx, thresholdDao)
 	if err != nil {
+		logger.Errorf("Service layer failed to create threshold: %v", err)
 		return nil, err
 	}
 	var res *dto.ThresholdDto
 	res, err = GetThresholdByID(ctx, insertedID)
-	return res, err
+	if err != nil {
+		logger.Errorf("Service layer failed to retrieve created threshold: %v", err)
+		return nil, err
+	}
+	return res, nil
 }
 
 func GetThresholdByID(ctx context.Context, id int64) (*dto.ThresholdDto, error) {
@@ -27,6 +32,7 @@ func GetThresholdByID(ctx context.Context, id int64) (*dto.ThresholdDto, error) 
 	var err error
 	th, err = dao.GetThresholdByID(ctx, id)
 	if err != nil {
+		logger.Errorf("Service layer failed to get threshold by ID %d: %v", id, err)
 		return nil, err
 	}
 	if th == nil {
@@ -42,6 +48,7 @@ func GetAllThresholds(ctx context.Context) ([]dto.ThresholdDto, error) {
 	var err error
 	list, err = dao.GetAllThresholds(ctx)
 	if err != nil {
+		logger.Errorf("Service layer failed to get all thresholds: %v", err)
 		return nil, err
 	}
 	var res []dto.ThresholdDto
@@ -56,6 +63,7 @@ func UpdateThreshold(ctx context.Context, id int64, input dto.ThresholdCreateDto
 	var err error
 	updated, err = dao.UpdateThreshold(ctx, id, thresholdDao)
 	if err != nil {
+		logger.Errorf("Service layer failed to update threshold ID %d: %v", id, err)
 		return nil, err
 	}
 	if !updated {
@@ -63,7 +71,11 @@ func UpdateThreshold(ctx context.Context, id int64, input dto.ThresholdCreateDto
 	}
 	var res *dto.ThresholdDto
 	res, err = GetThresholdByID(ctx, id)
-	return res, err
+	if err != nil {
+		logger.Errorf("Service layer failed to retrieve updated threshold ID %d: %v", id, err)
+		return nil, err
+	}
+	return res, nil
 }
 
 func DeleteThreshold(ctx context.Context, id int64) (bool, error) {
@@ -71,7 +83,7 @@ func DeleteThreshold(ctx context.Context, id int64) (bool, error) {
 	var found bool
 	found, err = dao.DeleteThreshold(ctx, id)
 	if err != nil {
-		logger.Errorf("Error deleting threshold ID %d: %v", id, err)
+		logger.Errorf("Service error deleting threshold ID %d: %v", id, err)
 		return false, err
 	}
 	if !found {

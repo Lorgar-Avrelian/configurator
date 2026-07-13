@@ -643,11 +643,26 @@ definitions:
         example: true
         type: boolean
     type: object
+  configurator_internal_dto.ThresholdComparisonDto:
+    properties:
+      operator:
+        example: '>'
+        type: string
+      result:
+        example: true
+        type: boolean
+        x-nullable: true
+      target:
+        $ref: '#/definitions/configurator_internal_dto.ThresholdTargetDto'
+      value:
+        example: "90"
+        type: string
+    type: object
   configurator_internal_dto.ThresholdCreateDto:
     properties:
       author:
+        example: admin
         type: string
-        x-nullable: true
       description:
         type: string
         x-nullable: true
@@ -655,17 +670,24 @@ definitions:
         example: Высокая загрузка CPU
         type: string
       query:
-        example: cpu_util > 90
+        $ref: '#/definitions/configurator_internal_dto.ThresholdExpressionDto'
+      target:
+        $ref: '#/definitions/configurator_internal_dto.ThresholdTargetDto'
+      value:
+        example: "90"
         type: string
     required:
+    - author
     - name
     - query
+    - target
+    - value
     type: object
   configurator_internal_dto.ThresholdDto:
     properties:
       author:
+        example: admin
         type: string
-        x-nullable: true
       created:
         type: string
         x-nullable: true
@@ -679,8 +701,79 @@ definitions:
         example: Высокая загрузка CPU
         type: string
       query:
-        example: cpu_util > 90
+        $ref: '#/definitions/configurator_internal_dto.ThresholdExpressionDto'
+      target:
+        $ref: '#/definitions/configurator_internal_dto.ThresholdTargetDto'
+      value:
+        example: "90"
         type: string
+    type: object
+  configurator_internal_dto.ThresholdElementDto:
+    properties:
+      comparison:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.ThresholdComparisonDto'
+        x-nullable: true
+      expression:
+        type: object
+        x-nullable: true
+    type: object
+  configurator_internal_dto.ThresholdExpressionDto:
+    properties:
+      root:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.ThresholdNodeDto'
+        x-nullable: true
+    type: object
+  configurator_internal_dto.ThresholdNodeDto:
+    properties:
+      element:
+        $ref: '#/definitions/configurator_internal_dto.ThresholdElementDto'
+      next:
+        type: object
+        x-nullable: true
+      operator:
+        example: AND
+        type: string
+        x-nullable: true
+    type: object
+  configurator_internal_dto.ThresholdTargetDto:
+    properties:
+      host:
+        example: 127.0.0.1
+        type: string
+      port:
+        example: 161
+        type: integer
+      protocol:
+        example: SNMP
+        type: string
+      target:
+        allOf:
+        - $ref: '#/definitions/configurator_internal_dto.ThresholdTargetNodeDto'
+        x-nullable: true
+    type: object
+  configurator_internal_dto.ThresholdTargetNodeDto:
+    properties:
+      component:
+        example: cpu
+        type: string
+        x-nullable: true
+      field:
+        example: value
+        type: string
+        x-nullable: true
+      internalOrder:
+        example: 1
+        type: integer
+        x-nullable: true
+      next:
+        type: object
+        x-nullable: true
+      param:
+        example: utilization
+        type: string
+        x-nullable: true
     type: object
 host: localhost:8082
 info:

@@ -206,20 +206,61 @@ type ConfigurationDto struct {
 	DeviceComponent *DeviceComponentDto `json:"device_component,omitempty" extensions:"x-nullable"`
 }
 
+type ThresholdTargetNodeDto struct {
+	Component     *string                 `json:"component,omitempty" example:"cpu" extensions:"x-nullable"`
+	InternalOrder *int32                  `json:"internalOrder,omitempty" example:"1" extensions:"x-nullable"`
+	Param         *string                 `json:"param,omitempty" example:"utilization" extensions:"x-nullable"`
+	Field         *string                 `json:"field,omitempty" example:"value" extensions:"x-nullable"`
+	Next          *ThresholdTargetNodeDto `json:"next,omitempty" swaggertype:"object" extensions:"x-nullable"`
+}
+
+type ThresholdTargetDto struct {
+	PollingProtocol string                  `json:"protocol" example:"SNMP"`
+	Host            string                  `json:"host" example:"127.0.0.1"`
+	Port            int32                   `json:"port" example:"161"`
+	Target          *ThresholdTargetNodeDto `json:"target,omitempty" extensions:"x-nullable"`
+}
+
+type ThresholdComparisonDto struct {
+	Target   ThresholdTargetDto `json:"target"`
+	Operator string             `json:"operator" example:">"`
+	Value    string             `json:"value" example:"90"`
+	Result   *bool              `json:"result,omitempty" example:"true" extensions:"x-nullable"`
+}
+
+type ThresholdElementDto struct {
+	Comparison *ThresholdComparisonDto `json:"comparison,omitempty" extensions:"x-nullable"`
+	Expression *ThresholdExpressionDto `json:"expression,omitempty" swaggertype:"object" extensions:"x-nullable"`
+}
+
+type ThresholdNodeDto struct {
+	Element  ThresholdElementDto `json:"element"`
+	Operator *string             `json:"operator,omitempty" example:"AND" extensions:"x-nullable"`
+	Next     *ThresholdNodeDto   `json:"next,omitempty" swaggertype:"object" extensions:"x-nullable"`
+}
+
+type ThresholdExpressionDto struct {
+	Root *ThresholdNodeDto `json:"root,omitempty" extensions:"x-nullable"`
+}
+
 type ThresholdCreateDto struct {
-	Name        string  `json:"name" binding:"required" example:"Высокая загрузка CPU"`
-	Description *string `json:"description,omitempty" extensions:"x-nullable"`
-	Author      *string `json:"author,omitempty" extensions:"x-nullable"`
-	Query       string  `json:"query" binding:"required" example:"cpu_util > 90"`
+	Name        string                 `json:"name" binding:"required" example:"Высокая загрузка CPU"`
+	Description *string                `json:"description,omitempty" extensions:"x-nullable"`
+	Author      string                 `json:"author" binding:"required" example:"admin"`
+	Query       ThresholdExpressionDto `json:"query" binding:"required"`
+	Target      ThresholdTargetDto     `json:"target" binding:"required"`
+	Value       string                 `json:"value" binding:"required" example:"90"`
 }
 
 type ThresholdDto struct {
-	ID          int64   `json:"id" example:"1"`
-	Name        string  `json:"name" example:"Высокая загрузка CPU"`
-	Description *string `json:"description,omitempty" extensions:"x-nullable"`
-	Author      *string `json:"author,omitempty" extensions:"x-nullable"`
-	Created     *string `json:"created,omitempty" extensions:"x-nullable"`
-	Query       string  `json:"query" example:"cpu_util > 90"`
+	ID          int64                  `json:"id" example:"1"`
+	Name        string                 `json:"name" example:"Высокая загрузка CPU"`
+	Description *string                `json:"description,omitempty" extensions:"x-nullable"`
+	Author      string                 `json:"author" example:"admin"`
+	Created     *string                `json:"created,omitempty" extensions:"x-nullable"`
+	Query       ThresholdExpressionDto `json:"query"`
+	Target      ThresholdTargetDto     `json:"target"`
+	Value       string                 `json:"value" example:"90"`
 }
 
 type ConfigInProcessDto struct {

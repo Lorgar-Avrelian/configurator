@@ -4560,16 +4560,40 @@ const docTemplate = `{
                 }
             }
         },
+        "configurator_internal_dto.ThresholdComparisonDto": {
+            "type": "object",
+            "properties": {
+                "operator": {
+                    "type": "string",
+                    "example": "\u003e"
+                },
+                "result": {
+                    "type": "boolean",
+                    "x-nullable": true,
+                    "example": true
+                },
+                "target": {
+                    "$ref": "#/definitions/configurator_internal_dto.ThresholdTargetDto"
+                },
+                "value": {
+                    "type": "string",
+                    "example": "90"
+                }
+            }
+        },
         "configurator_internal_dto.ThresholdCreateDto": {
             "type": "object",
             "required": [
+                "author",
                 "name",
-                "query"
+                "query",
+                "target",
+                "value"
             ],
             "properties": {
                 "author": {
                     "type": "string",
-                    "x-nullable": true
+                    "example": "admin"
                 },
                 "description": {
                     "type": "string",
@@ -4580,8 +4604,14 @@ const docTemplate = `{
                     "example": "Высокая загрузка CPU"
                 },
                 "query": {
+                    "$ref": "#/definitions/configurator_internal_dto.ThresholdExpressionDto"
+                },
+                "target": {
+                    "$ref": "#/definitions/configurator_internal_dto.ThresholdTargetDto"
+                },
+                "value": {
                     "type": "string",
-                    "example": "cpu_util \u003e 90"
+                    "example": "90"
                 }
             }
         },
@@ -4590,7 +4620,7 @@ const docTemplate = `{
             "properties": {
                 "author": {
                     "type": "string",
-                    "x-nullable": true
+                    "example": "admin"
                 },
                 "created": {
                     "type": "string",
@@ -4609,8 +4639,115 @@ const docTemplate = `{
                     "example": "Высокая загрузка CPU"
                 },
                 "query": {
+                    "$ref": "#/definitions/configurator_internal_dto.ThresholdExpressionDto"
+                },
+                "target": {
+                    "$ref": "#/definitions/configurator_internal_dto.ThresholdTargetDto"
+                },
+                "value": {
                     "type": "string",
-                    "example": "cpu_util \u003e 90"
+                    "example": "90"
+                }
+            }
+        },
+        "configurator_internal_dto.ThresholdElementDto": {
+            "type": "object",
+            "properties": {
+                "comparison": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdComparisonDto"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "expression": {
+                    "type": "object",
+                    "x-nullable": true
+                }
+            }
+        },
+        "configurator_internal_dto.ThresholdExpressionDto": {
+            "type": "object",
+            "properties": {
+                "root": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdNodeDto"
+                        }
+                    ],
+                    "x-nullable": true
+                }
+            }
+        },
+        "configurator_internal_dto.ThresholdNodeDto": {
+            "type": "object",
+            "properties": {
+                "element": {
+                    "$ref": "#/definitions/configurator_internal_dto.ThresholdElementDto"
+                },
+                "next": {
+                    "type": "object",
+                    "x-nullable": true
+                },
+                "operator": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "AND"
+                }
+            }
+        },
+        "configurator_internal_dto.ThresholdTargetDto": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "type": "string",
+                    "example": "127.0.0.1"
+                },
+                "port": {
+                    "type": "integer",
+                    "example": 161
+                },
+                "protocol": {
+                    "type": "string",
+                    "example": "SNMP"
+                },
+                "target": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/configurator_internal_dto.ThresholdTargetNodeDto"
+                        }
+                    ],
+                    "x-nullable": true
+                }
+            }
+        },
+        "configurator_internal_dto.ThresholdTargetNodeDto": {
+            "type": "object",
+            "properties": {
+                "component": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "cpu"
+                },
+                "field": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "value"
+                },
+                "internalOrder": {
+                    "type": "integer",
+                    "x-nullable": true,
+                    "example": 1
+                },
+                "next": {
+                    "type": "object",
+                    "x-nullable": true
+                },
+                "param": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "example": "utilization"
                 }
             }
         }

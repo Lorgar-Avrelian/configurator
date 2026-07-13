@@ -25,13 +25,14 @@ func CreateThreshold(c *gin.Context) {
 	var input dto.ThresholdCreateDto
 	var err error
 	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Errorf("Failed to bind JSON for threshold creation: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	var res *dto.ThresholdDto
 	res, err = service.CreateThreshold(c.Request.Context(), input)
 	if err != nil {
-		logger.Error("Service error occurred while creating threshold: %v", err)
+		logger.Errorf("Service error occurred while creating threshold: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -53,17 +54,19 @@ func GetThreshold(c *gin.Context) {
 	var err error
 	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
+		logger.Errorf("Failed to parse threshold ID: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
 		return
 	}
 	if 1 > id {
+		logger.Errorf("Threshold ID validation failed for ID: %d", id)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
 		return
 	}
 	var res *dto.ThresholdDto
 	res, err = service.GetThresholdByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while retrieving threshold %d: %v", id, err)
+		logger.Errorf("Service error occurred while retrieving threshold %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -86,7 +89,7 @@ func GetAllThresholds(c *gin.Context) {
 	var err error
 	res, err = service.GetAllThresholds(c.Request.Context())
 	if err != nil {
-		logger.Error("Service error occurred while retrieving all thresholds: %v", err)
+		logger.Errorf("Service error occurred while retrieving all thresholds: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -110,22 +113,25 @@ func UpdateThreshold(c *gin.Context) {
 	var err error
 	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
+		logger.Errorf("Failed to parse threshold ID for update: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
 		return
 	}
 	if 1 > id {
+		logger.Errorf("Threshold ID validation failed for update ID: %d", id)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
 		return
 	}
 	var input dto.ThresholdCreateDto
 	if err = c.ShouldBindJSON(&input); err != nil {
+		logger.Errorf("Failed to bind JSON for threshold update: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	var res *dto.ThresholdDto
 	res, err = service.UpdateThreshold(c.Request.Context(), id, input)
 	if err != nil {
-		logger.Error("Service error occurred while updating threshold %d: %v", id, err)
+		logger.Errorf("Service error occurred while updating threshold %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -150,17 +156,19 @@ func DeleteThreshold(c *gin.Context) {
 	var err error
 	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
+		logger.Errorf("Failed to parse threshold ID for deletion: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
 		return
 	}
 	if 1 > id {
+		logger.Errorf("Threshold ID validation failed for deletion ID: %d", id)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
 		return
 	}
 	var found bool
 	found, err = service.DeleteThreshold(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while deleting threshold %d: %v", id, err)
+		logger.Errorf("Service error occurred while deleting threshold %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -188,18 +196,20 @@ func ChangeThresholdDataHandler(c *gin.Context) {
 	var err error
 	prevId, err = strconv.ParseInt(c.Param("prevId"), 10, 64)
 	if err != nil {
+		logger.Errorf("Failed to parse prevId: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid prevId format"})
 		return
 	}
 	newId, err = strconv.ParseInt(c.Param("newId"), 10, 64)
 	if err != nil {
+		logger.Errorf("Failed to parse newId: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid newId format"})
 		return
 	}
 	var success bool
 	success, err = service.ChangeThresholdData(c.Request.Context(), prevId, newId)
 	if err != nil {
-		logger.Error("Service error during changing threshold data from %d to %d: %v", prevId, newId, err)
+		logger.Errorf("Service error during changing threshold data from %d to %d: %v", prevId, newId, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
