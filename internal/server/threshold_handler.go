@@ -219,3 +219,107 @@ func ChangeThresholdDataHandler(c *gin.Context) {
 	}
 	c.Status(http.StatusOK)
 }
+
+// CreateThresholdFromString создаёт порог из эквивалентного строкового выражения
+// @Summary         Создать порог из эквивалентной строки
+// @Tags            12. Конфигурация: Пороги
+// @Accept          plain
+// @Produce         json
+// @Param           request body string true "Эквивалентное строковое выражение порога"
+// @Success         201  {object}  dto.ThresholdDto
+// @Failure         400  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/threshold/from-string [post]
+func CreateThresholdFromString(c *gin.Context) {
+	var bodyBytes []byte
+	var err error
+	bodyBytes, err = c.GetRawData()
+	if err != nil {
+		logger.Errorf("Failed to read text expression raw body bytes: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid text request body content"})
+		return
+	}
+	var res dto.ThresholdDto
+	res, err = service.CreateThresholdFromString(c.Request.Context(), string(bodyBytes))
+	if err != nil {
+		logger.Errorf("Service error occurred while creating threshold from string: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, res)
+}
+
+// GetThresholdStringByID возвращает эквивалентную логическую строку порога по ID
+// @Summary         Получить эквивалентную строку выражения порога по ID
+// @Tags            12. Конфигурация: Пороги
+// @Produce         plain
+// @Param           id   path      int  true  "ID порога"
+// @Success         200  {string}  string "Эквивалентное строковое выражение порога"
+// @Failure         400  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/threshold/{id}/from-string [get]
+func GetThresholdStringByID(c *gin.Context) {
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		logger.Errorf("Failed to parse threshold string ID: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
+		return
+	}
+	if 1 > id {
+		logger.Errorf("Threshold string ID validation failed for ID: %d", id)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
+		return
+	}
+	var res string
+	res, err = service.GetThresholdStringByID(c.Request.Context(), id)
+	if err != nil {
+		logger.Errorf("Service error occurred while retrieving threshold expression %d: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.String(http.StatusOK, res)
+}
+
+// UpdateThresholdFromString обновляет порог по ID посредством эквивалентного выражения
+// @Summary         Обновить порог по ID из строки
+// @Tags            12. Конфигурация: Пороги
+// @Accept          plain
+// @Produce         json
+// @Param           id      path      int  true  "ID порога"
+// @Param           request body string true "Эквивалентное строковое выражение порога"
+// @Success         200  {object}  dto.ThresholdDto
+// @Failure         400  {object}  map[string]string
+// @Failure         500  {object}  map[string]string
+// @Router          /api/v1/threshold/{id}/from-string [put]
+func UpdateThresholdFromString(c *gin.Context) {
+	var id int64
+	var err error
+	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		logger.Errorf("Failed to parse threshold ID for update from string: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
+		return
+	}
+	if 1 > id {
+		logger.Errorf("Threshold ID validation failed for string update ID: %d", id)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid threshold ID format"})
+		return
+	}
+	var bodyBytes []byte
+	bodyBytes, err = c.GetRawData()
+	if err != nil {
+		logger.Errorf("Failed to read text expression update raw body bytes: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid text request body content"})
+		return
+	}
+	var res dto.ThresholdDto
+	res, err = service.UpdateThresholdFromString(c.Request.Context(), id, string(bodyBytes))
+	if err != nil {
+		logger.Errorf("Service error occurred while updating threshold %d from string: %v", id, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}

@@ -3095,6 +3095,73 @@ paths:
       summary: Обновить порог по ID
       tags:
       - '12. Конфигурация: Пороги'
+  /api/v1/threshold/{id}/from-string:
+    get:
+      parameters:
+      - description: ID порога
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Эквивалентное строковое выражение порога
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить эквивалентную строку выражения порога по ID
+      tags:
+      - '12. Конфигурация: Пороги'
+    put:
+      consumes:
+      - text/plain
+      parameters:
+      - description: ID порога
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Эквивалентное строковое выражение порога
+        in: body
+        name: request
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ThresholdDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить порог по ID из строки
+      tags:
+      - '12. Конфигурация: Пороги'
   /api/v1/threshold/{prevId}/{newId}:
     patch:
       parameters:
@@ -3132,6 +3199,39 @@ paths:
               type: string
             type: object
       summary: Изменить ID порога
+      tags:
+      - '12. Конфигурация: Пороги'
+  /api/v1/threshold/from-string:
+    post:
+      consumes:
+      - text/plain
+      parameters:
+      - description: Эквивалентное строковое выражение порога
+        in: body
+        name: request
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/configurator_internal_dto.ThresholdDto'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать порог из эквивалентной строки
       tags:
       - '12. Конфигурация: Пороги'
   /api/v1/thresholds:

@@ -133,6 +133,9 @@ func NewServer() *Server {
 			thresholdGroup.POST("", CreateThreshold)
 			thresholdGroup.GET("/:id", GetThreshold)
 			thresholdGroup.PUT("/:id", UpdateThreshold)
+			thresholdGroup.POST("/from-string", CreateThresholdFromString)
+			thresholdGroup.GET("/:id/from-string", GetThresholdStringByID)
+			thresholdGroup.PUT("/:id/from-string", UpdateThresholdFromString)
 			thresholdGroup.DELETE("/:id", DeleteThreshold)
 			thresholdGroup.PATCH("/:prevId/:newId", ChangeThresholdDataHandler)
 		}

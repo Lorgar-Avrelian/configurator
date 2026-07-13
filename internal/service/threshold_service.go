@@ -6,6 +6,7 @@ import (
 	"configurator/internal/logger"
 	"configurator/internal/mapper"
 	"context"
+	"errors"
 )
 
 func CreateThreshold(ctx context.Context, input dto.ThresholdCreateDto) (*dto.ThresholdDto, error) {
@@ -99,4 +100,73 @@ func DeleteThreshold(ctx context.Context, id int64) (bool, error) {
 	}
 	CompressThresholdDependentData(ctx)
 	return true, nil
+}
+
+func CreateThresholdFromString(ctx context.Context, expr string) (dto.ThresholdDto, error) {
+	var createDto dto.ThresholdCreateDto
+	var err error
+	createDto, err = mapper.StringToThresholdCreateDto(expr)
+	if err != nil {
+		logger.Errorf("Failed to parse string expression for creation: %v", err)
+		return dto.ThresholdDto{}, err
+	}
+	var res *dto.ThresholdDto
+	res, err = CreateThreshold(ctx, createDto)
+	if err != nil {
+		return dto.ThresholdDto{}, err
+	}
+	if res == nil {
+		return dto.ThresholdDto{}, errors.New("received empty entity threshold dto pointer data")
+	}
+	return *res, nil
+}
+
+func UpdateThresholdFromString(ctx context.Context, id int64, expr string) (dto.ThresholdDto, error) {
+	var createDto dto.ThresholdCreateDto
+	var err error
+	createDto, err = mapper.StringToThresholdCreateDto(expr)
+	if err != nil {
+		logger.Errorf("Failed to parse string expression for update: %v", err)
+		return dto.ThresholdDto{}, err
+	}
+	var daoObj dao.ThresholdDao
+	daoObj, err = mapper.ThresholdCreateDtoToThresholdDao(createDto)
+	if err != nil {
+		return dto.ThresholdDto{}, err
+	}
+	var success bool
+	success, err = dao.UpdateThreshold(ctx, id, daoObj)
+	if err != nil {
+		return dto.ThresholdDto{}, err
+	}
+	if !success {
+		return dto.ThresholdDto{}, errors.New("threshold configuration update target entity not found")
+	}
+	var updated *dao.ThresholdDao
+	updated, err = dao.GetThresholdByID(ctx, id)
+	if err != nil {
+		return dto.ThresholdDto{}, err
+	}
+	if updated == nil {
+		return dto.ThresholdDto{}, errors.New("failed to fetch updated threshold entity by specified id")
+	}
+	return mapper.ThresholdDaoToThresholdDto(*updated), nil
+}
+
+func GetThresholdStringByID(ctx context.Context, id int64) (string, error) {
+	var daoObj *dao.ThresholdDao
+	var err error
+	daoObj, err = dao.GetThresholdByID(ctx, id)
+	if err != nil {
+		logger.Errorf("Failed to fetch threshold ID %d for string rendering: %v", id, err)
+		return "", err
+	}
+	if daoObj == nil {
+		return "", errors.New("requested threshold configuration entry data not found by id")
+	}
+	var d dto.ThresholdDto
+	d = mapper.ThresholdDaoToThresholdDto(*daoObj)
+	var expr string
+	expr = mapper.ThresholdDtoToString(d)
+	return expr, nil
 }
