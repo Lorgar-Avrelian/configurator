@@ -721,8 +721,8 @@ func renderExpressionNode(n *dto.ThresholdNodeDto) string {
 			cleanVal = comp.Value
 			var _, numErr = strconv.ParseFloat(cleanVal, 64)
 			if numErr != nil && cleanVal != "true" && cleanVal != "false" && cleanVal != "null" {
-				if !strings.HasPrefix(cleanVal, "\"") && !strings.HasSuffix(cleanVal, "\"") {
-					cleanVal = fmt.Sprintf("\"%s\"", cleanVal)
+				if !strings.HasPrefix(cleanVal, "'") && !strings.HasSuffix(cleanVal, "'") {
+					cleanVal = fmt.Sprintf("'%s'", cleanVal)
 				}
 			}
 			sb.WriteString(fmt.Sprintf("%s %s %s", renderTarget(comp.Target), comp.Operator, cleanVal))
@@ -750,8 +750,8 @@ func ThresholdDtoToString(d dto.ThresholdDto) string {
 	finalVal = d.Value
 	var _, numErr = strconv.ParseFloat(finalVal, 64)
 	if numErr != nil && finalVal != "true" && finalVal != "false" && finalVal != "null" {
-		if !strings.HasPrefix(finalVal, "\"") && !strings.HasSuffix(finalVal, "\"") {
-			finalVal = fmt.Sprintf("\"%s\"", finalVal)
+		if !strings.HasPrefix(finalVal, "'") && !strings.HasSuffix(finalVal, "'") {
+			finalVal = fmt.Sprintf("'%s'", finalVal)
 		}
 	}
 	sb.WriteString(finalVal)
