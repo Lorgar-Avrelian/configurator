@@ -60,7 +60,7 @@ func GetMappingByID(ctx context.Context, id int64) ([]Mapping, error) {
 			 )
 			 SELECT mb."id", mb."indicator", mb."param", mb."frequency", mb."value", mb."coefficient", mb."enum", mb."position", mb."from", mb."position_type",
 			        pi."oid_id", pi."dotter_notation", o."mib", mib."path", mib."name", mib."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category",
-			        p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+			        p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible", p."diagram"
 			 FROM mapping_branch mb
 			     LEFT JOIN public.param_indicator pi ON mb."indicator" = pi."id"
 			     LEFT JOIN public.oid o ON pi."oid_id" = o."id"
@@ -74,7 +74,7 @@ func GetMappingByID(ctx context.Context, id int64) ([]Mapping, error) {
 	defer rows.Close()
 	list = []Mapping{}
 	for rows.Next() {
-		err = rows.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible)
+		err = rows.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible, &m.ParamDiagram)
 		if err != nil {
 			return nil, err
 		}
@@ -102,7 +102,7 @@ func GetAllMappings(ctx context.Context) ([]Mapping, error) {
 			 )
 			 SELECT mt."id", mt."indicator", mt."param", mt."frequency", mt."value", mt."coefficient", mt."enum", mt."position", mt."from", mt."position_type",
 			        pi."oid_id", pi."dotter_notation", o."mib", mib."path", mib."name", mib."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category",
-			        p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+			        p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible", p."diagram"
 			 FROM mapping_tree mt
 			     LEFT JOIN public.param_indicator pi ON mt."indicator" = pi."id"
 			     LEFT JOIN public.oid o ON pi."oid_id" = o."id"
@@ -116,7 +116,7 @@ func GetAllMappings(ctx context.Context) ([]Mapping, error) {
 	defer rows.Close()
 	list = []Mapping{}
 	for rows.Next() {
-		err = rows.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible)
+		err = rows.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible, &m.ParamDiagram)
 		if err != nil {
 			return nil, err
 		}
@@ -174,7 +174,7 @@ func GetMappingByIDOwn(ctx context.Context, id int64) (*Mapping, error) {
 	conn = database.Get()
 	query = `SELECT m."id", m."indicator", m."param", m."frequency", m."value", m."coefficient", m."enum", m."position", m."from", m."position_type",
 			        pi."oid_id", pi."dotter_notation", o."mib", mib."path", mib."name", mib."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category",
-			        p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+			        p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible", p."diagram"
 			 FROM public.mapping m
 			     LEFT JOIN public.param_indicator pi ON m."indicator" = pi."id"
 			     LEFT JOIN public.oid o ON pi."oid_id" = o."id"
@@ -182,7 +182,7 @@ func GetMappingByIDOwn(ctx context.Context, id int64) (*Mapping, error) {
 			     LEFT JOIN public.param p ON m."param" = p."id"
 			 WHERE m."id" = $1`
 	row = conn.QueryRow(ctx, query, id)
-	err = row.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible)
+	err = row.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible, &m.ParamDiagram)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, nil

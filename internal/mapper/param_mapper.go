@@ -25,6 +25,7 @@ func ParamCreateDtoToParamDao(d dto.ParamCreateDto) dao.ParamDao {
 	res.Access = int16(parsedAccess)
 	res.Saved = d.Saved
 	res.Visible = d.Visible
+	res.Diagram = d.Diagram
 	return res
 }
 
@@ -47,6 +48,7 @@ func ParamDaoToParamDto(d dao.ParamDao) dto.ParamDto {
 	res.Access = modelAccess.String()
 	res.Saved = d.Saved
 	res.Visible = d.Visible
+	res.Diagram = d.Diagram
 	return res
 }
 
@@ -69,6 +71,7 @@ func ParamToParamDto(m dao.Param) dto.ParamDto {
 	res.Access = modelAccess.String()
 	res.Saved = m.Saved
 	res.Visible = m.Visible
+	res.Diagram = m.Diagram
 	return res
 }
 
@@ -91,6 +94,7 @@ func ParamUpdateDtoToParamDao(d dto.ParamUpdateDto) dao.ParamDao {
 	res.Access = int16(parsedAccess)
 	res.Saved = d.Saved
 	res.Visible = d.Visible
+	res.Diagram = d.Diagram
 	return res
 }
 

@@ -134,6 +134,7 @@ func MappingToMappingDto(d dao.Mapping) dto.MappingDto {
 	pDto.Access = pAccessStr
 	pDto.Saved = d.ParamSaved
 	pDto.Visible = d.ParamVisible
+	pDto.Diagram = d.ParamDiagram
 	res.Param = &pDto
 	res.Children = []dto.MappingDto{}
 	return res

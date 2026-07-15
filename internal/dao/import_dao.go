@@ -253,10 +253,10 @@ func ImportParamDao(ctx context.Context, list []ParamDao) error {
 	var batches [][]ParamDao
 	var query string
 	batches = dropArray(list)
-	query = `INSERT INTO public.param ("id", "title", "name_en", "name_ru", "type", "value", "description_en", "description_ru", "units_en", "units_ru", "access", "saved", "visible") 
-			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`
+	query = `INSERT INTO public.param ("id", "title", "name_en", "name_ru", "type", "value", "description_en", "description_ru", "units_en", "units_ru", "access", "saved", "visible", "diagram") 
+			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`
 	return executeBatchInsert(ctx, batches, func(b pgx.Batch, item ParamDao) pgx.Batch {
-		b.Queue(query, item.ID, item.Title, item.NameEn, item.NameRu, item.Type, item.Value, item.DescriptionEn, item.DescriptionRu, item.UnitsEn, item.UnitsRu, item.Access, item.Saved, item.Visible)
+		b.Queue(query, item.ID, item.Title, item.NameEn, item.NameRu, item.Type, item.Value, item.DescriptionEn, item.DescriptionRu, item.UnitsEn, item.UnitsRu, item.Access, item.Saved, item.Visible, item.Diagram)
 		return b
 	})
 }

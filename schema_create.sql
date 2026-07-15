@@ -117,7 +117,8 @@ CREATE TABLE IF NOT EXISTS public.param
     "units_ru" TEXT,
     "access" SMALLINT NOT NULL,
     "saved" BOOLEAN NOT NULL,
-    "visible" BOOLEAN NOT NULL
+    "visible" BOOLEAN NOT NULL,
+    "diagram" BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS public.component_param

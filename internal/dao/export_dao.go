@@ -447,7 +447,7 @@ func GetAllParamDao(ctx context.Context) ([]ParamDao, error) {
 	var rows pgx.Rows
 	var err error
 	var query string
-	query = `SELECT "id", "title", "name_en", "name_ru", "type", "value", "description_en", "description_ru", "units_en", "units_ru", "access", "saved", "visible"
+	query = `SELECT "id", "title", "name_en", "name_ru", "type", "value", "description_en", "description_ru", "units_en", "units_ru", "access", "saved", "visible", "diagram"
 			 FROM public.param
 			 ORDER BY "id" ASC`
 	rows, err = database.Get().Query(ctx, query)
@@ -473,6 +473,7 @@ func GetAllParamDao(ctx context.Context) ([]ParamDao, error) {
 			&d.Access,
 			&d.Saved,
 			&d.Visible,
+			&d.Diagram,
 		)
 		if err != nil {
 			return nil, err

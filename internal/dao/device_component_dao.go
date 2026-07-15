@@ -177,7 +177,7 @@ func GetMappingsByDeviceComponentID(ctx context.Context, devCompID int64) ([]Map
 			 )
 			 SELECT mb."id", mb."indicator", mb."param", mb."frequency", mb."value", mb."coefficient", mb."enum", mb."position", mb."from", mb."position_type",
 			        pi."oid_id", pi."dotter_notation", o."mib", mib."path", mib."name", mib."vendor", o."type", o."name", o."number", o."dotter_notation", o."object_descriptor", o."syntax", o."enum", o."status", o."access", o."units", o."description", o."category",
-			        p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+			        p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible", p."diagram"
 			 FROM mapping_branches mb
 			     LEFT JOIN public.param_indicator pi ON mb."indicator" = pi."id"
 			     LEFT JOIN public.oid o ON pi."oid_id" = o."id"
@@ -191,7 +191,7 @@ func GetMappingsByDeviceComponentID(ctx context.Context, devCompID int64) ([]Map
 	defer rows.Close()
 	list = []Mapping{}
 	for rows.Next() {
-		err = rows.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible)
+		err = rows.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible, &m.ParamDiagram)
 		if err != nil {
 			return nil, err
 		}

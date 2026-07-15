@@ -91,7 +91,7 @@ func fetchInheritedParams(ctx context.Context, conn *pgxpool.Pool, componentID i
 		SELECT c."id", c."base_component" FROM public.component c
 		JOIN component_tree ct ON c."id" = ct."base_component"
 	)
-	SELECT p."id", p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible"
+	SELECT p."id", p."title", p."name_en", p."name_ru", p."type", p."value", p."description_en", p."description_ru", p."units_en", p."units_ru", p."access", p."saved", p."visible", p."diagram"
 	FROM public.param p
 	JOIN public.component_param cp ON p."id" = cp."param_id"
 	JOIN component_tree ct ON cp."component_id" = ct."id"
@@ -109,7 +109,7 @@ func fetchInheritedParams(ctx context.Context, conn *pgxpool.Pool, componentID i
 	list = []Param{}
 	var p Param
 	for rows.Next() {
-		err = rows.Scan(&p.ID, &p.Title, &p.NameEn, &p.NameRu, &p.Type, &p.Value, &p.DescriptionEn, &p.DescriptionRu, &p.UnitsEn, &p.UnitsRu, &p.Access, &p.Saved, &p.Visible)
+		err = rows.Scan(&p.ID, &p.Title, &p.NameEn, &p.NameRu, &p.Type, &p.Value, &p.DescriptionEn, &p.DescriptionRu, &p.UnitsEn, &p.UnitsRu, &p.Access, &p.Saved, &p.Visible, &p.Diagram)
 		if err != nil {
 			return nil, err
 		}

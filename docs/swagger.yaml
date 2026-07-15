@@ -14,7 +14,7 @@ definitions:
         type: string
         x-nullable: true
       name_en:
-        example: component
+        example: Component
         type: string
       name_ru:
         example: Компонент
@@ -26,7 +26,7 @@ definitions:
         example: Компоненты
         type: string
       title:
-        example: Component
+        example: component
         type: string
     required:
     - name_en
@@ -53,7 +53,7 @@ definitions:
         example: 1
         type: integer
       name_en:
-        example: component
+        example: Component
         type: string
       name_ru:
         example: Компонент
@@ -69,7 +69,7 @@ definitions:
         example: Компоненты
         type: string
       title:
-        example: Component
+        example: component
         type: string
     type: object
   configurator_internal_dto.ComponentInfoDto:
@@ -105,7 +105,7 @@ definitions:
         example: 1
         type: integer
       name_en:
-        example: component
+        example: Component
         type: string
       name_ru:
         example: Компонент
@@ -121,7 +121,7 @@ definitions:
         example: Компоненты
         type: string
       title:
-        example: Component
+        example: component
         type: string
     type: object
   configurator_internal_dto.ConfigInProcessDto:
@@ -459,8 +459,11 @@ definitions:
       description_ru:
         type: string
         x-nullable: true
+      diagram:
+        example: true
+        type: boolean
       name_en:
-        example: name
+        example: Name
         type: string
       name_ru:
         example: Имя
@@ -469,7 +472,7 @@ definitions:
         example: true
         type: boolean
       title:
-        example: Component name
+        example: name
         type: string
       type:
         example: VARCHAR
@@ -504,11 +507,14 @@ definitions:
       description_ru:
         type: string
         x-nullable: true
+      diagram:
+        example: true
+        type: boolean
       id:
         example: 2
         type: integer
       name_en:
-        example: name
+        example: Name
         type: string
       name_ru:
         example: Имя
@@ -517,7 +523,7 @@ definitions:
         example: true
         type: boolean
       title:
-        example: Component name
+        example: name
         type: string
       type:
         example: VARCHAR
@@ -612,11 +618,14 @@ definitions:
       description_ru:
         type: string
         x-nullable: true
+      diagram:
+        example: true
+        type: boolean
       id:
         example: 2
         type: integer
       name_en:
-        example: name
+        example: Name
         type: string
       name_ru:
         example: Имя
@@ -625,7 +634,7 @@ definitions:
         example: true
         type: boolean
       title:
-        example: Component name
+        example: name
         type: string
       type:
         example: VARCHAR
@@ -776,7 +785,7 @@ definitions:
         type: string
       field:
         type: string
-      internalOrder:
+      internal_order:
         type: integer
       next:
         type: object

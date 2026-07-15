@@ -121,7 +121,8 @@ var tableSchemas = map[string]string{
     "units_ru" TEXT,
     "access" SMALLINT NOT NULL,
     "saved" BOOLEAN NOT NULL,
-    "visible" BOOLEAN NOT NULL
+    "visible" BOOLEAN NOT NULL,
+    "diagram" BOOLEAN NOT NULL
 );`,
 	"public.component_param": `CREATE TABLE IF NOT EXISTS public.component_param
 (

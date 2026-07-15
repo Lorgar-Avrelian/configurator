@@ -3853,7 +3853,7 @@
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "component"
+                    "example": "Component"
                 },
                 "name_ru": {
                     "type": "string",
@@ -3869,7 +3869,7 @@
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component"
+                    "example": "component"
                 }
             }
         },
@@ -3898,7 +3898,7 @@
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "component"
+                    "example": "Component"
                 },
                 "name_ru": {
                     "type": "string",
@@ -3920,7 +3920,7 @@
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component"
+                    "example": "component"
                 }
             }
         },
@@ -3970,7 +3970,7 @@
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "component"
+                    "example": "Component"
                 },
                 "name_ru": {
                     "type": "string",
@@ -3992,7 +3992,7 @@
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component"
+                    "example": "component"
                 }
             }
         },
@@ -4478,9 +4478,13 @@
                     "type": "string",
                     "x-nullable": true
                 },
+                "diagram": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "name_en": {
                     "type": "string",
-                    "example": "name"
+                    "example": "Name"
                 },
                 "name_ru": {
                     "type": "string",
@@ -4492,7 +4496,7 @@
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component name"
+                    "example": "name"
                 },
                 "type": {
                     "type": "string",
@@ -4531,13 +4535,17 @@
                     "type": "string",
                     "x-nullable": true
                 },
+                "diagram": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "id": {
                     "type": "integer",
                     "example": 2
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "name"
+                    "example": "Name"
                 },
                 "name_ru": {
                     "type": "string",
@@ -4549,7 +4557,7 @@
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component name"
+                    "example": "name"
                 },
                 "type": {
                     "type": "string",
@@ -4681,13 +4689,17 @@
                     "type": "string",
                     "x-nullable": true
                 },
+                "diagram": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "id": {
                     "type": "integer",
                     "example": 2
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "name"
+                    "example": "Name"
                 },
                 "name_ru": {
                     "type": "string",
@@ -4699,7 +4711,7 @@
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component name"
+                    "example": "name"
                 },
                 "type": {
                     "type": "string",
@@ -4915,7 +4927,7 @@
                 "field": {
                     "type": "string"
                 },
-                "internalOrder": {
+                "internal_order": {
                     "type": "integer"
                 },
                 "next": {

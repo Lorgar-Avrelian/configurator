@@ -185,6 +185,7 @@ func processMappingRow(r dao.DefaultConfiguration, mapMap map[int64]*dto.Mapping
 	}
 	pDto.Saved = r.MapParamSaved.Bool
 	pDto.Visible = r.MapParamVisible.Bool
+	pDto.Diagram = r.MapParamDiagram.Bool
 	mDto.Param = &pDto
 	mDto.Children = []dto.MappingDto{}
 	mapMap[mID] = &mDto

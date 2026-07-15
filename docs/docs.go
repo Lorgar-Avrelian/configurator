@@ -3861,7 +3861,7 @@ const docTemplate = `{
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "component"
+                    "example": "Component"
                 },
                 "name_ru": {
                     "type": "string",
@@ -3877,7 +3877,7 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component"
+                    "example": "component"
                 }
             }
         },
@@ -3906,7 +3906,7 @@ const docTemplate = `{
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "component"
+                    "example": "Component"
                 },
                 "name_ru": {
                     "type": "string",
@@ -3928,7 +3928,7 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component"
+                    "example": "component"
                 }
             }
         },
@@ -3978,7 +3978,7 @@ const docTemplate = `{
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "component"
+                    "example": "Component"
                 },
                 "name_ru": {
                     "type": "string",
@@ -4000,7 +4000,7 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component"
+                    "example": "component"
                 }
             }
         },
@@ -4486,9 +4486,13 @@ const docTemplate = `{
                     "type": "string",
                     "x-nullable": true
                 },
+                "diagram": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "name_en": {
                     "type": "string",
-                    "example": "name"
+                    "example": "Name"
                 },
                 "name_ru": {
                     "type": "string",
@@ -4500,7 +4504,7 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component name"
+                    "example": "name"
                 },
                 "type": {
                     "type": "string",
@@ -4539,13 +4543,17 @@ const docTemplate = `{
                     "type": "string",
                     "x-nullable": true
                 },
+                "diagram": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "id": {
                     "type": "integer",
                     "example": 2
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "name"
+                    "example": "Name"
                 },
                 "name_ru": {
                     "type": "string",
@@ -4557,7 +4565,7 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component name"
+                    "example": "name"
                 },
                 "type": {
                     "type": "string",
@@ -4689,13 +4697,17 @@ const docTemplate = `{
                     "type": "string",
                     "x-nullable": true
                 },
+                "diagram": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "id": {
                     "type": "integer",
                     "example": 2
                 },
                 "name_en": {
                     "type": "string",
-                    "example": "name"
+                    "example": "Name"
                 },
                 "name_ru": {
                     "type": "string",
@@ -4707,7 +4719,7 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string",
-                    "example": "Component name"
+                    "example": "name"
                 },
                 "type": {
                     "type": "string",
@@ -4923,7 +4935,7 @@ const docTemplate = `{
                 "field": {
                     "type": "string"
                 },
-                "internalOrder": {
+                "internal_order": {
                     "type": "integer"
                 },
                 "next": {

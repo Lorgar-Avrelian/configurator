@@ -1,8 +1,8 @@
 package dto
 
 type ComponentCreateDto struct {
-	Title         string `json:"title" binding:"required" example:"Component"`
-	NameEn        string `json:"name_en" binding:"required" example:"component"`
+	Title         string `json:"title" binding:"required" example:"component"`
+	NameEn        string `json:"name_en" binding:"required" example:"Component"`
 	NameRu        string `json:"name_ru" binding:"required" example:"Компонент"`
 	PluralNameEn  string `json:"plural_name_en" binding:"required" example:"Components"`
 	PluralNameRu  string `json:"plural_name_ru" binding:"required" example:"Компоненты"`
@@ -14,8 +14,8 @@ type ComponentCreateDto struct {
 
 type ComponentDto struct {
 	ID            int64      `json:"id" example:"1"`
-	Title         string     `json:"title" example:"Component"`
-	NameEn        string     `json:"name_en" example:"component"`
+	Title         string     `json:"title" example:"component"`
+	NameEn        string     `json:"name_en" example:"Component"`
 	NameRu        string     `json:"name_ru" example:"Компонент"`
 	PluralNameEn  string     `json:"plural_name_en" example:"Components"`
 	PluralNameRu  string     `json:"plural_name_ru" example:"Компоненты"`
@@ -28,8 +28,8 @@ type ComponentDto struct {
 
 type ComponentUpdateDto struct {
 	ID            int64      `json:"id" example:"1"`
-	Title         string     `json:"title" example:"Component"`
-	NameEn        string     `json:"name_en" example:"component"`
+	Title         string     `json:"title" example:"component"`
+	NameEn        string     `json:"name_en" example:"Component"`
 	NameRu        string     `json:"name_ru" example:"Компонент"`
 	PluralNameEn  string     `json:"plural_name_en" example:"Components"`
 	PluralNameRu  string     `json:"plural_name_ru" example:"Компоненты"`
@@ -41,8 +41,8 @@ type ComponentUpdateDto struct {
 }
 
 type ParamCreateDto struct {
-	Title         string `json:"title" binding:"required" example:"Component name"`
-	NameEn        string `json:"name_en" binding:"required" example:"name"`
+	Title         string `json:"title" binding:"required" example:"name"`
+	NameEn        string `json:"name_en" binding:"required" example:"Name"`
 	NameRu        string `json:"name_ru" binding:"required" example:"Имя"`
 	Type          string `json:"type" binding:"required" swaggertype:"string" example:"VARCHAR"`
 	Value         string `json:"value,omitempty" swaggertype:"string" extensions:"x-nullable"`
@@ -53,12 +53,13 @@ type ParamCreateDto struct {
 	Access        string `json:"access" binding:"required" swaggertype:"string" example:"USER"`
 	Saved         bool   `json:"saved" example:"true"`
 	Visible       bool   `json:"visible" example:"true"`
+	Diagram       bool   `json:"diagram" example:"true"`
 }
 
 type ParamDto struct {
 	ID            int64   `json:"id" example:"2"`
-	Title         string  `json:"title" example:"Component name"`
-	NameEn        string  `json:"name_en" example:"name"`
+	Title         string  `json:"title" example:"name"`
+	NameEn        string  `json:"name_en" example:"Name"`
 	NameRu        string  `json:"name_ru" example:"Имя"`
 	Type          string  `json:"type" swaggertype:"string" example:"VARCHAR"`
 	Value         *string `json:"value" swaggertype:"string" extensions:"x-nullable"`
@@ -69,12 +70,13 @@ type ParamDto struct {
 	Access        string  `json:"access" swaggertype:"string" example:"USER"`
 	Saved         bool    `json:"saved" example:"true"`
 	Visible       bool    `json:"visible" example:"true"`
+	Diagram       bool    `json:"diagram" example:"true"`
 }
 
 type ParamUpdateDto struct {
 	ID            int64   `json:"id" example:"2"`
-	Title         string  `json:"title" example:"Component name"`
-	NameEn        string  `json:"name_en" example:"name"`
+	Title         string  `json:"title" example:"name"`
+	NameEn        string  `json:"name_en" example:"Name"`
 	NameRu        string  `json:"name_ru" example:"Имя"`
 	Type          string  `json:"type" swaggertype:"string" example:"VARCHAR"`
 	Value         *string `json:"value" swaggertype:"string" extensions:"x-nullable"`
@@ -85,6 +87,7 @@ type ParamUpdateDto struct {
 	Access        string  `json:"access" swaggertype:"string" example:"USER"`
 	Saved         bool    `json:"saved" example:"true"`
 	Visible       bool    `json:"visible" example:"true"`
+	Diagram       bool    `json:"diagram" example:"true"`
 }
 
 type ComponentParamLinkDto struct {
@@ -208,7 +211,7 @@ type ConfigurationDto struct {
 
 type ThresholdTargetNodeDto struct {
 	Component     *string                 `json:"component"`
-	InternalOrder *int32                  `json:"internalOrder"`
+	InternalOrder *int32                  `json:"internal_order"`
 	Param         *string                 `json:"param"`
 	Field         *string                 `json:"field"`
 	Next          *ThresholdTargetNodeDto `json:"next,omitempty" swaggertype:"object"`

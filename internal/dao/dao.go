@@ -98,6 +98,7 @@ type Param struct {
 	Access        int16          `db:"access" json:"access"`
 	Saved         bool           `db:"saved" json:"saved"`
 	Visible       bool           `db:"visible" json:"visible"`
+	Diagram       bool           `db:"diagram" json:"diagram"`
 }
 
 type Component struct {
@@ -141,6 +142,7 @@ type ParamDao struct {
 	Access        int16          `db:"access" json:"access"`
 	Saved         bool           `db:"saved" json:"saved"`
 	Visible       bool           `db:"visible" json:"visible"`
+	Diagram       bool           `db:"diagram" json:"diagram"`
 }
 
 type ComponentParamDao struct {
@@ -284,6 +286,7 @@ type Mapping struct {
 	ParamAccess         int16           `db:"param_access" json:"param_access"`
 	ParamSaved          bool            `db:"param_saved" json:"param_saved"`
 	ParamVisible        bool            `db:"param_visible" json:"param_visible"`
+	ParamDiagram        bool            `db:"param_diagram" json:"param_diagram"`
 }
 
 type DeviceComponentDao struct {
@@ -369,6 +372,7 @@ type Configuration struct {
 	MapParamAccess    sql.NullInt16   `db:"map_param_access"`
 	MapParamSaved     sql.NullBool    `db:"map_param_saved"`
 	MapParamVisible   sql.NullBool    `db:"map_param_visible"`
+	MapParamDiagram   sql.NullBool    `db:"map_param_diagram"`
 }
 
 type DefaultConfigurationDao struct {
@@ -433,6 +437,7 @@ type DefaultConfiguration struct {
 	MapParamAccess    sql.NullInt16   `db:"map_param_access"`
 	MapParamSaved     sql.NullBool    `db:"map_param_saved"`
 	MapParamVisible   sql.NullBool    `db:"map_param_visible"`
+	MapParamDiagram   sql.NullBool    `db:"map_param_diagram"`
 }
 
 type ThresholdDao struct {
