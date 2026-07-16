@@ -1,3 +1,7 @@
+# ОПИСАНИЕ API
+
+<details><summary>1. Модельный каталог: Компоненты</summary>
+
 # 1. Модельный каталог: Компоненты
 
 ---
@@ -14,6 +18,7 @@
 > Это вызвано тем, что **_базовый компонент_** для всех остальных компонентов должен быть только один, и он
 > **_уже создан_**.  
 > Компонент с id, равным 1, является основой для создания всех остальных компонентов модельного каталога.
+<details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
 
@@ -613,6 +618,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/api/v1/catalog/component
   ]
 }
 ```
+</details>
 
 ### Возможные коды ошибок
 
@@ -622,6 +628,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/api/v1/catalog/component
 ---
 
 ## [GET] /api/v1/catalog/component/{id} - Получить компонент по ID
+<details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
 
@@ -1317,6 +1324,7 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
   ]
 }
 ```
+</details>
 
 ### Возможные коды ошибок
 
@@ -1332,6 +1340,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 > Поля "id" и "params", содержащиеся в теле запроса, при обновлении данных компонента полностью игнорируется.  
 > Запрос обновляет данные только самого компонента, имеющего id, равный переданному значению в пути запроса.  
 > Параметры компонента остаются теми же, что и были прикреплены к нему или его родительскому компоненту ранее.
+
+<details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
 
@@ -3411,6 +3421,7 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
   ]
 }
 ```
+</details>
 
 ### Возможные коды ошибок
 
@@ -3428,6 +3439,7 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 > [!WARNING]  
 > В связи с вышесказанным желательно добавить либо кнопку, либо дополнительное всплывающее сообщение подтверждения
 > проведения операции.
+<details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
 
@@ -3444,6 +3456,7 @@ DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 ```json
 {}
 ```
+</details>
 
 ### Возможные коды ошибок
 
@@ -3459,6 +3472,7 @@ DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 > Таким образом, базовый компонент `component` (id которого равен 1) всегда будет первым в списке компонентов.  
 > При изменении id компонента возможен сдвиг всех последующих компонентов в списке компонентов (увеличение их id на 1),
 > который не приводит к возникновению ошибки в работе системы.
+<details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
 
@@ -3475,6 +3489,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/catalog/component/3/2
 ```json
 {}
 ```
+</details>
 
 ### Возможные коды ошибок
 
@@ -3485,6 +3500,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/catalog/component/3/2
 ---
 
 ## [GET] /api/v1/catalog/component/search - Поиск компонентов по строке
+<details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
 
@@ -3499,6 +3515,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+</details>
 
 ### Возможные коды ошибок
 
@@ -3509,6 +3526,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/components - Получить всю структуру подчиненности устройств
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3522,6 +3541,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3529,9 +3550,13 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ---
 
+</details>
+
 # 2. Модельный каталог: Параметры
 
 ## [POST] /api/v1/catalog/param - Создать параметр
+
+<details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
 
@@ -3546,6 +3571,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3556,6 +3583,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/param/{id} - Получить параметр по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3569,6 +3598,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3578,6 +3609,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PUT] /api/v1/catalog/param/{id} - Обновить параметр
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3591,6 +3624,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3602,6 +3637,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/param/{id} - Удалить параметр
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3615,6 +3652,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3626,6 +3665,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PATCH] /api/v1/catalog/param/{prevId}/{newId} - Изменить ID параметра
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3639,6 +3680,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3650,6 +3693,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/param/search - Поиск параметров по строке
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3663,6 +3708,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3673,6 +3720,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/param/search/{id} - Получить компоненты по ID параметра
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3686,6 +3735,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3696,6 +3747,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/param/unattached - Получить непривязанные параметры
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3709,6 +3762,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3718,6 +3773,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/params - Получить все параметры
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3731,6 +3788,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3742,6 +3801,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/link/component-param/{componentId}/{paramId} - Связать компонент с параметром
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3755,6 +3816,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3766,6 +3829,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/link/component-param/{componentId}/{paramId} - Удалить связь компонента с параметром
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3779,6 +3844,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3790,6 +3857,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/oid - Поиск OID по точной dotter notation
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3803,6 +3872,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3813,6 +3884,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/oid/exact - Поиск OID по dotter notation, названию MIB и производителю
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3826,6 +3899,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3836,6 +3911,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/oid/mib - Получить OID по названию MIB
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3849,6 +3926,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3859,6 +3938,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/oid/prefix - Поиск OID по префиксу с пагинацией
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3872,6 +3953,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3882,6 +3965,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/oid/vendor - Получить OID по производителю с пагинацией
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3895,6 +3980,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3906,6 +3993,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/indicator/device - Создать индикатор устройства
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3919,6 +4008,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3929,6 +4020,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/indicator/device/{id} - Получить индикатор по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3942,6 +4035,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3953,6 +4048,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PUT] /api/v1/catalog/indicator/device/{id} - Обновить индикатор по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3966,6 +4063,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3975,6 +4074,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/indicator/device/{id} - Удалить индикатор по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -3988,6 +4089,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -3999,6 +4102,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/indicator/devices - Получить все индикаторы устройств
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4012,6 +4117,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4023,6 +4130,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/indicator/param - Создать индикатор параметров
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4036,6 +4145,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4046,6 +4157,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/indicator/param/{id} - Получить индикатор параметров по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4059,6 +4172,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4070,6 +4185,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PUT] /api/v1/catalog/indicator/param/{id} - Обновить индикатор параметров по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4083,6 +4200,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4094,6 +4213,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/indicator/param/{id} - Удалить индикатор параметров по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4107,6 +4228,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4118,6 +4241,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/indicator/params - Получить все индикаторы параметров
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4131,6 +4256,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4140,6 +4267,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/mapping - Создать сопоставление
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4153,6 +4282,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4163,6 +4294,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/mapping/{id} - Получить сопоставление по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4176,6 +4309,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4187,6 +4322,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PUT] /api/v1/catalog/mapping/{id} - Обновить сопоставление по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4200,6 +4337,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4211,6 +4350,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/mapping/{id} - Удалить сопоставление по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4224,6 +4365,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4235,6 +4378,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/mapping/{id}/own - Получить изолированное сопоставление по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4248,6 +4393,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4259,6 +4406,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PATCH] /api/v1/catalog/mapping/{prevId}/{newId} - Изменить ID сопоставления
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4272,6 +4421,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4283,6 +4434,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/mappings - Получить все сопоставления
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4296,6 +4449,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4305,6 +4460,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/device-component - Создать составную часть устройства
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4318,6 +4475,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4328,6 +4487,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/device-component/{id} - Получить составную часть устройства по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4341,6 +4502,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4352,6 +4515,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PUT] /api/v1/catalog/device-component/{id} - Обновить составную часть устройства по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4365,6 +4530,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4376,6 +4543,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/device-component/{id} - Удалить составную часть устройства по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4389,6 +4558,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4400,6 +4571,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/device-component/{id}/own - Получить изолированную составную часть устройства по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4413,6 +4586,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4424,6 +4599,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PATCH] /api/v1/catalog/device-component/{prevId}/{newId} - Изменить ID составной части устройства
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4437,6 +4614,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4448,6 +4627,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/device-components - Получить всю структуру составных частей устройств
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4461,6 +4642,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4470,6 +4653,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/link/device-component-mapping/{deviceComponentId}/{mappingId} - Связать составную часть устройства с сопоставлением параметра
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4483,6 +4668,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4494,6 +4681,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/link/device-component-mapping/{deviceComponentId}/{mappingId} - Удалить связь составной части устройства с сопоставлением параметра
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4507,6 +4696,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4520,6 +4711,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/default-configuration - Создать конфигурацию по умолчанию
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4533,6 +4726,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4543,6 +4738,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/default-configuration/{id} - Получить конфигурацию по умолчанию по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4556,6 +4753,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4567,6 +4766,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PUT] /api/v1/catalog/default-configuration/{id} - Обновить конфигурацию по умолчанию по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4580,6 +4781,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4591,6 +4794,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/default-configuration/{id} - Удалить конфигурацию по умолчанию по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4604,6 +4809,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4615,6 +4822,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PATCH] /api/v1/catalog/default-configuration/{prevId}/{newId} - Изменить ID конфигурации по умолчанию
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4628,6 +4837,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4639,6 +4850,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/default-configurations - Получить все конфигурации по умолчанию
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4652,6 +4865,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4661,6 +4876,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/configuration - Создать рабочую конфигурацию
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4674,6 +4891,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4684,6 +4903,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/configuration/{id} - Получить рабочую конфигурацию по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4697,6 +4918,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4708,6 +4931,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PUT] /api/v1/catalog/configuration/{id} - Обновить рабочую конфигурацию по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4721,6 +4946,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4732,6 +4959,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/configuration/{id} - Удалить рабочую конфигурацию по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4745,6 +4974,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4756,6 +4987,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/configurations - Получить все рабочие конфигурации
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4769,6 +5002,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4780,6 +5015,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/threshold - Создать порог
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4793,6 +5030,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4801,6 +5040,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/threshold/{id} - Получить порог по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4814,6 +5055,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4825,6 +5068,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PUT] /api/v1/catalog/threshold/{id} - Обновить порог по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4838,6 +5083,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4849,6 +5096,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [DELETE] /api/v1/catalog/threshold/{id} - Удалить порог по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4862,6 +5111,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4873,6 +5124,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/threshold/{id}/from-string - Получить эквивалентную строку выражения порога по ID
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4886,6 +5139,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4897,6 +5152,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PUT] /api/v1/catalog/threshold/{id}/from-string - Обновить порог по ID из строки
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4910,6 +5167,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4921,6 +5180,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [PATCH] /api/v1/catalog/threshold/{prevId}/{newId} - Изменить ID порога
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4934,6 +5195,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4945,6 +5208,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/threshold/from-string - Создать порог из эквивалентной строки
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4958,6 +5223,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4968,6 +5235,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/thresholds - Получить все пороги
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -4981,6 +5250,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -4990,6 +5261,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/config/in-progress - Получить все данные устройств, находящихся в процессе конфигурирования
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -5003,6 +5276,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -5013,6 +5288,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/config/in-progress/search - Поиск данных устройств, находящихся в процессе конфигурирования
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -5026,6 +5303,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -5039,6 +5318,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/config/working - Получить рабочую конфигурацию устройства
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -5052,6 +5333,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -5065,6 +5348,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/param-result - Получить отфильтрованные сохранённые значения параметров
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -5078,6 +5363,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -5088,6 +5375,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [GET] /api/v1/catalog/param-results - Получить все сохранённые значения параметров
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -5101,6 +5390,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
@@ -5112,6 +5403,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ## [POST] /api/v1/catalog/save-result - Экспортировать результаты в SQL скрипт
 
+<details><summary>Примеры запросов</summary>
+
 ### Примеры запросов
 
 Запрос 1:
@@ -5125,6 +5418,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 ### Возможные коды ошибок
 
