@@ -18,6 +18,7 @@
 > Это вызвано тем, что **_базовый компонент_** для всех остальных компонентов должен быть только один, и он
 > **_уже создан_**.  
 > Компонент с id, равным 1, является основой для создания всех остальных компонентов модельного каталога.
+
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
@@ -618,6 +619,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/api/v1/catalog/component
   ]
 }
 ```
+
 </details>
 
 ### Возможные коды ошибок
@@ -628,6 +630,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/api/v1/catalog/component
 ---
 
 ## [GET] /api/v1/catalog/component/{id} - Получить компонент по ID
+
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
@@ -1324,6 +1327,7 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
   ]
 }
 ```
+
 </details>
 
 ### Возможные коды ошибок
@@ -3421,6 +3425,7 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
   ]
 }
 ```
+
 </details>
 
 ### Возможные коды ошибок
@@ -3439,6 +3444,7 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 > [!WARNING]  
 > В связи с вышесказанным желательно добавить либо кнопку, либо дополнительное всплывающее сообщение подтверждения
 > проведения операции.
+
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
@@ -3456,6 +3462,7 @@ DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 ```json
 {}
 ```
+
 </details>
 
 ### Возможные коды ошибок
@@ -3472,6 +3479,7 @@ DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 > Таким образом, базовый компонент `component` (id которого равен 1) всегда будет первым в списке компонентов.  
 > При изменении id компонента возможен сдвиг всех последующих компонентов в списке компонентов (увеличение их id на 1),
 > который не приводит к возникновению ошибки в работе системы.
+
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
@@ -3489,6 +3497,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/catalog/component/3/2
 ```json
 {}
 ```
+
 </details>
 
 ### Возможные коды ошибок
@@ -3500,6 +3509,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/catalog/component/3/2
 ---
 
 ## [GET] /api/v1/catalog/component/search - Поиск компонентов по строке
+
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
@@ -3515,6 +3525,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
 </details>
 
 ### Возможные коды ошибок
