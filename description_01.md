@@ -3515,9 +3515,6 @@ PATCH https://nms-dev.opk-bulat.ru/api/v1/catalog/component/3/2
 > API для поиска компонента по строке, содержащей часть или полное значение полей "title", "name_en", "name_ru",
 > "description_en", "description_ru".
 
-> [!IMPORTANT]  
-> При вводе строки на кириллице она должна кодироваться в адресной строке в bytestring.
-
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
