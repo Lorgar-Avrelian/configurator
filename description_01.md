@@ -625,7 +625,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/api/v1/catalog/component
 
 ### Возможные коды ошибок
 
-400: Bad Request - Неверный формат тела запроса или ошибка валидации данных
+400: Bad Request - Неверный формат тела запроса или ошибка валидации данных  
 500: Internal Server Error - Ошибка на стороне базы данных или сервера
 
 ---
@@ -1333,8 +1333,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 
 ### Возможные коды ошибок
 
-400: Bad Request - Неверный формат идентификатора компонента в пути
-404: Not Found - Компонент с указанным ID не найден в системе
+400: Bad Request - Неверный формат идентификатора компонента в пути  
+404: Not Found - Компонент с указанным ID не найден в системе  
 500: Internal Server Error - Внутренняя ошибка базы данных
 
 ---
@@ -3431,7 +3431,7 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 
 ### Возможные коды ошибок
 
-400: Bad Request - Неверный формат ID в пути или ошибка валидации JSON-тела
+400: Bad Request - Неверный формат ID в пути или ошибка валидации JSON-тела  
 500: Internal Server Error - Ошибка обновления данных на стороне СУБД
 
 ---
@@ -3507,8 +3507,8 @@ PATCH https://nms-dev.opk-bulat.ru/api/v1/catalog/component/3/2
 
 ### Возможные коды ошибок
 
-400: Bad Request - Неверный формат prevId или newId, либо операция отклонена сервисом
-404: Not Found - Исходный компонент для изменения ID не найден
+400: Bad Request - Неверный формат prevId или newId, либо операция отклонена сервисом  
+404: Not Found - Исходный компонент для изменения ID не найден  
 500: Internal Server Error - Ошибка изменения первичного или внешнего ключа в СУБД
 
 ---
@@ -8690,7 +8690,7 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/search?query=%D0%B8%D0
 
 ### Возможные коды ошибок
 
-400: Bad Request - Строка поиска query отсутствует или является пустой
+400: Bad Request - Строка поиска query отсутствует или является пустой  
 500: Internal Server Error - Ошибка выполнения полнотекстового запроса к БД
 
 ---
