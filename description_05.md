@@ -116,7 +116,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1/api/v1/catalog/indicator/device
 > [!TIP]
 > Индикатор с id, равным 1, отличается от других индикаторов по своему содержанию, имея значение поля `object_id`,
 > равное строке `default` (все остальные индикаторы устройств имеют значение данного поля, равное точечной нотации
-> sysObjectID), и служит значением по умолчанию для конфигурации по умолчанию.
+> sysObjectID), и служит значением по умолчанию для базовой конфигурации по умолчанию.
 
 <details><summary>Примеры запросов</summary>
 
@@ -186,6 +186,17 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/indicator/device/1
 
 ## [PUT] /api/v1/catalog/indicator/device/{id} - Обновить индикатор по ID
 
+> [!TIP]
+> API обновляет значения только тех полей индикатора устройства, которые были переданы в теле запроса для индикатора с
+> данным id.
+
+> [!TIP]
+> Попытка отредактировать индикатор устройства до состояния уже существующего индикатора устройства будет отклонена
+> сервером.
+
+> [!WARNING]
+> Обновлять данные индикатора с id, равным 1, запрещено.
+
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
@@ -196,12 +207,28 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/indicator/device/1
 
 ```http
 PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/indicator/device/2
+
+{
+  "contact": "sysadmin",
+  "description": "Linux server-node-01 5.4.0-74-generic",
+  "location": "Rack 04, Room 202",
+  "object_id": ".1.3.6.1.4.1.8072.3.2.10",
+  "services": 72
+}
 ```
 
 Ответ 1:
 
 ```json
-
+{
+  "id": 2,
+  "description": "Linux server-node-01 5.4.0-74-generic",
+  "object_id": ".1.3.6.1.4.1.8072.3.2.10",
+  "contact": "sysadmin",
+  "name": "node-01.local",
+  "location": "Rack 04, Room 202",
+  "services": 72
+}
 ```
 
 </details>
@@ -216,6 +243,14 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/indicator/device/2
 
 ## [DELETE] /api/v1/catalog/indicator/device/{id} - Удалить индикатор по ID
 
+> [!CAUTION]
+> При удалении индикатора устройства из БД также удаляются все связанные с ним конфигурации: как конфигурации по
+> умолчанию, так и рабочие конфигурации.
+
+> [!WARNING]
+> В связи с вышесказанным желательно добавить либо кнопку, либо дополнительное всплывающее сообщение подтверждения
+> проведения операции.
+
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
@@ -225,13 +260,15 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/indicator/device/2
 Запрос 1:
 
 ```http
-POST https://nms-dev.opk-bulat.ru/api/v1
+DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/indicator/device/2
+
+{}
 ```
 
 Ответ 1:
 
 ```json
-
+{}
 ```
 
 </details>
@@ -257,13 +294,34 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 Запрос 1:
 
 ```http
-POST https://nms-dev.opk-bulat.ru/api/v1
+GET https://nms-dev.opk-bulat.ru/api/v1/catalog/indicator/devices
+
+{}
 ```
 
 Ответ 1:
 
 ```json
-
+[
+  {
+    "id": 1,
+    "description": null,
+    "object_id": "default",
+    "contact": null,
+    "name": null,
+    "location": null,
+    "services": null
+  },
+  {
+    "id": 2,
+    "description": "Linux server-node-01 5.4.0-74-generic",
+    "object_id": ".1.3.6.1.4.1.8072.3.2.10",
+    "contact": "sysadmin@company.com",
+    "name": "node-01.local",
+    "location": "Rack 04, Room 202",
+    "services": 72
+  }
+]
 ```
 
 </details>

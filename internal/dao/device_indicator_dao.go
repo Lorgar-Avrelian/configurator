@@ -22,7 +22,7 @@ func CreateIndicator(ctx context.Context, d DeviceIndicatorDao) (*DeviceIndicato
 			 RETURNING "id", "description", "object_id", "contact", "name", "location", "services"`
 	err = conn.QueryRow(ctx, query, d.Description, d.ObjectID, d.Contact, d.Name, d.Location, d.Services).Scan(&res.ID, &res.Description, &res.ObjectID, &res.Contact, &res.Name, &res.Location, &res.Services)
 	if err != nil {
-		logger.Error("Failed to insert device indicator into DB: %v", err)
+		logger.Errorf("Failed to insert device indicator into DB: %v", err)
 		return nil, err
 	}
 	return &res, nil
@@ -42,7 +42,7 @@ func GetIndicatorByID(ctx context.Context, id int64) (*DeviceIndicatorDao, error
 		if err == pgx.ErrNoRows {
 			return nil, nil
 		}
-		logger.Error("Failed to retrieve device indicator ID %d: %v", id, err)
+		logger.Errorf("Failed to retrieve device indicator ID %d: %v", id, err)
 		return nil, err
 	}
 	return &res, nil
@@ -61,7 +61,7 @@ func GetAllIndicators(ctx context.Context) ([]DeviceIndicatorDao, error) {
 			 ORDER BY "id" ASC`
 	rows, err = conn.Query(ctx, query)
 	if err != nil {
-		logger.Error("Failed to fetch all device indicators from DB: %v", err)
+		logger.Errorf("Failed to fetch all device indicators from DB: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -91,7 +91,7 @@ func UpdateIndicator(ctx context.Context, id int64, d DeviceIndicatorDao) (*Devi
 		if err == pgx.ErrNoRows {
 			return nil, nil
 		}
-		logger.Error("Failed to update device indicator ID %d: %v", id, err)
+		logger.Errorf("Failed to update device indicator ID %d: %v", id, err)
 		return nil, err
 	}
 	return &res, nil
@@ -109,7 +109,7 @@ func DeleteIndicator(ctx context.Context, id int64) (bool, error) {
 			 WHERE "id" = $1`
 	commandTag, err = conn.Exec(ctx, query, id)
 	if err != nil {
-		logger.Error("Failed to delete device indicator ID %d: %v", id, err)
+		logger.Errorf("Failed to delete device indicator ID %d: %v", id, err)
 		return false, err
 	}
 	affected = commandTag.RowsAffected()
@@ -117,7 +117,7 @@ func DeleteIndicator(ctx context.Context, id int64) (bool, error) {
 				FROM public.device_indicator`
 	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
-		logger.Error("Failed to reset device indicator sequence: %v", err)
+		logger.Errorf("Failed to reset device indicator sequence: %v", err)
 		return true, err
 	}
 	return affected > 0, nil

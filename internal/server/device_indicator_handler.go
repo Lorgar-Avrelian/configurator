@@ -26,13 +26,13 @@ func CreateIndicator(c *gin.Context) {
 	var err error
 	var res *dto.DeviceIndicatorDto
 	if err = c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Validation failed during device indicator creation: %v", err)
+		logger.Warnf("Validation failed during device indicator creation: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
 	res, err = service.CreateDeviceIndicator(c.Request.Context(), input)
 	if err != nil {
-		logger.Error("Service error occurred while creating device indicator: %v", err)
+		logger.Errorf("Service error occurred while creating device indicator: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create device indicator"})
 		return
 	}
@@ -60,7 +60,7 @@ func GetIndicator(c *gin.Context) {
 	}
 	res, err = service.GetDeviceIndicatorByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while retrieving device indicator %d: %v", id, err)
+		logger.Errorf("Service error occurred while retrieving device indicator %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve device indicator"})
 		return
 	}
@@ -83,7 +83,7 @@ func GetAllIndicators(c *gin.Context) {
 	var err error
 	res, err = service.GetAllDeviceIndicators(c.Request.Context())
 	if err != nil {
-		logger.Error("Service error occurred while retrieving all device indicators: %v", err)
+		logger.Errorf("Service error occurred while retrieving all device indicators: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve all device indicators"})
 		return
 	}
@@ -108,18 +108,22 @@ func UpdateIndicator(c *gin.Context) {
 	var input dto.DeviceIndicatorCreateDto
 	var res *dto.DeviceIndicatorDto
 	id, err = strconv.ParseInt(c.Param("id"), 10, 64)
+	if id == 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid device indicator ID value"})
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid device indicator ID format"})
 		return
 	}
 	if err = c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Validation failed during device indicator update for ID %d: %v", id, err)
+		logger.Warnf("Validation failed during device indicator update for ID %d: %v", id, err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
 	res, err = service.UpdateDeviceIndicator(c.Request.Context(), id, input)
 	if err != nil {
-		logger.Error("Service error occurred while updating device indicator %d: %v", id, err)
+		logger.Errorf("Service error occurred while updating device indicator %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update device indicator"})
 		return
 	}
@@ -150,7 +154,7 @@ func DeleteIndicator(c *gin.Context) {
 	}
 	found, err = service.DeleteDeviceIndicator(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while deleting device indicator %d: %v", id, err)
+		logger.Errorf("Service error occurred while deleting device indicator %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete device indicator"})
 		return
 	}
