@@ -39,6 +39,8 @@
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -79,6 +81,10 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/oid
   }
 ]
 ```
+
+</details>
+
+<details><summary>Пример 2</summary>
 
 Запрос 2:
 
@@ -229,6 +235,10 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/oid
   }
 ]
 ```
+
+</details>
+
+<details><summary>Пример 3</summary>
 
 Запрос 3:
 
@@ -1545,6 +1555,10 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/oid
 ]
 ```
 
+</details>
+
+<details><summary>Пример 4</summary>
+
 Запрос 4:
 
 ```http
@@ -1748,6 +1762,10 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/oid
   }
 ]
 ```
+
+</details>
+
+<details><summary>Пример 5</summary>
 
 Запрос 5:
 
@@ -2164,6 +2182,10 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/oid
 ]
 ```
 
+</details>
+
+<details><summary>Пример 6</summary>
+
 Запрос 6:
 
 ```http
@@ -2219,6 +2241,10 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/oid
   }
 ]
 ```
+
+</details>
+
+<details><summary>Пример 7</summary>
 
 Запрос 7:
 
@@ -4143,6 +4169,10 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/oid
 ]
 ```
 
+</details>
+
+<details><summary>Пример 8</summary>
+
 Запрос 8:
 
 ```http
@@ -4182,6 +4212,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/oid
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Параметр notation отсутствует или имеет некорректный формат  
@@ -4217,6 +4249,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/oid
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -4255,6 +4289,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/parse
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Получен некорректный JSON-объект  
@@ -4272,6 +4308,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/parse
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -4955,6 +4993,10 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/mibs
     ]
 }
 ```
+
+</details>
+
+<details><summary>Пример 2</summary>
 
 Запрос 2:
 
@@ -5650,6 +5692,10 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/mibs
     ]
 }
 ```
+
+</details>
+
+<details><summary>Пример 3</summary>
 
 Запрос 3:
 
@@ -25398,6 +25444,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/mibs
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Передан не валидный JSON  
@@ -25413,6 +25461,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/mib-parser/mibs
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -25432,10 +25482,12 @@ GET https://nms-dev.opk-bulat.ru/api/v1/mib-parser/mib?path=SNMPv2-MIB.mib
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Отсутствует обязательный параметр (path)  
-404: Not Found - Отсутствует файла MIB по указанному пути в системе  
+404: Not Found - Отсутствует файл MIB по указанному пути в системе  
 500: Internal Server Error - Ошибка чтения файла MIB
 
 ---

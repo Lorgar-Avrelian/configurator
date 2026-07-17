@@ -26,6 +26,8 @@
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -37,6 +39,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -53,6 +57,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -64,6 +70,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -81,6 +89,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -92,6 +102,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -107,6 +119,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -118,6 +132,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -135,6 +151,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -146,6 +164,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 

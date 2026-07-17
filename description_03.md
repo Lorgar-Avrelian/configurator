@@ -18,6 +18,8 @@
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -713,6 +715,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/catalog/link/component-param/2/38
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Некорректные форматы переданных идентификаторов в пути  
@@ -739,6 +743,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/catalog/link/component-param/2/38
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -1416,6 +1422,8 @@ DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/link/component-param/2/38
   ]
 }
 ```
+
+</details>
 
 </details>
 

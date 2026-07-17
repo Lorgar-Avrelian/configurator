@@ -24,6 +24,8 @@
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -623,6 +625,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/api/v1/catalog/component
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Неверный формат тела запроса или ошибка валидации данных  
@@ -635,6 +639,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/api/v1/catalog/component
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -1331,6 +1337,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Неверный формат идентификатора компонента в пути  
@@ -1349,6 +1357,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -2054,6 +2064,10 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
   ]
 }
 ```
+
+</details>
+
+<details><summary>Пример 2</summary>
 
 Запрос 2:
 
@@ -3429,6 +3443,8 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Неверный формат ID в пути или ошибка валидации JSON-тела  
@@ -3454,6 +3470,8 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -3467,6 +3485,8 @@ DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 ```json
 {}
 ```
+
+</details>
 
 </details>
 
@@ -3489,6 +3509,8 @@ DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/component/2
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -3502,6 +3524,8 @@ PATCH https://nms-dev.opk-bulat.ru/api/v1/catalog/component/3/2
 ```json
 {}
 ```
+
+</details>
 
 </details>
 
@@ -3522,6 +3546,8 @@ PATCH https://nms-dev.opk-bulat.ru/api/v1/catalog/component/3/2
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -4217,6 +4243,10 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/search?query=physical
   }
 ]
 ```
+
+</details>
+
+<details><summary>Пример 2</summary>
 
 Запрос 2:
 
@@ -7873,6 +7903,10 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/search?query=memory
 ]
 ```
 
+</details>
+
+<details><summary>Пример 3</summary>
+
 Запрос 3 - Пример для ввода значения `интерфейс` на кириллице:
 
 ```http
@@ -8688,6 +8722,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/search?query=%D0%B8%D0
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Строка поиска query отсутствует или является пустой  
@@ -8700,6 +8736,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/component/search?query=%D0%B8%D0
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -20013,6 +20051,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/components
   }
 ]
 ```
+
+</details>
 
 </details>
 

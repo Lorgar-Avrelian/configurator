@@ -13,6 +13,8 @@
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -54,6 +56,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/catalog/param
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Ошибка валидации структуры системного параметра  
@@ -66,6 +70,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1/catalog/param
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -96,6 +102,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/param/4
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Неверный числовой формат идентификатора в пути  
@@ -112,6 +120,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/param/4
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -151,6 +161,10 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/param/4
   "diagram": false
 }
 ```
+
+</details>
+
+<details><summary>Пример 2</summary>
 
 Запрос 2:
 
@@ -194,6 +208,8 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/param/4
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Ошибка валидации или неверный числовой формат ID в пути  
@@ -219,6 +235,8 @@ PUT https://nms-dev.opk-bulat.ru/api/v1/catalog/param/4
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -232,6 +250,8 @@ DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/param/4
 ```json
 {}
 ```
+
+</details>
 
 </details>
 
@@ -255,6 +275,8 @@ DELETE https://nms-dev.opk-bulat.ru/api/v1/catalog/param/4
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -268,6 +290,8 @@ PATCH https://nms-dev.opk-bulat.ru/api/v1/catalog/param/62/1
 ```json
 {}
 ```
+
+</details>
 
 </details>
 
@@ -288,6 +312,8 @@ PATCH https://nms-dev.opk-bulat.ru/api/v1/catalog/param/62/1
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -373,6 +399,10 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/param/search?query=status
   }
 ]
 ```
+
+</details>
+
+<details><summary>Пример 2</summary>
 
 Запрос 2 - Пример для ввода значения `количество` на кириллице:
 
@@ -581,6 +611,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/param/search?query=%D0%BA%D0%BE%
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Пустой поисковый запрос (параметр query отсутствует)  
@@ -603,6 +635,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/param/search?query=%D0%BA%D0%BE%
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -634,6 +668,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/param/search/4
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Неверный формат числового идентификатора параметра  
@@ -651,6 +687,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/param/search/4
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -685,6 +723,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/param/unattached
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 500: Internal Server Error - Системная ошибка СУБД при получении изолированных параметров
@@ -696,6 +736,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/param/unattached
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -1665,6 +1707,8 @@ GET https://nms-dev.opk-bulat.ru/api/v1/catalog/params
   }
 ]
 ```
+
+</details>
 
 </details>
 

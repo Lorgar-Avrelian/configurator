@@ -10,6 +10,8 @@
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -24,6 +26,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 </details>
 
+</details>
+
 ### Возможные коды ошибок
 
 400: Bad Request - Ошибка валидации переданной JSON-структуры порога или пропущены обязательные поля  
@@ -34,6 +38,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 <details><summary>Примеры запросов</summary>
 
 ### Примеры запросов
+
+<details><summary>Пример 1</summary>
 
 Запрос 1:
 
@@ -46,6 +52,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -63,6 +71,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -74,6 +84,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -91,6 +103,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -102,6 +116,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -119,6 +135,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -130,6 +148,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -147,6 +167,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -158,6 +180,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -175,6 +199,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -186,6 +212,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -203,6 +231,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -214,6 +244,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
@@ -230,6 +262,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ### Примеры запросов
 
+<details><summary>Пример 1</summary>
+
 Запрос 1:
 
 ```http
@@ -241,6 +275,8 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 ```json
 
 ```
+
+</details>
 
 </details>
 
