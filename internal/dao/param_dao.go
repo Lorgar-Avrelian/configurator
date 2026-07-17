@@ -18,7 +18,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 RETURNING "id", "title", "name_en", "name_ru", "type", "value", "description_en", "description_ru", "units_en", "units_ru", "access", "saved", "visible", "diagram"`
 	var p ParamDao
 	var err error
-	err = conn.QueryRow(ctx, query, d.Title, d.NameEn, d.NameRu, d.Type, d.Value, d.DescriptionEn, d.DescriptionRu, d.UnitsEn, d.UnitsRu, d.Access, d.Saved, d.Visible).Scan(&p.ID, &p.Title, &p.NameEn, &p.NameRu, &p.Type, &p.Value, &p.DescriptionEn, &p.DescriptionRu, &p.UnitsEn, &p.UnitsRu, &p.Access, &p.Saved, &p.Visible, &p.Diagram)
+	err = conn.QueryRow(ctx, query, d.Title, d.NameEn, d.NameRu, d.Type, d.Value, d.DescriptionEn, d.DescriptionRu, d.UnitsEn, d.UnitsRu, d.Access, d.Saved, d.Visible, d.Diagram).Scan(&p.ID, &p.Title, &p.NameEn, &p.NameRu, &p.Type, &p.Value, &p.DescriptionEn, &p.DescriptionRu, &p.UnitsEn, &p.UnitsRu, &p.Access, &p.Saved, &p.Visible, &p.Diagram)
 	if err != nil {
 		logger.Error("Failed to insert parameter into DB: %v", err)
 		return nil, err

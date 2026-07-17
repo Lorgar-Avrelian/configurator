@@ -1035,7 +1035,7 @@ func executeTableExport(outputDir string, tableName string, dataSlice any) {
 		i = chunkEnd
 	}
 	if hasID {
-		sb.WriteString(fmt.Sprintf("SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('%s', 'id'), COALESCE(MAX(\"id\"), 1))\nFROM %s;", tableName, tableName))
+		sb.WriteString(fmt.Sprintf("SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('%s', 'id'), COALESCE(MAX(\"id\"), 0) + 1, false)\nFROM %s;", tableName, tableName))
 	}
 	finalSQL = sb.String()
 	finalSQL = strings.TrimRight(finalSQL, "\n\r ")
