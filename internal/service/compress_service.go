@@ -22,38 +22,38 @@ func CompressComponentDependentData(ctx context.Context) {
 	var tAffectedParam []dao.AffectedParamDao
 	tComponent, tCompParam, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tResult, tAffectedTh, tAffectedParam, err = GetComponentDependentDataOnly(ctx)
 	if err != nil {
-		logger.Error("Error while loading component dependent data:", err)
+		logger.Errorf("Error while loading component dependent data: %v", err)
 		return
 	}
 	tComponent, tCompParam, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tResult, tAffectedTh, tAffectedParam = overrideComponentDependentIds(tComponent, tCompParam, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tResult, tAffectedTh, tAffectedParam)
 	err = DropComponentDependentConstraintsForComponent(ctx)
 	if err != nil {
-		logger.Error("Error while dropping component dependent constraints:", err)
+		logger.Errorf("Error while dropping component dependent constraints: %v", err)
 		return
 	}
 	err = DropComponentDependentTablesForComponent(ctx)
 	if err != nil {
-		logger.Error("Error while dropping component dependent tables:", err)
+		logger.Errorf("Error while dropping component dependent tables: %v", err)
 		return
 	}
 	err = CreateComponentDependentTablesForComponent(ctx)
 	if err != nil {
-		logger.Error("Error while creating component dependent tables:", err)
+		logger.Errorf("Error while creating component dependent tables: %v", err)
 		return
 	}
 	err = InsertComponentDependentDataForComponent(ctx, tComponent, tCompParam, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam)
 	if err != nil {
-		logger.Error("Error while inserting component dependent data:", err)
+		logger.Errorf("Error while inserting component dependent data: %v", err)
 		return
 	}
 	err = CreateComponentDependentConstraintsForComponent(ctx)
 	if err != nil {
-		logger.Error("Error while creating component dependent constraints:", err)
+		logger.Errorf("Error while creating component dependent constraints: %v", err)
 		return
 	}
 	err = ResetComponentDependentCountersForComponent(ctx)
 	if err != nil {
-		logger.Error("Error while resetting component dependent counters:", err)
+		logger.Errorf("Error while resetting component dependent counters: %v", err)
 	}
 }
 
@@ -458,6 +458,11 @@ func processAffectedThresholdsSelfIds(affectedThresholds []dao.AffectedThreshold
 
 func DropComponentDependentConstraintsForComponent(ctx context.Context) error {
 	var err error
+	err = dao.DropResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.result: %v", err)
+		return err
+	}
 	err = dao.DropAffectedThresholdDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error dropping constraints for table public.affected_threshold: %v", err)
@@ -653,6 +658,11 @@ func CreateComponentDependentConstraintsForComponent(ctx context.Context) error 
 		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
 		return err
 	}
+	err = dao.CreateResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.affected_threshold: %v", err)
+		return err
+	}
 	return nil
 }
 
@@ -821,38 +831,38 @@ func CompressParamDependentData(ctx context.Context) {
 	var tAffectedParam []dao.AffectedParamDao
 	tParam, tCompParam, tMapping, tDevCompMap, tResult, tAffectedParam, err = GetParamDependentDataOnly(ctx)
 	if err != nil {
-		logger.Error("Error while loading param dependent data:", err)
+		logger.Errorf("Error while loading param dependent data: %v", err)
 		return
 	}
 	tParam, tCompParam, tMapping, tDevCompMap, tResult, tAffectedParam = overrideParamDependentIds(tParam, tCompParam, tMapping, tDevCompMap, tResult, tAffectedParam)
 	err = DropParamDependentConstraintsForParam(ctx)
 	if err != nil {
-		logger.Error("Error while dropping param dependent constraints:", err)
+		logger.Errorf("Error while dropping param dependent constraints: %v", err)
 		return
 	}
 	err = DropParamDependentTablesForParam(ctx)
 	if err != nil {
-		logger.Error("Error while dropping param dependent tables:", err)
+		logger.Errorf("Error while dropping param dependent tables: %v", err)
 		return
 	}
 	err = CreateParamDependentTablesForParam(ctx)
 	if err != nil {
-		logger.Error("Error while creating param dependent tables:", err)
+		logger.Errorf("Error while creating param dependent tables: %v", err)
 		return
 	}
 	err = InsertParamDependentDataForParam(ctx, tParam, tCompParam, tMapping, tDevCompMap, tAffectedParam)
 	if err != nil {
-		logger.Error("Error while inserting param dependent data:", err)
+		logger.Errorf("Error while inserting param dependent data: %v", err)
 		return
 	}
 	err = CreateParamDependentConstraintsForParam(ctx)
 	if err != nil {
-		logger.Error("Error while creating param dependent constraints:", err)
+		logger.Errorf("Error while creating param dependent constraints: %v", err)
 		return
 	}
 	err = ResetParamDependentCountersForParam(ctx)
 	if err != nil {
-		logger.Error("Error while resetting param dependent counters:", err)
+		logger.Errorf("Error while resetting param dependent counters: %v", err)
 	}
 }
 
@@ -1059,6 +1069,11 @@ func processMappings(mappings []dao.MappingDao, deviceComponentMappings []dao.De
 
 func DropParamDependentConstraintsForParam(ctx context.Context) error {
 	var err error
+	err = dao.DropResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error dropping constraints for table public.result: %v", err)
+		return err
+	}
 	err = dao.DropAffectedParamDaoConstraints(ctx)
 	if err != nil {
 		logger.Errorf("Error dropping constraints for table public.affected_param: %v", err)
@@ -1174,6 +1189,11 @@ func CreateParamDependentConstraintsForParam(ctx context.Context) error {
 		logger.Errorf("Error creating constraints for table public.affected_param: %v", err)
 		return err
 	}
+	err = dao.CreateResultDaoConstraints(ctx)
+	if err != nil {
+		logger.Errorf("Error creating constraints for table public.result: %v", err)
+		return err
+	}
 	return nil
 }
 
@@ -1279,38 +1299,38 @@ func CompressDeviceIndicatorDependentData(ctx context.Context) {
 	var tAffectedParam []dao.AffectedParamDao
 	tDevInd, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam, err = GetDeviceIndicatorDependentDataOnly(ctx)
 	if err != nil {
-		logger.Error("Error while loading device indicator dependent data:", err)
+		logger.Errorf("Error while loading device indicator dependent data: %v", err)
 		return
 	}
 	tDevInd, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam = overrideDeviceIndicatorDependentIds(tDevInd, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam)
 	err = DropDeviceIndicatorDependentConstraintsForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while dropping device indicator dependent constraints:", err)
+		logger.Errorf("Error while dropping device indicator dependent constraints: %v", err)
 		return
 	}
 	err = DropDeviceIndicatorDependentTablesForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while dropping device indicator dependent tables:", err)
+		logger.Errorf("Error while dropping device indicator dependent tables: %v", err)
 		return
 	}
 	err = CreateDeviceIndicatorDependentTablesForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while creating device indicator dependent tables:", err)
+		logger.Errorf("Error while creating device indicator dependent tables: %v", err)
 		return
 	}
 	err = InsertDeviceIndicatorDependentDataForDeviceIndicator(ctx, tDevInd, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam)
 	if err != nil {
-		logger.Error("Error while inserting device indicator dependent data:", err)
+		logger.Errorf("Error while inserting device indicator dependent data: %v", err)
 		return
 	}
 	err = CreateDeviceIndicatorDependentConstraintsForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while creating device indicator dependent constraints:", err)
+		logger.Errorf("Error while creating device indicator dependent constraints: %v", err)
 		return
 	}
 	err = ResetDeviceIndicatorDependentCountersForDeviceIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while resetting device indicator dependent counters:", err)
+		logger.Errorf("Error while resetting device indicator dependent counters: %v", err)
 	}
 }
 
@@ -1723,38 +1743,38 @@ func CompressParamIndicatorDependentData(ctx context.Context) {
 	var tDevCompMap []dao.DeviceComponentMappingDao
 	tParamInd, tMapping, tDevCompMap, err = GetParamIndicatorDependentDataOnly(ctx)
 	if err != nil {
-		logger.Error("Error while loading param indicator dependent data:", err)
+		logger.Errorf("Error while loading param indicator dependent data: %v", err)
 		return
 	}
 	tParamInd, tMapping, tDevCompMap = overrideParamIndicatorDependentIds(tParamInd, tMapping, tDevCompMap)
 	err = DropParamIndicatorDependentConstraintsForParamIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while dropping param indicator dependent constraints:", err)
+		logger.Errorf("Error while dropping param indicator dependent constraints: %v", err)
 		return
 	}
 	err = DropParamIndicatorDependentTablesForParamIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while dropping param indicator dependent tables:", err)
+		logger.Errorf("Error while dropping param indicator dependent tables: %v", err)
 		return
 	}
 	err = CreateParamIndicatorDependentTablesForParamIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while creating param indicator dependent tables:", err)
+		logger.Errorf("Error while creating param indicator dependent tables: %v", err)
 		return
 	}
 	err = InsertParamIndicatorDependentDataForParamIndicator(ctx, tParamInd, tMapping, tDevCompMap)
 	if err != nil {
-		logger.Error("Error while inserting param indicator dependent data:", err)
+		logger.Errorf("Error while inserting param indicator dependent data: %v", err)
 		return
 	}
 	err = CreateParamIndicatorDependentConstraintsForParamIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while creating param indicator dependent constraints:", err)
+		logger.Errorf("Error while creating param indicator dependent constraints: %v", err)
 		return
 	}
 	err = ResetParamIndicatorDependentCountersForParamIndicator(ctx)
 	if err != nil {
-		logger.Error("Error while resetting param indicator dependent counters:", err)
+		logger.Errorf("Error while resetting param indicator dependent counters: %v", err)
 	}
 }
 
@@ -1998,38 +2018,38 @@ func CompressDeviceComponentDependentData(ctx context.Context) {
 	var tAffectedParam []dao.AffectedParamDao
 	tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam, err = GetDeviceComponentDependentDataOnly(ctx)
 	if err != nil {
-		logger.Error("Error while loading device component dependent data:", err)
+		logger.Errorf("Error while loading device component dependent data: %v", err)
 		return
 	}
 	tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam = overrideDeviceComponentDependentIds(tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam)
 	err = DropDeviceComponentDependentConstraintsForDeviceComponent(ctx)
 	if err != nil {
-		logger.Error("Error while dropping device component dependent constraints:", err)
+		logger.Errorf("Error while dropping device component dependent constraints: %v", err)
 		return
 	}
 	err = DropDeviceComponentDependentTablesForDeviceComponent(ctx)
 	if err != nil {
-		logger.Error("Error while dropping device component dependent tables:", err)
+		logger.Errorf("Error while dropping device component dependent tables: %v", err)
 		return
 	}
 	err = CreateDeviceComponentDependentTablesForDeviceComponent(ctx)
 	if err != nil {
-		logger.Error("Error while creating device component dependent tables:", err)
+		logger.Errorf("Error while creating device component dependent tables: %v", err)
 		return
 	}
 	err = InsertDeviceComponentDependentDataForDeviceComponent(ctx, tDevComp, tDevCompMap, tConfig, tDefConfig, tDevSnmp, tAffectedTh, tAffectedParam)
 	if err != nil {
-		logger.Error("Error while inserting device component dependent data:", err)
+		logger.Errorf("Error while inserting device component dependent data: %v", err)
 		return
 	}
 	err = CreateDeviceComponentDependentConstraintsForDeviceComponent(ctx)
 	if err != nil {
-		logger.Error("Error while creating device component dependent constraints:", err)
+		logger.Errorf("Error while creating device component dependent constraints: %v", err)
 		return
 	}
 	err = ResetDeviceComponentDependentCountersForDeviceComponent(ctx)
 	if err != nil {
-		logger.Error("Error while resetting device component dependent counters:", err)
+		logger.Errorf("Error while resetting device component dependent counters: %v", err)
 	}
 }
 
@@ -2447,38 +2467,38 @@ func CompressMappingDependentData(ctx context.Context) {
 	var tDevCompMap []dao.DeviceComponentMappingDao
 	tMapping, tDevCompMap, err = GetMappingDependentDataOnly(ctx)
 	if err != nil {
-		logger.Error("Error while loading mapping dependent data:", err)
+		logger.Errorf("Error while loading mapping dependent data: %v", err)
 		return
 	}
 	tMapping, tDevCompMap = overrideMappingDependentIds(tMapping, tDevCompMap)
 	err = DropMappingDependentConstraintsForMapping(ctx)
 	if err != nil {
-		logger.Error("Error while dropping mapping dependent constraints:", err)
+		logger.Errorf("Error while dropping mapping dependent constraints: %v", err)
 		return
 	}
 	err = DropMappingDependentTablesForMapping(ctx)
 	if err != nil {
-		logger.Error("Error while dropping mapping dependent tables:", err)
+		logger.Errorf("Error while dropping mapping dependent tables: %v", err)
 		return
 	}
 	err = CreateMappingDependentTablesForMapping(ctx)
 	if err != nil {
-		logger.Error("Error while creating mapping dependent tables:", err)
+		logger.Errorf("Error while creating mapping dependent tables: %v", err)
 		return
 	}
 	err = InsertMappingDependentDataForMapping(ctx, tMapping, tDevCompMap)
 	if err != nil {
-		logger.Error("Error while inserting mapping dependent data:", err)
+		logger.Errorf("Error while inserting mapping dependent data: %v", err)
 		return
 	}
 	err = CreateMappingDependentConstraintsForMapping(ctx)
 	if err != nil {
-		logger.Error("Error while creating mapping dependent constraints:", err)
+		logger.Errorf("Error while creating mapping dependent constraints: %v", err)
 		return
 	}
 	err = ResetMappingDependentCountersForMapping(ctx)
 	if err != nil {
-		logger.Error("Error while resetting mapping dependent counters:", err)
+		logger.Errorf("Error while resetting mapping dependent counters: %v", err)
 	}
 }
 
@@ -2644,38 +2664,38 @@ func CompressConfigurationDependentData(ctx context.Context) {
 	var tAffectedParam []dao.AffectedParamDao
 	tConfig, tDevSnmp, tAffectedTh, tAffectedParam, err = GetConfigurationDependentDataOnly(ctx)
 	if err != nil {
-		logger.Error("Error while loading configuration dependent data:", err)
+		logger.Errorf("Error while loading configuration dependent data: %v", err)
 		return
 	}
 	tConfig, tDevSnmp, tAffectedTh, tAffectedParam = overrideConfigurationDependentIds(tConfig, tDevSnmp, tAffectedTh, tAffectedParam)
 	err = DropConfigurationDependentConstraintsForConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while dropping configuration dependent constraints:", err)
+		logger.Errorf("Error while dropping configuration dependent constraints: %v", err)
 		return
 	}
 	err = DropConfigurationDependentTablesForConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while dropping configuration dependent tables:", err)
+		logger.Errorf("Error while dropping configuration dependent tables: %v", err)
 		return
 	}
 	err = CreateConfigurationDependentTablesForConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while creating configuration dependent tables:", err)
+		logger.Errorf("Error while creating configuration dependent tables: %v", err)
 		return
 	}
 	err = InsertConfigurationDependentDataForConfiguration(ctx, tConfig, tDevSnmp, tAffectedTh, tAffectedParam)
 	if err != nil {
-		logger.Error("Error while inserting configuration dependent data:", err)
+		logger.Errorf("Error while inserting configuration dependent data: %v", err)
 		return
 	}
 	err = CreateConfigurationDependentConstraintsForConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while creating configuration dependent constraints:", err)
+		logger.Errorf("Error while creating configuration dependent constraints: %v", err)
 		return
 	}
 	err = ResetConfigurationDependentCountersForConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while resetting configuration dependent counters:", err)
+		logger.Errorf("Error while resetting configuration dependent counters: %v", err)
 	}
 }
 
@@ -2944,38 +2964,38 @@ func CompressDefaultConfigurationDependentData(ctx context.Context) {
 	var tDefConfig []dao.DefaultConfigurationDao
 	tDefConfig, err = GetDefaultConfigurationDependentDataOnly(ctx)
 	if err != nil {
-		logger.Error("Error while loading default configuration dependent data:", err)
+		logger.Errorf("Error while loading default configuration dependent data: %v", err)
 		return
 	}
 	tDefConfig = overrideDefaultConfigurationDependentIds(tDefConfig)
 	err = DropDefaultConfigurationDependentConstraintsForDefaultConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while dropping default configuration dependent constraints:", err)
+		logger.Errorf("Error while dropping default configuration dependent constraints: %v", err)
 		return
 	}
 	err = DropDefaultConfigurationDependentTablesForDefaultConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while dropping default configuration dependent tables:", err)
+		logger.Errorf("Error while dropping default configuration dependent tables: %v", err)
 		return
 	}
 	err = CreateDefaultConfigurationDependentTablesForDefaultConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while creating default configuration dependent tables:", err)
+		logger.Errorf("Error while creating default configuration dependent tables: %v", err)
 		return
 	}
 	err = InsertDefaultConfigurationDependentDataForDefaultConfiguration(ctx, tDefConfig)
 	if err != nil {
-		logger.Error("Error while inserting default configuration dependent data:", err)
+		logger.Errorf("Error while inserting default configuration dependent data: %v", err)
 		return
 	}
 	err = CreateDefaultConfigurationDependentConstraintsForDefaultConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while creating default configuration dependent constraints:", err)
+		logger.Errorf("Error while creating default configuration dependent constraints: %v", err)
 		return
 	}
 	err = ResetDefaultConfigurationDependentCountersForDefaultConfiguration(ctx)
 	if err != nil {
-		logger.Error("Error while resetting default configuration dependent counters:", err)
+		logger.Errorf("Error while resetting default configuration dependent counters: %v", err)
 	}
 }
 
@@ -3063,38 +3083,38 @@ func CompressThresholdDependentData(ctx context.Context) {
 	var tAffectedTh []dao.AffectedThresholdDao
 	tThreshold, tAffectedTh, err = GetThresholdDependentDataOnly(ctx)
 	if err != nil {
-		logger.Error("Error while loading threshold dependent data:", err)
+		logger.Errorf("Error while loading threshold dependent data: %v", err)
 		return
 	}
 	tThreshold, tAffectedTh = overrideThresholdDependentIds(tThreshold, tAffectedTh)
 	err = DropThresholdDependentConstraintsForThreshold(ctx)
 	if err != nil {
-		logger.Error("Error while dropping threshold dependent constraints:", err)
+		logger.Errorf("Error while dropping threshold dependent constraints: %v", err)
 		return
 	}
 	err = DropThresholdDependentTablesForThreshold(ctx)
 	if err != nil {
-		logger.Error("Error while dropping threshold dependent tables:", err)
+		logger.Errorf("Error while dropping threshold dependent tables: %v", err)
 		return
 	}
 	err = CreateThresholdDependentTablesForThreshold(ctx)
 	if err != nil {
-		logger.Error("Error while creating threshold dependent tables:", err)
+		logger.Errorf("Error while creating threshold dependent tables: %v", err)
 		return
 	}
 	err = InsertThresholdDependentDataForThreshold(ctx, tThreshold, tAffectedTh)
 	if err != nil {
-		logger.Error("Error while inserting threshold dependent data:", err)
+		logger.Errorf("Error while inserting threshold dependent data: %v", err)
 		return
 	}
 	err = CreateThresholdDependentConstraintsForThreshold(ctx)
 	if err != nil {
-		logger.Error("Error while creating threshold dependent constraints:", err)
+		logger.Errorf("Error while creating threshold dependent constraints: %v", err)
 		return
 	}
 	err = ResetThresholdDependentCountersForThreshold(ctx)
 	if err != nil {
-		logger.Error("Error while resetting threshold dependent counters:", err)
+		logger.Errorf("Error while resetting threshold dependent counters: %v", err)
 	}
 }
 
