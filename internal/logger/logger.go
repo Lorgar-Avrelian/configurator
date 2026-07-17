@@ -80,18 +80,15 @@ func (l *Logger) log(level Level, format string, v ...interface{}) {
 	if globalLogger == nil {
 		return
 	}
-
 	if level < l.minLevel {
 		return
 	}
-
 	timeStr := time.Now().Format("2006-01-02 15:04:05.000")
 	lvlName := fmt.Sprintf("%5s", levelNames[level])
 	colorCode := levelColors[level]
 	coloredLevel := fmt.Sprintf("%s%s%s", colorCode, lvlName, colorReset)
 	coloredPID := fmt.Sprintf("%s%5d%s", colorMagenta, l.pid, colorReset)
 	threadName := "main"
-
 	loggerName := "unknown"
 	for i := 1; i < 10; i++ {
 		_, file, line, ok := runtime.Caller(i)
@@ -103,12 +100,10 @@ func (l *Logger) log(level Level, format string, v ...interface{}) {
 			break
 		}
 	}
-
 	if len(loggerName) > 40 {
 		loggerName = loggerName[len(loggerName)-40:]
 	}
 	coloredLogger := fmt.Sprintf("%s%-40s%s", colorCyan, loggerName, colorReset)
-
 	var msg string
 	if format == "" {
 		msg = fmt.Sprintln(v...)
@@ -116,7 +111,6 @@ func (l *Logger) log(level Level, format string, v ...interface{}) {
 		msg = fmt.Sprintf(format, v...)
 	}
 	msg = strings.TrimSuffix(msg, "\n")
-
 	result := fmt.Sprintf("%s %s %s --- [%15.15s] %s : %s\n",
 		timeStr,
 		coloredLevel,
@@ -125,17 +119,35 @@ func (l *Logger) log(level Level, format string, v ...interface{}) {
 		coloredLogger,
 		msg,
 	)
-
 	_, _ = l.out.Write([]byte(result))
 }
 
 func Printf(format string, v ...interface{}) { globalLogger.log(LevelInfo, format, v...) }
 func Println(v ...interface{})               { globalLogger.log(LevelInfo, "", v...) }
 
-func Info(format string, v ...interface{})  { globalLogger.log(LevelInfo, format, v...) }
-func Warn(format string, v ...interface{})  { globalLogger.log(LevelWarn, format, v...) }
-func Error(format string, v ...interface{}) { globalLogger.log(LevelError, format, v...) }
-func Debug(format string, v ...interface{}) { globalLogger.log(LevelDebug, format, v...) }
+func Info(v ...interface{}) {
+	var msg string
+	msg = fmt.Sprint(v...)
+	globalLogger.log(LevelInfo, msg)
+}
+
+func Warn(v ...interface{}) {
+	var msg string
+	msg = fmt.Sprint(v...)
+	globalLogger.log(LevelWarn, msg)
+}
+
+func Error(v ...interface{}) {
+	var msg string
+	msg = fmt.Sprint(v...)
+	globalLogger.log(LevelError, msg)
+}
+
+func Debug(v ...interface{}) {
+	var msg string
+	msg = fmt.Sprint(v...)
+	globalLogger.log(LevelDebug, msg)
+}
 
 func Debugf(format string, v ...interface{}) {
 	msg := fmt.Sprintf(format, v...)

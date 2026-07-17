@@ -53,7 +53,7 @@ func CreateConfiguration(c *gin.Context) {
 	var res *dto.ConfigurationDto
 	res, err = service.CreateConfiguration(c.Request.Context(), indID, dcID)
 	if err != nil {
-		logger.Error("Service error occurred while creating configuration: %v", err)
+		logger.Errorf("Service error occurred while creating configuration: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -85,7 +85,7 @@ func GetConfiguration(c *gin.Context) {
 	var res *dto.ConfigurationDto
 	res, err = service.GetConfigurationByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while retrieving configuration %d: %v", id, err)
+		logger.Errorf("Service error occurred while retrieving configuration %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -108,7 +108,7 @@ func GetAllConfigurations(c *gin.Context) {
 	var err error
 	res, err = service.GetAllConfigurations(c.Request.Context())
 	if err != nil {
-		logger.Error("Service error occurred while retrieving all configurations: %v", err)
+		logger.Errorf("Service error occurred while retrieving all configurations: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -169,7 +169,7 @@ func UpdateConfiguration(c *gin.Context) {
 	var res *dto.ConfigurationDto
 	res, err = service.UpdateConfiguration(c.Request.Context(), id, indID, dcID)
 	if err != nil {
-		logger.Error("Service error occurred while updating configuration %d: %v", id, err)
+		logger.Errorf("Service error occurred while updating configuration %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -204,7 +204,7 @@ func DeleteConfiguration(c *gin.Context) {
 	var found bool
 	found, err = service.DeleteConfiguration(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while deleting configuration %d: %v", id, err)
+		logger.Errorf("Service error occurred while deleting configuration %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
