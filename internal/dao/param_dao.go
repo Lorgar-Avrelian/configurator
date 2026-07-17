@@ -20,7 +20,7 @@ RETURNING "id", "title", "name_en", "name_ru", "type", "value", "description_en"
 	var err error
 	err = conn.QueryRow(ctx, query, d.Title, d.NameEn, d.NameRu, d.Type, d.Value, d.DescriptionEn, d.DescriptionRu, d.UnitsEn, d.UnitsRu, d.Access, d.Saved, d.Visible, d.Diagram).Scan(&p.ID, &p.Title, &p.NameEn, &p.NameRu, &p.Type, &p.Value, &p.DescriptionEn, &p.DescriptionRu, &p.UnitsEn, &p.UnitsRu, &p.Access, &p.Saved, &p.Visible, &p.Diagram)
 	if err != nil {
-		logger.Error("Failed to insert parameter into DB: %v", err)
+		logger.Errorf("Failed to insert parameter into DB: %v", err)
 		return nil, err
 	}
 	return &p, nil
@@ -40,7 +40,7 @@ WHERE "id" = $1`
 		if err == pgx.ErrNoRows {
 			return nil, nil
 		}
-		logger.Error("Failed to retrieve parameter ID %d: %v", id, err)
+		logger.Errorf("Failed to retrieve parameter ID %d: %v", id, err)
 		return nil, err
 	}
 	return &p, nil
@@ -56,12 +56,12 @@ WHERE "id" = $14
 RETURNING "id", "title", "name_en", "name_ru", "type", "value", "description_en", "description_ru", "units_en", "units_ru", "access", "saved", "visible", "diagram"`
 	var p ParamDao
 	var err error
-	err = conn.QueryRow(ctx, query, d.Title, d.NameEn, d.NameRu, d.Type, d.Value, d.DescriptionEn, d.DescriptionRu, d.UnitsEn, d.UnitsRu, d.Access, d.Saved, d.Visible, d.Diagram, id).Scan(&p.ID, &p.Title, &p.NameEn, &p.NameRu, &p.Type, &p.Value, &p.DescriptionEn, &p.DescriptionRu, &p.UnitsEn, &p.UnitsRu, &p.Access, &p.Saved, &p.Visible)
+	err = conn.QueryRow(ctx, query, d.Title, d.NameEn, d.NameRu, d.Type, d.Value, d.DescriptionEn, d.DescriptionRu, d.UnitsEn, d.UnitsRu, d.Access, d.Saved, d.Visible, d.Diagram, id).Scan(&p.ID, &p.Title, &p.NameEn, &p.NameRu, &p.Type, &p.Value, &p.DescriptionEn, &p.DescriptionRu, &p.UnitsEn, &p.UnitsRu, &p.Access, &p.Saved, &p.Visible, &p.Diagram)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, nil
 		}
-		logger.Error("Failed to update parameter ID %d: %v", id, err)
+		logger.Errorf("Failed to update parameter ID %d: %v", id, err)
 		return nil, err
 	}
 	return &p, nil
@@ -76,7 +76,7 @@ func DeleteParam(ctx context.Context, id int64) (bool, error) {
 	var err error
 	commandTag, err = conn.Exec(ctx, query, id)
 	if err != nil {
-		logger.Error("Failed to delete parameter ID %d: %v", id, err)
+		logger.Errorf("Failed to delete parameter ID %d: %v", id, err)
 		return false, err
 	}
 	var affected int64
@@ -85,7 +85,7 @@ func DeleteParam(ctx context.Context, id int64) (bool, error) {
 	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.param', 'id'), COALESCE(MAX("id"), 0) + 1, false) FROM public.param`
 	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
-		logger.Error("Failed to reset param sequence: %v", err)
+		logger.Errorf("Failed to reset param sequence: %v", err)
 		return true, err
 	}
 	return affected > 0, nil
@@ -102,7 +102,7 @@ ORDER BY "id" ASC`
 	var err error
 	rows, err = conn.Query(ctx, query)
 	if err != nil {
-		logger.Error("Failed to fetch all parameters from DB: %v", err)
+		logger.Errorf("Failed to fetch all parameters from DB: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -132,7 +132,7 @@ ORDER BY p."id" ASC`
 	var err error
 	rows, err = conn.Query(ctx, query)
 	if err != nil {
-		logger.Error("Failed to fetch unattached parameters from DB: %v", err)
+		logger.Errorf("Failed to fetch unattached parameters from DB: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -163,7 +163,7 @@ ORDER BY "id" ASC`
 	likePattern = "%" + queryText + "%"
 	rows, err = conn.Query(ctx, query, likePattern)
 	if err != nil {
-		logger.Error("Failed to search parameters for query '%s': %v", queryText, err)
+		logger.Errorf("Failed to search parameters for query '%s': %v", queryText, err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -192,7 +192,7 @@ WHERE cp."param_id" = $1 ORDER BY c."id" ASC`
 	var err error
 	rows, err = conn.Query(ctx, query, paramID)
 	if err != nil {
-		logger.Error("Failed to fetch components by direct param ID %d: %v", paramID, err)
+		logger.Errorf("Failed to fetch components by direct param ID %d: %v", paramID, err)
 		return nil, err
 	}
 	defer rows.Close()
