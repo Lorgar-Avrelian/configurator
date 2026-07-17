@@ -119,6 +119,15 @@ type OidDto struct {
 	Category         *string           `json:"category,omitempty" swaggertype:"string" extensions:"x-nullable" example:"system"`
 }
 
+type OidRequestDto struct {
+	DotterNotation string `json:"dotter_notation" example:".1.3.6.1.2.1.1.2"`
+	Mib            string `json:"mib" example:"SNMPv2-MIB"`
+	Vendor         string `json:"vendor" example:"Raisecom"`
+	Prefix         *bool  `json:"prefix" example:"true"`
+	Page           *int   `json:"page" example:"1"`
+	PageSize       *int   `json:"page_size" example:"100"`
+}
+
 type DeviceIndicatorCreateDto struct {
 	Description *string `json:"description" swaggertype:"string" extensions:"x-nullable" example:"Linux server-node-01 5.4.0-74-generic"`
 	ObjectID    string  `json:"object_id" binding:"required" example:".1.3.6.1.4.1.8072.3.2.10"`

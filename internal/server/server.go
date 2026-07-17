@@ -53,15 +53,7 @@ func NewServer() *Server {
 			linkComponentParam.POST("/:componentId/:paramId", BindParam)
 			linkComponentParam.DELETE("/:componentId/:paramId", UnbindParam)
 		}
-		var oid *gin.RouterGroup
-		oid = v1.Group("/oid")
-		{
-			oid.GET("", GetOidsByExactNotation)
-			oid.GET("/prefix", GetOidsByPrefixNotation)
-			oid.GET("/mib", GetOidsByMib)
-			oid.GET("/vendor", GetOidsByVendor)
-			oid.GET("/exact", GetOidsByDotterMibAndVendor)
-		}
+		v1.POST("/oid", GetOids)
 		v1.GET("/indicator/devices", GetAllIndicators)
 		var indicatorDevice *gin.RouterGroup
 		indicatorDevice = v1.Group("/indicator/device")

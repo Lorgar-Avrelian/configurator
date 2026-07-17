@@ -4,7 +4,7 @@
 
 ---
 
-## [GET] /api/v1/catalog/oid - Поиск OID по точной dotter notation
+## [GET] /api/v1/mib-parser/oid - Поиск OID по точной dotter notation
 
 <details><summary>Примеры запросов</summary>
 
@@ -31,7 +31,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ---
 
-## [GET] /api/v1/catalog/oid/exact - Поиск OID по dotter notation, названию MIB и производителю
+## [GET] /api/v1/mib-parser/oid/exact - Поиск OID по dotter notation, названию MIB и производителю
 
 <details><summary>Примеры запросов</summary>
 
@@ -58,7 +58,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ---
 
-## [GET] /api/v1/catalog/oid/mib - Получить OID по названию MIB
+## [GET] /api/v1/mib-parser/oid/mib - Получить OID по названию MIB
 
 <details><summary>Примеры запросов</summary>
 
@@ -85,7 +85,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ---
 
-## [GET] /api/v1/catalog/oid/prefix - Поиск OID по префиксу с пагинацией
+## [GET] /api/v1/mib-parser/oid/prefix - Поиск OID по префиксу с пагинацией
 
 <details><summary>Примеры запросов</summary>
 
@@ -112,7 +112,7 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 
 ---
 
-## [GET] /api/v1/catalog/oid/vendor - Получить OID по производителю с пагинацией
+## [GET] /api/v1/mib-parser/oid/vendor - Получить OID по производителю с пагинацией
 
 <details><summary>Примеры запросов</summary>
 

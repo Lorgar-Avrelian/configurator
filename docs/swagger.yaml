@@ -448,6 +448,27 @@ definitions:
         type: string
         x-nullable: true
     type: object
+  configurator_internal_dto.OidRequestDto:
+    properties:
+      dotter_notation:
+        example: .1.3.6.1.2.1.1.2
+        type: string
+      mib:
+        example: SNMPv2-MIB
+        type: string
+      page:
+        example: 1
+        type: integer
+      page_size:
+        example: 100
+        type: integer
+      prefix:
+        example: true
+        type: boolean
+      vendor:
+        example: Raisecom
+        type: string
+    type: object
   configurator_internal_dto.ParamCreateDto:
     properties:
       access:
@@ -2451,13 +2472,18 @@ paths:
       tags:
       - '7. Конфигурация: Сопоставления параметров'
   /api/v1/oid:
-    get:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает список OID на основе переданной нотации, MIB, названия
+        производителя и параметров пагинации
       parameters:
-      - description: Точная dotter notation
-        in: query
-        name: notation
+      - description: Фильтры для поиска OID
+        in: body
+        name: request
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/configurator_internal_dto.OidRequestDto'
       produces:
       - application/json
       responses:
@@ -2479,146 +2505,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Поиск OID по точной dotter notation
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/oid/exact:
-    get:
-      parameters:
-      - description: Точная dotter notation
-        in: query
-        name: notation
-        required: true
-        type: string
-      - description: Точное название MIB
-        in: query
-        name: mib
-        required: true
-        type: string
-      - description: Имя или директория вендора
-        in: query
-        name: vendor
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_dto.OidDto'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Поиск OID по dotter notation, названию MIB и производителю
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/oid/mib:
-    get:
-      parameters:
-      - description: Название MIB
-        in: query
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_dto.OidDto'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить OID по названию MIB
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/oid/prefix:
-    get:
-      description: Возвращает отсортированный список OID (по 100 на страницу)
-      parameters:
-      - description: Префикс dotter_notation
-        in: query
-        name: prefix
-        required: true
-        type: string
-      - description: 'Номер страницы (по умолчанию: 1)'
-        in: query
-        name: page
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_dto.OidDto'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Поиск OID по префиксу с пагинацией
-      tags:
-      - '4. Парсер: OID'
-  /api/v1/oid/vendor:
-    get:
-      parameters:
-      - description: Имя вендора или его директория
-        in: query
-        name: vendor
-        type: string
-      - description: 'Номер страницы (дефолт: 1)'
-        in: query
-        name: page
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/configurator_internal_dto.OidDto'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Получить OID по производителю с пагинацией
+      summary: Поиск OID по фильтрам
       tags:
       - '4. Парсер: OID'
   /api/v1/param:
