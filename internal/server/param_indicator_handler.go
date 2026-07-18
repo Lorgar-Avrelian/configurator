@@ -25,14 +25,19 @@ func CreateParamIndicator(c *gin.Context) {
 	var input dto.ParamIndicatorCreateDto
 	var err error
 	var res *dto.ParamIndicatorDto
-	if err = c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Validation failed during param indicator creation: %v", err)
+	err = c.ShouldBindJSON(&input)
+	if err != nil {
+		logger.Warnf("Validation failed during param indicator creation: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
+		return
+	}
+	if input.DotterNotation == nil && input.OidID == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body value"})
 		return
 	}
 	res, err = service.CreateParamIndicator(c.Request.Context(), input)
 	if err != nil {
-		logger.Error("Service error occurred while creating param indicator: %v", err)
+		logger.Errorf("Service error occurred while creating param indicator: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -60,7 +65,7 @@ func GetParamIndicator(c *gin.Context) {
 	}
 	res, err = service.GetParamIndicatorByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while retrieving param indicator %d: %v", id, err)
+		logger.Errorf("Service error occurred while retrieving param indicator %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve param indicator"})
 		return
 	}
@@ -83,7 +88,7 @@ func GetAllParamIndicators(c *gin.Context) {
 	var err error
 	res, err = service.GetAllParamIndicators(c.Request.Context())
 	if err != nil {
-		logger.Error("Service error occurred while retrieving all param indicators: %v", err)
+		logger.Errorf("Service error occurred while retrieving all param indicators: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve all param indicators"})
 		return
 	}
@@ -112,14 +117,19 @@ func UpdateParamIndicator(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid param indicator ID format"})
 		return
 	}
-	if err = c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Validation failed during param indicator update for ID %d: %v", id, err)
+	err = c.ShouldBindJSON(&input)
+	if err != nil {
+		logger.Warnf("Validation failed during param indicator update for ID %d: %v", id, err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
+		return
+	}
+	if input.DotterNotation == nil && input.OidID == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body value"})
 		return
 	}
 	res, err = service.UpdateParamIndicator(c.Request.Context(), id, input)
 	if err != nil {
-		logger.Error("Service error occurred while updating param indicator %d: %v", id, err)
+		logger.Errorf("Service error occurred while updating param indicator %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -150,7 +160,7 @@ func DeleteParamIndicator(c *gin.Context) {
 	}
 	found, err = service.DeleteParamIndicator(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while deleting param indicator %d: %v", id, err)
+		logger.Errorf("Service error occurred while deleting param indicator %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete param indicator"})
 		return
 	}
