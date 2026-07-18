@@ -57,7 +57,7 @@ func CreateDefaultConfiguration(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		logger.Error("Service error occurred while creating default configuration: %v", err)
+		logger.Errorf("Service error occurred while creating default configuration: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -89,7 +89,7 @@ func GetDefaultConfiguration(c *gin.Context) {
 	var res *dto.DefaultConfigurationDto
 	res, err = service.GetDefaultConfigurationByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while retrieving default configuration %d: %v", id, err)
+		logger.Errorf("Service error occurred while retrieving default configuration %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -112,7 +112,7 @@ func GetAllDefaultConfigurations(c *gin.Context) {
 	var err error
 	res, err = service.GetAllDefaultConfigurations(c.Request.Context())
 	if err != nil {
-		logger.Error("Service error occurred while retrieving all default configurations: %v", err)
+		logger.Errorf("Service error occurred while retrieving all default configurations: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -177,7 +177,7 @@ func UpdateDefaultConfiguration(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		logger.Error("Service error occurred while updating default configuration %d: %v", id, err)
+		logger.Errorf("Service error occurred while updating default configuration %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -212,7 +212,7 @@ func DeleteDefaultConfiguration(c *gin.Context) {
 	var found bool
 	found, err = service.DeleteDefaultConfiguration(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while deleting default configuration %d: %v", id, err)
+		logger.Errorf("Service error occurred while deleting default configuration %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -251,7 +251,7 @@ func ChangeDefaultConfigurationDataHandler(c *gin.Context) {
 	var success bool
 	success, err = service.ChangeDefaultConfigurationData(c.Request.Context(), prevId, newId)
 	if err != nil {
-		logger.Error("Service error during changing threshold data from %d to %d: %v", prevId, newId, err)
+		logger.Errorf("Service error during changing threshold data from %d to %d: %v", prevId, newId, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
