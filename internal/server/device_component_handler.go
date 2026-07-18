@@ -26,13 +26,13 @@ func CreateDeviceComponent(c *gin.Context) {
 	var err error
 	var res *dto.DeviceComponentDto
 	if err = c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Validation failed during device component creation: %v", err)
+		logger.Warnf("Validation failed during device component creation: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
 	res, err = service.CreateDeviceComponent(c.Request.Context(), input)
 	if err != nil {
-		logger.Error("Service error occurred while creating device component: %v", err)
+		logger.Errorf("Service error occurred while creating device component: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create device component"})
 		return
 	}
@@ -60,7 +60,7 @@ func GetDeviceComponent(c *gin.Context) {
 	}
 	res, err = service.GetDeviceComponentByID(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while retrieving device component %d: %v", id, err)
+		logger.Errorf("Service error occurred while retrieving device component %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve device component"})
 		return
 	}
@@ -83,7 +83,7 @@ func GetAllDeviceComponents(c *gin.Context) {
 	var err error
 	res, err = service.GetAllDeviceComponents(c.Request.Context())
 	if err != nil {
-		logger.Error("Service error occurred while retrieving all device components: %v", err)
+		logger.Errorf("Service error occurred while retrieving all device components: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve all device components"})
 		return
 	}
@@ -113,13 +113,13 @@ func UpdateDeviceComponent(c *gin.Context) {
 		return
 	}
 	if err = c.ShouldBindJSON(&input); err != nil {
-		logger.Warn("Validation failed during device component update for ID %d: %v", id, err)
+		logger.Warnf("Validation failed during device component update for ID %d: %v", id, err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
 		return
 	}
 	res, err = service.UpdateDeviceComponent(c.Request.Context(), id, input)
 	if err != nil {
-		logger.Error("Service error occurred while updating device component %d: %v", id, err)
+		logger.Errorf("Service error occurred while updating device component %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update device component"})
 		return
 	}
@@ -150,7 +150,7 @@ func DeleteDeviceComponent(c *gin.Context) {
 	}
 	found, err = service.DeleteDeviceComponent(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while deleting device component %d: %v", id, err)
+		logger.Errorf("Service error occurred while deleting device component %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete device component"})
 		return
 	}
@@ -182,7 +182,7 @@ func GetDeviceComponentOwn(c *gin.Context) {
 	}
 	res, err = service.GetDeviceComponentByIDOwn(c.Request.Context(), id)
 	if err != nil {
-		logger.Error("Service error occurred while retrieving single device component %d: %v", id, err)
+		logger.Errorf("Service error occurred while retrieving single device component %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve device component"})
 		return
 	}
@@ -221,7 +221,7 @@ func ChangeDeviceComponentDataHandler(c *gin.Context) {
 	var success bool
 	success, err = service.ChangeDeviceComponentData(c.Request.Context(), prevId, newId)
 	if err != nil {
-		logger.Error("Service error during changing device component data from %d to %d: %v", prevId, newId, err)
+		logger.Errorf("Service error during changing device component data from %d to %d: %v", prevId, newId, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
