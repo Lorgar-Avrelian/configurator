@@ -53,6 +53,10 @@ func CreateDefaultConfiguration(c *gin.Context) {
 	var res *dto.DefaultConfigurationDto
 	res, err = service.CreateDefaultConfiguration(c.Request.Context(), indID, dcID)
 	if err != nil {
+		if err.Error() == "default configuration already exists for this indicator" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 		logger.Error("Service error occurred while creating default configuration: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -169,6 +173,10 @@ func UpdateDefaultConfiguration(c *gin.Context) {
 	var res *dto.DefaultConfigurationDto
 	res, err = service.UpdateDefaultConfiguration(c.Request.Context(), id, indID, dcID)
 	if err != nil {
+		if err.Error() == "default configuration already exists for this indicator" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 		logger.Error("Service error occurred while updating default configuration %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

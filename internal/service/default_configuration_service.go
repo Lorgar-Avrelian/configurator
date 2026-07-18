@@ -5,11 +5,20 @@ import (
 	"configurator/internal/dto"
 	"configurator/internal/mapper"
 	"context"
+	"errors"
 )
 
 func CreateDefaultConfiguration(ctx context.Context, indicatorID int64, devCompID *int64) (*dto.DefaultConfigurationDto, error) {
-	var rows []dao.DefaultConfiguration
+	var exists bool
 	var err error
+	exists, err = dao.CheckDefaultConfigurationExistsByIndicator(ctx, indicatorID, nil)
+	if err != nil {
+		return nil, err
+	}
+	if exists {
+		return nil, errors.New("default configuration already exists for this indicator")
+	}
+	var rows []dao.DefaultConfiguration
 	rows, err = dao.CreateDefaultConfiguration(ctx, indicatorID, devCompID)
 	if err != nil {
 		return nil, err
@@ -44,8 +53,16 @@ func GetAllDefaultConfigurations(ctx context.Context) ([]dto.DefaultConfiguratio
 }
 
 func UpdateDefaultConfiguration(ctx context.Context, id int64, indicatorID int64, devCompID *int64) (*dto.DefaultConfigurationDto, error) {
-	var rows []dao.DefaultConfiguration
+	var exists bool
 	var err error
+	exists, err = dao.CheckDefaultConfigurationExistsByIndicator(ctx, indicatorID, &id)
+	if err != nil {
+		return nil, err
+	}
+	if exists {
+		return nil, errors.New("default configuration already exists for this indicator")
+	}
+	var rows []dao.DefaultConfiguration
 	rows, err = dao.UpdateDefaultConfiguration(ctx, id, indicatorID, devCompID)
 	if err != nil {
 		return nil, err

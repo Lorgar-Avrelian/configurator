@@ -206,3 +206,32 @@ func DeleteDefaultConfiguration(ctx context.Context, id int64) (bool, error) {
 	}
 	return affected > 0, nil
 }
+
+func CheckDefaultConfigurationExistsByIndicator(ctx context.Context, indicatorID int64, excludeID *int64) (bool, error) {
+	var conn *pgxpool.Pool
+	var query string
+	var err error
+	var exists bool
+	conn = database.Get()
+	if excludeID == nil {
+		query = `SELECT EXISTS (
+			SELECT 1
+			FROM public.default_configuration
+			WHERE "indicator" = $1
+		)`
+		err = conn.QueryRow(ctx, query, indicatorID).Scan(&exists)
+	} else {
+		query = `SELECT EXISTS (
+			SELECT 1
+			FROM public.default_configuration
+			WHERE "indicator" = $1
+				AND "id" != $2
+		)`
+		err = conn.QueryRow(ctx, query, indicatorID, *excludeID).Scan(&exists)
+	}
+	if err != nil {
+		logger.Error("Failed to check configuration existence by indicator: %v", err)
+		return false, err
+	}
+	return exists, nil
+}
