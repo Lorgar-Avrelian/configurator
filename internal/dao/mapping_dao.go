@@ -20,7 +20,7 @@ func CreateMappingRaw(ctx context.Context, d MappingDao) (int64, error) {
 			 RETURNING "id"`
 	err = conn.QueryRow(ctx, query, d.Indicator, d.Param, d.Frequency, d.Value, d.Coefficient, d.Enum, d.Position, d.From, d.PositionType).Scan(&insertedID)
 	if err != nil {
-		logger.Error("Failed to raw insert mapping into DB: %v", err)
+		logger.Errorf("Failed to raw insert mapping into DB: %v", err)
 		return 0, err
 	}
 	return insertedID, nil
@@ -68,7 +68,7 @@ func GetMappingByID(ctx context.Context, id int64) ([]Mapping, error) {
 			     LEFT JOIN public.param p ON mb."param" = p."id"`
 	rows, err = conn.Query(ctx, query, id)
 	if err != nil {
-		logger.Error("Failed to fetch recursive full tree branch from DB: %v", err)
+		logger.Errorf("Failed to fetch recursive full tree branch from DB: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -110,7 +110,7 @@ func GetAllMappings(ctx context.Context) ([]Mapping, error) {
 			     LEFT JOIN public.param p ON mt."param" = p."id"`
 	rows, err = conn.Query(ctx, query)
 	if err != nil {
-		logger.Error("Failed to fetch recursive mappings from DB: %v", err)
+		logger.Errorf("Failed to fetch recursive mappings from DB: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -135,7 +135,7 @@ func UpdateMappingRaw(ctx context.Context, id int64, d MappingDao) error {
 			 WHERE "id" = $10`
 	_, err = conn.Exec(ctx, query, d.Indicator, d.Param, d.Frequency, d.Value, d.Coefficient, d.Enum, d.Position, d.From, d.PositionType, id)
 	if err != nil {
-		logger.Error("Failed to raw update mapping ID %d: %v", id, err)
+		logger.Errorf("Failed to raw update mapping ID %d: %v", id, err)
 		return err
 	}
 	return nil
@@ -152,14 +152,14 @@ func DeleteMapping(ctx context.Context, id int64) (bool, error) {
 	query = `DELETE FROM public.mapping WHERE "id" = $1`
 	commandTag, err = conn.Exec(ctx, query, id)
 	if err != nil {
-		logger.Error("Failed to delete mapping ID %d: %v", id, err)
+		logger.Errorf("Failed to delete mapping ID %d: %v", id, err)
 		return false, err
 	}
 	affected = commandTag.RowsAffected()
 	seqQuery = `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('public.mapping', 'id'), COALESCE(MAX("id"), 0) + 1, false) FROM public.mapping`
 	_, err = conn.Exec(ctx, seqQuery)
 	if err != nil {
-		logger.Error("Failed to reset mapping sequence: %v", err)
+		logger.Errorf("Failed to reset mapping sequence: %v", err)
 		return true, err
 	}
 	return affected > 0, nil
@@ -168,7 +168,6 @@ func DeleteMapping(ctx context.Context, id int64) (bool, error) {
 func GetMappingByIDOwn(ctx context.Context, id int64) (*Mapping, error) {
 	var conn *pgxpool.Pool
 	var query string
-	var row pgx.Row
 	var m Mapping
 	var err error
 	conn = database.Get()
@@ -181,13 +180,9 @@ func GetMappingByIDOwn(ctx context.Context, id int64) (*Mapping, error) {
 			     LEFT JOIN public.mib mib ON o."mib" = mib."id"
 			     LEFT JOIN public.param p ON m."param" = p."id"
 			 WHERE m."id" = $1`
-	row = conn.QueryRow(ctx, query, id)
-	err = row.Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible, &m.ParamDiagram)
+	err = conn.QueryRow(ctx, query, id).Scan(&m.ID, &m.IndicatorID, &m.ParamID, &m.Frequency, &m.Value, &m.Coefficient, &m.Enum, &m.Position, &m.From, &m.PositionType, &m.IndOidID, &m.IndDotterNotation, &m.OidMibID, &m.OidMibPath, &m.OidMibName, &m.OidMibVendor, &m.OidType, &m.OidName, &m.OidNumber, &m.OidDotterNotation, &m.OidObjectDescriptor, &m.OidSyntax, &m.OidEnum, &m.OidStatus, &m.OidAccess, &m.OidUnits, &m.OidDescription, &m.OidCategory, &m.ParamTitle, &m.ParamNameEn, &m.ParamNameRu, &m.ParamType, &m.ParamValue, &m.ParamDescriptionEn, &m.ParamDescriptionRu, &m.ParamUnitsEn, &m.ParamUnitsRu, &m.ParamAccess, &m.ParamSaved, &m.ParamVisible, &m.ParamDiagram)
 	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil, nil
-		}
-		logger.Error("Failed to retrieve single mapping own ID %d: %v", id, err)
+		logger.Errorf("Failed to retrieve single mapping own ID %d: %v", id, err)
 		return nil, err
 	}
 	return &m, nil

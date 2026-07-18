@@ -78,6 +78,7 @@ func NewServer() *Server {
 		{
 			mapping.POST("", CreateMapping)
 			mapping.GET("/:id", GetMapping)
+			mapping.GET("/:id/own", GetMappingOwn)
 			mapping.PUT("/:id", UpdateMapping)
 			mapping.DELETE("/:id", DeleteMapping)
 			mapping.PATCH("/:prevId/:newId", ChangeMappingDataHandler)
