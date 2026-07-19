@@ -44,7 +44,7 @@ func GetAllConfigInProcess(c *gin.Context) {
 // @Failure         400  {object}  map[string]string
 // @Failure         404  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/config/in-progress/search [get]
+// @Router          /api/v1/config/in-progress/search [post]
 func SearchConfigInProcess(c *gin.Context) {
 	var hostRaw string
 	var portRaw string

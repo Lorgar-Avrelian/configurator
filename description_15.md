@@ -2,9 +2,13 @@
 
 > [[_**ОГЛАВЛЕНИЕ**_]](./README.md)
 
+> [!TIP]
+> API из данного блока предназначены для просмотра карты сохранённых значений параметров устройств, необходимых для 
+> расчёта результатов пороговых выражений в других устройствах.
+
 ---
 
-## [GET] /api/v1/catalog/param-result - Получить отфильтрованные сохранённые значения параметров
+## [POST] /api/v1/catalog/param-result - Получить отфильтрованные сохранённые значения параметров
 
 <details><summary>Примеры запросов</summary>
 
@@ -15,13 +19,30 @@
 Запрос 1:
 
 ```http
-POST https://nms-dev.opk-bulat.ru/api/v1
+POST https://nms-dev.opk-bulat.ru/api/v1/catalog/param-result
+
+{
+  "component_title": "component",
+  "host": "127.0.0.1",
+  "internal_order": 1,
+  "param_title": "name",
+  "port": 161
+}
 ```
 
 Ответ 1:
 
 ```json
-
+[
+  {
+    "component_title": "component",
+    "host": "127.0.0.1",
+    "internal_order": 1,
+    "param_title": "name",
+    "port": 161,
+    "value": "Main Node"
+  }
+]
 ```
 
 </details>
@@ -46,13 +67,22 @@ POST https://nms-dev.opk-bulat.ru/api/v1
 Запрос 1:
 
 ```http
-POST https://nms-dev.opk-bulat.ru/api/v1
+GET https://nms-dev.opk-bulat.ru/api/v1/catalog/param-results
 ```
 
 Ответ 1:
 
 ```json
-
+[
+  {
+    "component_title": "component",
+    "host": "127.0.0.1",
+    "internal_order": 1,
+    "param_title": "name",
+    "port": 161,
+    "value": "Main Node"
+  }
+]
 ```
 
 </details>

@@ -369,7 +369,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/config/in-progress/search": {
-            "get": {
+            "post": {
                 "produces": [
                     "application/json"
                 ],
@@ -2632,7 +2632,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/param-result": {
-            "get": {
+            "post": {
                 "produces": [
                     "application/json"
                 ],

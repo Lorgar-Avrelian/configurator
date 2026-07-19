@@ -1053,7 +1053,7 @@ paths:
       tags:
       - '13. Просмотр: В процессе конфигурирования'
   /api/v1/config/in-progress/search:
-    get:
+    post:
       parameters:
       - description: Host устройства
         in: query
@@ -2543,7 +2543,7 @@ paths:
       tags:
       - '2. Модельный каталог: Параметры'
   /api/v1/param-result:
-    get:
+    post:
       parameters:
       - description: Фильтры параметров
         in: body

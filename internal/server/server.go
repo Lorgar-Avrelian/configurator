@@ -136,7 +136,7 @@ func NewServer() *Server {
 		configInProgressGroup = v1.Group("/config/in-progress")
 		{
 			configInProgressGroup.GET("", GetAllConfigInProcess)
-			configInProgressGroup.GET("/search", SearchConfigInProcess)
+			configInProgressGroup.POST("/search", SearchConfigInProcess)
 		}
 		var configWorkingGroup *gin.RouterGroup
 		configWorkingGroup = v1.Group("/config/working")
@@ -144,7 +144,7 @@ func NewServer() *Server {
 			configWorkingGroup.GET("", GetWorkingConfiguration)
 		}
 		v1.GET("/param-results", GetAllParamResults)
-		v1.GET("/param-result", GetParamResultsByFilter)
+		v1.POST("/param-result", GetParamResultsByFilter)
 		v1.POST("/save-result", SaveResult)
 	}
 	return &Server{router: r}

@@ -36,7 +36,7 @@ func GetAllParamResults(c *gin.Context) {
 // @Success         200  {array}   dto.ParamResultDto
 // @Failure         400  {object}  map[string]string
 // @Failure         500  {object}  map[string]string
-// @Router          /api/v1/param-result [get]
+// @Router          /api/v1/param-result [post]
 func GetParamResultsByFilter(c *gin.Context) {
 	var input dto.ParamResultGetDto
 	var err error
